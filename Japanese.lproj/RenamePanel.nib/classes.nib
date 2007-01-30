@@ -1,0 +1,45 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                askAndDelete = id; 
+                closeWindowOrDrawer = id; 
+                copyFile = id; 
+                deleteFileFromMenu = id; 
+                destinationListClick = id; 
+                fullScreen = id; 
+                launchAppFromMenu = id; 
+                launchDefaultEditor = id; 
+                moveFile = id; 
+                renameFileFromMenu = id; 
+                revealInFinder = id; 
+                setResizeBlockFromSender = id; 
+                toggleStatusBar = id; 
+            }; 
+            CLASS = XeeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                closebutton = NSButton; 
+                collisionpanel = XeeCollisionPanel; 
+                drawer = NSDrawer; 
+                drawerseg = NSSegmentedControl; 
+                imageview = XeeView; 
+                renamepanel = XeeRenamePanel; 
+                statusbar = XeeStatusBar; 
+                table = NSTableView; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeFullScreenWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {
+            ACTIONS = {cancelClick = id; renameClick = id; }; 
+            CLASS = XeeRenamePanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeController; namefield = NSTextField; }; 
+            SUPERCLASS = NSWindow; 
+        }
+    ); 
+    IBVersion = 1; 
+}

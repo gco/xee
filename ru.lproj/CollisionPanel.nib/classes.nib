@@ -1,0 +1,59 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {cancelClick = id; renameClick = id; replaceClick = id; }; 
+            CLASS = XeeCollisionPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                controller = XeeController; 
+                icon = XeeView; 
+                namefield = NSTextField; 
+                newdate = NSTextField; 
+                newformat = NSTextField; 
+                newsize = NSTextField; 
+                olddate = NSTextField; 
+                oldformat = NSTextField; 
+                oldsize = NSTextField; 
+                renamebutton = NSButton; 
+                replacebutton = NSButton; 
+                titlefield = NSTextField; 
+            }; 
+            SUPERCLASS = NSWindow; 
+        }, 
+        {
+            ACTIONS = {
+                askAndDelete = id; 
+                closeWindowOrDrawer = id; 
+                copyFile = id; 
+                deleteFileFromMenu = id; 
+                destinationListClick = id; 
+                fullScreen = id; 
+                launchAppFromMenu = id; 
+                launchDefaultEditor = id; 
+                moveFile = id; 
+                renameFileFromMenu = id; 
+                revealInFinder = id; 
+                setResizeBlockFromSender = id; 
+                toggleStatusBar = id; 
+            }; 
+            CLASS = XeeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                closebutton = NSButton; 
+                collisionpanel = XeeCollisionPanel; 
+                drawer = NSDrawer; 
+                drawerseg = NSSegmentedControl; 
+                imageview = XeeView; 
+                renamepanel = XeeRenamePanel; 
+                statusbar = XeeStatusBar; 
+                table = NSTableView; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeFullScreenWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {CLASS = XeeView; LANGUAGE = ObjC; SUPERCLASS = NSOpenGLView; }
+    ); 
+    IBVersion = 1; 
+}

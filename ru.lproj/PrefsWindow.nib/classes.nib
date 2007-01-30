@@ -1,0 +1,256 @@
+{
+    IBClasses = (
+        {
+            CLASS = CSAction; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {target = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {deselectAll = id; selectAll = id; }; 
+            CLASS = CSFileTypeList; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {CLASS = CSFileTypeListSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = CSKeyListenerWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {CLASS = CSKeyStroke; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                addShortcut = id; 
+                draggingExited = id; 
+                removeShortcut = id; 
+                resetAll = id; 
+                resetToDefaults = id; 
+            }; 
+            CLASS = CSKeyboardList; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                addButton = NSControl; 
+                infoTextField = NSTextField; 
+                keyboardShortcuts = CSKeyboardShortcuts; 
+                removeButton = NSControl; 
+                resetButton = NSControl; 
+            }; 
+            SUPERCLASS = KFTypeSelectTableView; 
+        }, 
+        {CLASS = CSKeyboardShortcuts; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                animationToggle = id; 
+                autoRotate = id; 
+                copyFile = id; 
+                crop = id; 
+                deleteFileFromMenu = id; 
+                dummy = id; 
+                frameSkipNext = id; 
+                frameSkipPrev = id; 
+                fullScreen = id; 
+                keyboardShortcuts = id; 
+                launchAppFromMenu = id; 
+                launchDefaultEditor = id; 
+                losslessCrop = id; 
+                mirrorHorizontal = id; 
+                mirrorVertical = id; 
+                moveFile = id; 
+                myAction = id; 
+                openBugReport = id; 
+                openHomePage = id; 
+                openSupportThread = id; 
+                renameFileFromMenu = id; 
+                revealInFinder = id; 
+                rotate180 = id; 
+                rotateActual = id; 
+                rotateCCW = id; 
+                rotateCW = id; 
+                runSlideshow = id; 
+                saveImage = id; 
+                setAntialiasing = id; 
+                setAutoZoom = id; 
+                setCustomSlideshowDelay = id; 
+                setSlideshowDelay = id; 
+                setSortOrder = id; 
+                skip100Back = id; 
+                skip100Forward = id; 
+                skip10Back = id; 
+                skip10Forward = id; 
+                skipFirst = id; 
+                skipLast = id; 
+                skipNext = id; 
+                skipPrev = id; 
+                skipRandom = id; 
+                skipRandomPrev = id; 
+                toggleAnimation = id; 
+                toggleAutoEnlarge = id; 
+                toggleAutoShrink = id; 
+                toggleStatusBar = id; 
+                zoomActual = id; 
+                zoomFit = id; 
+                zoomIn = id; 
+                zoomOut = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {findNext = id; findPrevious = id; }; 
+            CLASS = KFTypeSelectTableView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {CLASS = NSDatePicker; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {
+            ACTIONS = {setAutomaticZoom = id; }; 
+            CLASS = NSWindow; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSResponder; 
+        }, 
+        {
+            CLASS = XeeAction; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {target = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeApplication; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }, 
+        {CLASS = XeeCloseButton; LANGUAGE = ObjC; SUPERCLASS = NSButton; }, 
+        {
+            ACTIONS = {cancelClick = id; renameClick = id; replaceClick = id; }; 
+            CLASS = XeeCollisionPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                controller = XeeDirectoryController; 
+                icon = XeeView; 
+                namefield = NSTextField; 
+                newdate = NSTextField; 
+                newformat = NSTextField; 
+                newsize = NSTextField; 
+                olddate = NSTextField; 
+                oldformat = NSTextField; 
+                oldsize = NSTextField; 
+                titlefield = NSTextField; 
+            }; 
+            SUPERCLASS = NSWindow; 
+        }, 
+        {
+            ACTIONS = {
+                autoRotate = id; 
+                closeWindowOrDrawer = id; 
+                copy = id; 
+                frameSkipNext = id; 
+                frameSkipPrev = id; 
+                fullScreen = id; 
+                mirrorHorizontal = id; 
+                mirrorVertical = id; 
+                rotate180 = id; 
+                rotateActual = id; 
+                rotateCCW = id; 
+                rotateCW = id; 
+                saveImage = id; 
+                setAutoZoom = id; 
+                setResizeBlockFromSender = id; 
+                toggleAnimation = id; 
+                toggleStatusBar = id; 
+                zoomActual = id; 
+                zoomFit = id; 
+                zoomIn = id; 
+                zoomOut = id; 
+            }; 
+            CLASS = XeeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {imageview = XeeView; statusbar = XeeStatusBar; window = XeeDisplayWindow; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                dummy = id; 
+                getInfo = id; 
+                installIconSet = id; 
+                keyboardShortcuts = id; 
+                openBugReport = id; 
+                openDocument = id; 
+                openHomePage = id; 
+                openSupportThread = id; 
+                paste = id; 
+                setDefaultEditorFromMenu = id; 
+            }; 
+            CLASS = XeeDelegate; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                antialiasmenu = NSMenu; 
+                copyitem = NSMenuItem; 
+                cropitem = NSMenuItem; 
+                editmenu = NSMenu; 
+                formattab = NSTabViewItem; 
+                fullscreenwell = NSColorWell; 
+                iconfield = NSTextField; 
+                iconwindow = NSWindow; 
+                imagewell = NSColorWell; 
+                openmenu = NSMenu; 
+                otherdelayitem = NSMenuItem; 
+                pasteitem = NSMenuItem; 
+                prefstabs = NSTabView; 
+                prefswindow = NSWindow; 
+                properties = XeePropertiesController; 
+                runslidesitem = NSMenuItem; 
+                slideshowmenu = NSMenu; 
+                sortmenu = NSMenu; 
+                statusitem = NSMenuItem; 
+                viewmenu = NSMenu; 
+                windowcontroller = XeeController; 
+                windowwell = NSColorWell; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeDisplayWindow; LANGUAGE = ObjC; SUPERCLASS = XeeWindow; }, 
+        {CLASS = XeeFiletypeListSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = XeeFullScreenWindow; LANGUAGE = ObjC; SUPERCLASS = XeeWindow; }, 
+        {CLASS = XeeKeyCell; LANGUAGE = ObjC; SUPERCLASS = NSCell; }, 
+        {CLASS = XeeKeyImage; LANGUAGE = ObjC; SUPERCLASS = NSImage; }, 
+        {CLASS = XeeKeyListenerWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {CLASS = XeeKeyStroke; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                addShortcut = id; 
+                draggingExited = id; 
+                removeShortcut = id; 
+                resetAll = id; 
+                resetToDefaults = id; 
+            }; 
+            CLASS = XeeKeyboardList; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                addButton = NSControl; 
+                infoTextField = NSTextField; 
+                keyboardShortcuts = XeeKeyboardShortcuts; 
+                removeButton = NSControl; 
+                resetButton = NSControl; 
+            }; 
+            SUPERCLASS = KFTypeSelectTableView; 
+        }, 
+        {CLASS = XeeKeyboardShortcuts; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {cancelClick = id; renameClick = id; }; 
+            CLASS = XeeRenamePanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeDirectoryController; namefield = NSTextField; }; 
+            SUPERCLASS = NSWindow; 
+        }, 
+        {
+            CLASS = XeeShortcutView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {keyboardList = XeeKeyboardList; }; 
+            SUPERCLASS = NSView; 
+        }, 
+        {
+            CLASS = XeeView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSOpenGLView; 
+        }, 
+        {CLASS = XeeWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }
+    ); 
+    IBVersion = 1; 
+}
