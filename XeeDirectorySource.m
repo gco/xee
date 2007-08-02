@@ -2,6 +2,7 @@
 #import "XeeImage.h"
 #import "XeeKQueue.h"
 #import "CSDesktopServices.h"
+#import "XeeStringAdditions.h"
 
 #import <sys/stat.h>
 
@@ -83,7 +84,7 @@
 	dirref=[[XeeFSRef refForPath:directoryname] retain];
 	if(!dirref) return NO;
 
-	sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortOrder"];
+	sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortingOrder"];
 
 	if(!sortorder)
 	{
@@ -295,7 +296,10 @@
 
 -(long)time { return time; }
 
--(NSString *)descriptiveName { return [[ref path] lastPathComponent]; }
+-(NSString *)descriptiveName
+{
+	return [[[ref path] lastPathComponent] stringByMappingColonToSlash];
+}
 
 -(BOOL)matchesObject:(id)obj { return [obj isKindOfClass:[XeeFSRef class]]&&[ref isEqual:obj]; }
 

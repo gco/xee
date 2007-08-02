@@ -235,16 +235,17 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 {
 	[shortcuts autorelease];
 
+	NSString *key=[@"shortcuts." stringByAppendingString:identifier];
 	if(!shortcutarray||[shortcutarray isEqual:defshortcuts])
 	{
 		shortcuts=nil;
-		[[NSUserDefaults standardUserDefaults] removeObjectForKey:[@"shortcuts." stringByAppendingString:identifier]];
+		[[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
 	}
 	else
 	{
 		shortcuts=[shortcutarray retain];
 		NSArray *dictionaries=[CSKeyStroke dictionariesFromKeys:shortcuts];
-		[[NSUserDefaults standardUserDefaults] setObject:dictionaries forKey:[@"shortcuts." stringByAppendingString:identifier]];
+		[[NSUserDefaults standardUserDefaults] setObject:dictionaries forKey:key];
 	}
 	[[NSUserDefaults standardUserDefaults] removeObjectForKey:identifier]; // also remove old-style
 
@@ -266,7 +267,13 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	NSArray *dictionaries=[[NSUserDefaults standardUserDefaults] arrayForKey:[@"shortcuts." stringByAppendingString:identifier]];
 	if(!dictionaries) dictionaries=[[NSUserDefaults standardUserDefaults] arrayForKey:identifier];
 
-	if(dictionaries) [self setShortcuts:[CSKeyStroke keysFromDictionaries:dictionaries]];
+	if(dictionaries)
+	{
+		[shortcuts autorelease];
+		shortcuts=[[CSKeyStroke keysFromDictionaries:dictionaries] retain];
+		[self updateMenuItem];
+		[self clearImage];
+	}
 }
 
 -(void)updateMenuItem
@@ -1097,8 +1104,12 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 -(BOOL)performKeyEquivalent:(NSEvent *)event
 {
-	if([event type]==NSKeyDown) // maybe I should just use keyDown?
-	if([defaultshortcuts handleKeyEvent:event]) return YES;
+	if(![self isKindOfClass:[NSPanel class]])
+	{
+		if([event type]==NSKeyDown) // maybe I should just use keyDown?
+		if([defaultshortcuts handleKeyEvent:event]) return YES;
+	}
+
 	return [super performKeyEquivalent:event];
 }
 

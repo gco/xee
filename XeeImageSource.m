@@ -100,7 +100,7 @@
 			if(newpos<0) newpos=0;
 			if(newpos>=count) newpos=count-1;
 		}
-		[self pickImageAtIndex:newpos];
+		if(newpos!=curr) [self pickImageAtIndex:newpos];
 	}
 }
 

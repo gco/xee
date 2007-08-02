@@ -40,7 +40,7 @@ static NSMutableArray *controllers=nil;
 		source=nil;
 		currimage=nil;
 
-		blocked=awake=NO;
+		blocked=awake=autofullscreen=NO;
 		drawer_mode=XeeNoMode;
 
 		movetool=nil;
@@ -80,6 +80,7 @@ static NSMutableArray *controllers=nil;
 
 	[window release];
 	[fullscreenwindow release];
+	if(fullscreenwindow) SetSystemUIMode(kUIModeNormal,0);
 
 	CGImageRelease(copiedcgimage);
 
@@ -124,6 +125,12 @@ static NSMutableArray *controllers=nil;
 
 -(void)dismantle
 {
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:nil];
+
+	[controllers removeObject:self];
+
+	[source stop];
+
 	// kill slideshow timer
 	[slideshowtimer invalidate];
 	[slideshowtimer release];
@@ -137,11 +144,6 @@ static NSMutableArray *controllers=nil;
 -(void)windowWillClose:(NSNotification *)notification
 {
 	if([notification object]!=window) return; // ignore messages from the fullscreen window
-	[controllers removeObject:self];
-
-	[source stop];
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:nil];
 	[self performSelector:@selector(dismantle) withObject:nil afterDelay:0];
 }
 
@@ -215,6 +217,8 @@ static BOOL HasAppleMouse()
 {
 	if([[NSUserDefaults standardUserDefaults] integerForKey:@"scrollWheelFunction"]==0)
 	{
+		if([self isCropping]) return;
+
 		static BOOL apple=NO;
 		static time_t lastcheck=0;
 
@@ -988,8 +992,17 @@ static BOOL HasAppleMouse()
 		[self setStandardImageSize];
 		[window makeKeyAndOrderFront:nil];
 	}
+	autofullscreen=NO;
 }
 
+-(void)autoFullScreen
+{
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"autoFullscreen"])
+	{
+		[self fullScreen:nil];
+		autofullscreen=YES;
+	}
+}
 
 
 -(IBAction)confirm:(id)sender
@@ -1002,7 +1015,11 @@ static BOOL HasAppleMouse()
 	int state=[drawer state];
 
 	if([self isCropping]) [imageview setTool:movetool];
-	else if(fullscreenwindow) [self fullScreen:nil];
+	else if(fullscreenwindow)
+	{
+		if(autofullscreen) [self dismantle];
+		else [self fullScreen:nil];
+	}
 	else if([[maindelegate propertiesController] closeIfOpen]) return;
 	else if(state==NSDrawerOpenState||state==NSDrawerOpeningState) [closebutton performClick:nil];
 	else [[[NSApplication sharedApplication] keyWindow] performClose:nil];

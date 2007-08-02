@@ -1,7 +1,7 @@
 #import "XeeRenamePanel.h"
 #import "XeeImage.h"
 #import "XeeControllerFileActions.h"
-
+#import "XeeStringAdditions.h"
 
 
 @implementation XeeRenamePanel
@@ -10,7 +10,7 @@
 {
 	image=[img retain];
 
-	NSString *filename=[[image filename] lastPathComponent];
+	NSString *filename=[[[image filename] lastPathComponent] stringByMappingColonToSlash];
 	[namefield setStringValue:filename];
 
 	if(window)
@@ -41,7 +41,8 @@
 	if(sheet) [[NSApplication sharedApplication] endSheet:self];
 	[self orderOut:nil];
 
-	NSString *newname=[[[image filename] stringByDeletingLastPathComponent] stringByAppendingPathComponent:[namefield stringValue]];
+	NSString *newname=[[[image filename] stringByDeletingLastPathComponent]
+	stringByAppendingPathComponent:[[namefield stringValue] stringByMappingSlashToColon]];
 	[controller renameFile:[image filename] to:newname];
 
 	[image release];

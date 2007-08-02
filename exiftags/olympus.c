@@ -143,6 +143,7 @@ olympus_prop(struct exifprop *prop, struct exiftags *t)
 		a = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
 		b = exif4byte(t->mkrmd.btiff + prop->value + 4, &t->mkrmd);
 
+		exifstralloc(&prop->str, 32);
 		if (a == b)
 			snprintf(prop->str, 31, "None");
 		else

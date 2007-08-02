@@ -2,6 +2,7 @@
 #import "XeeImage.h"
 #import "XeeView.h"
 #import "XeeControllerFileActions.h"
+#import "XeeStringAdditions.h"
 
 
 
@@ -31,7 +32,7 @@
 	[NSThread detachNewThreadSelector:@selector(loadThumbnail:) toTarget:self withObject:destimage];
 
 	[titlefield setStringValue:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" already exists.",
-	@"Title of the file exists dialog"),[[destimage filename] lastPathComponent]]];
+	@"Title of the file exists dialog"),[[[destimage filename] lastPathComponent] stringByMappingColonToSlash]]];
 
 	[oldsize setStringValue:[NSString stringWithFormat:@"%d",[destimage fileSize]]];
 	[newsize setStringValue:[NSString stringWithFormat:@"%d",[srcimage fileSize]]];
@@ -53,7 +54,7 @@
 	do { newname=[destdir stringByAppendingPathComponent:[[NSString stringWithFormat:@"%@-%d",destname,n++] stringByAppendingPathExtension:destext]]; }
 	while([[NSFileManager defaultManager] fileExistsAtPath:newname]);
 
-	[namefield setStringValue:[newname lastPathComponent]];
+	[namefield setStringValue:[[newname lastPathComponent] stringByMappingColonToSlash]];
 	[self makeFirstResponder:namefield];
 	[[namefield currentEditor] setSelectedRange:NSMakeRange(0,[[[namefield stringValue] stringByDeletingPathExtension] length])];
 
@@ -92,7 +93,8 @@
 	[[NSApplication sharedApplication] endSheet:self];
 	[self orderOut:nil];
 
-	NSString *destination=[[[destimage filename] stringByDeletingLastPathComponent] stringByAppendingPathComponent:[namefield stringValue]];
+	NSString *destination=[[[destimage filename] stringByDeletingLastPathComponent]
+	stringByAppendingPathComponent:[[namefield stringValue] stringByMappingSlashToColon]];
 	[controller attemptToTransferFile:[srcimage filename] to:destination mode:transfermode];
 
 	[destimage setAnimating:NO];

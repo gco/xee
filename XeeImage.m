@@ -340,13 +340,13 @@
 			[NSNumber numberWithInt:[self fullWidth]],
 			NSLocalizedString(@"Full image height:",@"Full image height property label"),
 			[NSNumber numberWithInt:[self fullHeight]],
-			NSLocalizedString(@"Cropping top offset:",@"Cropping top offset property label"),
+			NSLocalizedString(@"Cropping top:",@"Cropping top property label"),
 			[NSNumber numberWithInt:crop.origin.y],
-			NSLocalizedString(@"Cropping bottom offset:",@"Cropping bottom offset property label"),
+			NSLocalizedString(@"Cropping bottom:",@"Cropping bottom property label"),
 			[NSNumber numberWithInt:[self fullHeight]-crop.size.height-crop.origin.y],
-			NSLocalizedString(@"Cropping left offset:",@"Cropping left offset property label"),
+			NSLocalizedString(@"Cropping left:",@"Cropping left property label"),
 			[NSNumber numberWithInt:crop.origin.x],
-			NSLocalizedString(@"Cropping right offset:",@"Cropping right offset property label"),
+			NSLocalizedString(@"Cropping right:",@"Cropping right property label"),
 			[NSNumber numberWithInt:[self fullWidth]-crop.size.width-crop.origin.x],
 		nil]];
 	}

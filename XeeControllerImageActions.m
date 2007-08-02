@@ -180,6 +180,7 @@ int XeeNumberOfZoomLevels=21;
 {
 	[self setResizeBlockFromSender:sender];
 	[self setStandardImageSize];
+	[self updateStatusBar];
 	[self setResizeBlock:NO];
 }
 

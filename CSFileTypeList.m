@@ -184,8 +184,8 @@
 	NSURL *url;
 	while(url=[enumerator nextObject])
 	{
-		NSString *app=[url path];
-		[handlers addObject:[[NSBundle bundleWithPath:app] bundleIdentifier]];
+		NSString *identifier=[[NSBundle bundleWithPath:[url path]] bundleIdentifier];
+		if(identifier) [handlers addObject:identifier];
 	}
 
 	for(;;)

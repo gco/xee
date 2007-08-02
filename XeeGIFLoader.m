@@ -328,8 +328,12 @@
 {
 	unsigned long *ptr=(unsigned long *)data;
 	int n=(bytesperrow/4)*height;
+	unsigned long val;
 
-	while(n--) *ptr++=0x00000000;
+	if(background==transindex) val=0x00000000;
+	else val=[globalpal table][background];
+
+	while(n--) *ptr++=val;
 }
 
 -(int)background { return background; }
@@ -343,7 +347,9 @@
 
 @implementation XeeGIFFrame
 
--(id)initWithWidth:(int)framewidth height:(int)frameheight left:(int)frameleft top:(int)frametop time:(int)frametime transparent:(int)trans disposal:(int)disp palette:(XeeGIFPalette *)pal
+-(id)initWithWidth:(int)framewidth height:(int)frameheight left:(int)frameleft
+top:(int)frametop time:(int)frametime transparent:(int)trans disposal:(int)disp
+palette:(XeeGIFPalette *)pal
 {
 	if(self=[super init])
 	{

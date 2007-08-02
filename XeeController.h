@@ -17,7 +17,7 @@
 
 	float zoom;
 	int window_focus_x,window_focus_y;
-	BOOL blocked,awake;
+	BOOL blocked,awake,autofullscreen;
 	int drawer_mode;
 
 	XeeMoveTool *movetool;
@@ -121,8 +121,8 @@
 -(void)setDrawerEnableState;
 
 
-
 -(IBAction)fullScreen:(id)sender;
+-(void)autoFullScreen;
 
 -(IBAction)confirm:(id)sender;
 -(IBAction)cancel:(id)sender;

@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 		@"NO",@"randomizeSlideshow",
 		@"5",@"slideshowDelay",
 		@"0",@"slideshowCustomDelay",
-		@"0",@"defaultSortOrder",
+		@"0",@"defaultSortingOrder",
 		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],@"defaultImageBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"windowBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"fullScreenBackground",

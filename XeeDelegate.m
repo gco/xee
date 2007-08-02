@@ -334,8 +334,7 @@ XeeDelegate *maindelegate=nil;
 		}
 
 		[controller setImageSource:source];
-
-		if([[NSUserDefaults standardUserDefaults] boolForKey:@"autoFullscreen"]) [controller fullScreen:nil];
+		[controller autoFullScreen];
 
 		return YES;
 	}
