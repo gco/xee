@@ -36,7 +36,7 @@ static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
 
 // Reader class
 
-@interface XeeEXIFReader:NSObject
+@interface XeeEXIFParser:NSObject
 {
 	struct exiftags *exiftags;
 	uint8 *data;

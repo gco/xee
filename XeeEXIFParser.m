@@ -1,8 +1,8 @@
-#import "XeeEXIFReader.h"
+#import "XeeEXIFParser.h"
 #import "XeeImage.h"
 
 
-@implementation XeeEXIFReader
+@implementation XeeEXIFParser
 
 -(id)initWithBuffer:(uint8 *)exifdata length:(int)len
 {
