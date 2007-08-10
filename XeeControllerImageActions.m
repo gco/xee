@@ -39,6 +39,7 @@ int XeeNumberOfZoomLevels=21;
 	CFStringRef uttype;
 	if([type isEqual:NSTIFFPboardType]) uttype=kUTTypeTIFF;
 	else uttype=kUTTypePICT;
+NSLog(@"provide: %@",type);
 
 	NSMutableData *data=[NSMutableData data];
 
@@ -48,6 +49,8 @@ int XeeNumberOfZoomLevels=21;
 	CGImageDestinationAddImage(dest,copiedcgimage,NULL);
 	if(!CGImageDestinationFinalize(dest)) NSBeep();
 	CFRelease(dest);
+
+//	if(uttype==kUTTypePICT) data=[data subdataWithRange:NSMakeRange(512,[data length]-512)];
 
 	[pboard setData:data forType:type];
 }

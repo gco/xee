@@ -140,3 +140,11 @@ XeeMatrix XeeMatrixForTransformation(XeeTransformation trans,float w,float h);
 //
 
 double XeeGetTime();
+
+
+
+//
+// Hex Data
+//
+
+NSString *XeeHexDump(uint8 *data,int length,int maxlen);

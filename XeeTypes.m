@@ -174,3 +174,22 @@ double XeeGetTime()
 	gettimeofday(&tv,0);
 	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
 }
+
+
+
+//
+// Hex data
+//
+
+NSString *XeeHexDump(uint8 *data,int length,int maxlen)
+{
+	NSMutableString *str=[NSMutableString string];
+
+	int len=imin(length,maxlen);
+	for(int i=0;i<len;i++) [str appendFormat:@"%s%02x",i==0?"":" ",data[i]];
+
+	if(length>maxlen) [str appendFormat:@"..."];
+
+	return str;
+}
+

@@ -1,5 +1,5 @@
 #import "XeeJPEGLosslessSaving.h"
-#import "XeeEXIFReader.h"
+#import "XeeEXIFParser.h"
 #import "XeeJPEGUtilities.h"
 #import "XeeImageThumbnailing.h"
 
@@ -196,7 +196,7 @@
 			marker->data[0]=='E'&&marker->data[1]=='x'&&marker->data[2]=='i'&&
 			marker->data[3]=='f'&&marker->data[4]==0&&marker->data[5]==0)
 			{
-				XeeEXIFReader *exif=[[[XeeEXIFReader alloc] initWithBuffer:marker->data length:marker->data_length mutable:YES] autorelease];
+				XeeEXIFParser *exif=[[[XeeEXIFParser alloc] initWithBuffer:marker->data length:marker->data_length mutable:YES] autorelease];
 
 				[exif setLong:0 forTag:XeeOrientationTag set:XeeStandardTagSet];
 

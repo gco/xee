@@ -824,11 +824,12 @@ exifscan(unsigned char *b, int len, int domkr)
 	 * looking at somebody else's APP1 (e.g., Photoshop).
 	 */
 
-	if (memcmp(b, "Exif\0\0", 6)) {
+/* Xee */
+/*	if (memcmp(b, "Exif\0\0", 6)) {
 		exiffree(t);
 		return (NULL);
 	}
-	b += 6;
+	b += 6;*/
 
 	/* Determine endianness of the TIFF data. */
 

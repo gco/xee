@@ -107,3 +107,12 @@ void XeeJPEGPlanarToChunky(uint8 *row,uint8 *y_row,uint8 *cb_row,uint8 *cr_row,i
 		*row_b=*y_b;
 	}
 }
+
+BOOL XeeTestJPEGMarker(struct jpeg_marker_struct *marker,int n,int ident_len,void *ident_data)
+{
+	if(marker->marker!=JPEG_APP0+n) return NO;
+	if(marker->data_length<ident_len) return NO;
+	if(memcmp(marker->data,ident_data,ident_len)) return NO;
+	return YES;
+}
+
