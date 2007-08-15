@@ -3,6 +3,8 @@
 #import "XeeDelegate.h"
 #import "XeeImage.h"
 #import "XeeGraphicsStuff.h"
+#import "CSRegex.h"
+
 
 
 @implementation XeePropertiesController
@@ -11,13 +13,14 @@
 {
 	dataarray=nil;
 
-/*	NSMutableParagraphStyle *sectpara=[[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	NSMutableParagraphStyle *sectpara=[[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	[sectpara setAlignment:NSRightTextAlignment];
 	[sectpara setLineBreakMode:NSLineBreakByTruncatingTail];
 
 	sectionattributes=[[NSDictionary dictionaryWithObjectsAndKeys:
 		[NSFont boldSystemFontOfSize:14],NSFontAttributeName,
 		sectpara,NSParagraphStyleAttributeName,
-	nil] retain];*/
+	nil] retain];
 
 	NSMutableParagraphStyle *labelpara=[[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 	[labelpara setAlignment:NSRightTextAlignment];
@@ -92,10 +95,23 @@
 
 -(IBAction)doubleClick:(id)sender
 {
-	id item=[outlineview itemAtRow:[outlineview selectedRow]];
+	XeePropertyItem *item=[outlineview itemAtRow:[outlineview selectedRow]];
+	id value=[item value];
 
-	if([outlineview isItemExpanded:item]) [outlineview collapseItem:item];
-	else [outlineview expandItem:item];
+	if([value isKindOfClass:[NSArray class]])
+	{
+		if([outlineview isItemExpanded:item]) [outlineview collapseItem:item];
+		else [outlineview expandItem:item];
+	}
+	else if([value isKindOfClass:[NSURL class]])
+	{
+		[[NSWorkspace sharedWorkspace] openURL:value];
+	}
+	else if([value isKindOfClass:[NSString class]])
+	{
+		if([value matchedByPattern:@"^http://"])
+		[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:value]];
+	}
 }
 
 
@@ -129,7 +145,7 @@
 {
 	NSString *identifier=[col identifier];
 
-	if([item isSubSection])
+	if([item isSubSection] && [view levelForItem:item]==0)
 	{
 /*		if([identifier isEqual:@"label"]) return [[[NSAttributedString alloc]
 		initWithString:[item label] attributes:sectionattributes] autorelease];
@@ -139,9 +155,15 @@
 	else
 	{
 		if([identifier isEqual:@"label"]) return [[[NSAttributedString alloc]
-		initWithString:[item label] attributes:labelattributes] autorelease];
+		initWithString:[item label] attributes:[item isSubSection]?sectionattributes:labelattributes] autorelease];
 		// return [item label];
-		else return [item value];
+		else if(![item isSubSection])
+		{
+			id value=[item value];
+			if([value isKindOfClass:[NSDate class]]) return [value descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M" timeZone:nil locale:nil];
+			else return value;
+		}
+		else return nil;
 	}
 }
 
@@ -155,39 +177,26 @@
 -(float)outlineView:(NSOutlineView *)view heightOfRowByItem:(XeePropertyItem *)item
 {
 	if([item isSubSection]) return 18;
-	else
-	{
-		return 16;
-//		if(![item isEqual:[view itemAtRow:[view selectedRow]]]) return 16;
-
-/*		NSString *text=[[item value] description];
-		if(!text) return 16;
-
-		NSTableColumn *col=[view tableColumnWithIdentifier:@"value"];
-		id cell=[col dataCell];
-
-		[cell setStringValue:text];
-		[cell setLineBreakMode:NSLineBreakByWordWrapping];
-
-		float height=[cell cellSizeForBounds:NSMakeRect(0,0,[col width],1000000)].height;
-		if(height<16) return 16;
-		if(height>96) return 96;
-		return height;*/
-	}
+//	if([item isSubSection]&&[view levelForItem:item]==0) return 18;
+//	else if([item isSubSection]&&[view levelForItem:item]==1) return 24;
+	else return 16;
 }
 
 -(void)outlineViewItemDidCollapse:(NSNotification *)notification
 {
 	XeePropertyItem *item=[[notification userInfo] objectForKey:@"NSObject"];
-	NSString *defname=[NSString stringWithFormat:@"propertyListCollapsed.%@",[item label]];
+	NSString *defname=[NSString stringWithFormat:@"propertyListCollapsed.%@",[item identifier]];
 	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:defname];
 }
 
 -(void)outlineViewItemDidExpand:(NSNotification *)notification
 {
 	XeePropertyItem *item=[[notification userInfo] objectForKey:@"NSObject"];
-	NSString *defname=[NSString stringWithFormat:@"propertyListCollapsed.%@",[item label]];
+	NSString *defname=[NSString stringWithFormat:@"propertyListCollapsed.%@",[item identifier]];
 	[[NSUserDefaults standardUserDefaults] removeObjectForKey:defname];
+
+//	id value=[item value];
+//	if([value isKindOfClass:[NSArray class]]) [self performSelector:@selector(restoreCollapsedStatusForArray:) withObject:value afterDelay:0];
 }
 
 -(NSString *)outlineView:(NSOutlineView *)view toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect
@@ -209,7 +218,7 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 		id value=[item value];
 		if([value isKindOfClass:[NSArray class]])
 		{
-			NSString *defname=[NSString stringWithFormat:@"propertyListCollapsed.%@",[item label]];
+			NSString *defname=[NSString stringWithFormat:@"propertyListCollapsed.%@",[item identifier]];
 			if([defaults boolForKey:defname]) [outlineview collapseItem:item];
 			else [outlineview expandItem:item];
 			[self restoreCollapsedStatusForArray:value];
@@ -221,39 +230,71 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 
 
 
+// evil hack
+
+@interface NSOutlineView (EvilHack)
+-(NSRect)_frameOfOutlineCellAtRow:(int)row;
+@end
+
 @implementation XeePropertyOutlineView
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+	if(self=[super initWithCoder:coder])
+	{
+		float alpha=[[self backgroundColor] alphaComponent];
+
+		top_normal=[[NSColor colorWithCalibratedWhite:0.95 alpha:alpha] retain];
+		bottom_normal=[[NSColor colorWithCalibratedWhite:0.8 alpha:alpha] retain];
+		attrs_normal=[[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSFont boldSystemFontOfSize:14],NSFontAttributeName,
+			[NSColor controlTextColor],NSForegroundColorAttributeName,
+		nil] retain];
+
+		top_selected=[[[NSColor alternateSelectedControlColor] blendedColorWithFraction:0.2 ofColor:[NSColor whiteColor]] retain];
+		bottom_selected=[[[NSColor alternateSelectedControlColor] blendedColorWithFraction:0.2 ofColor:[NSColor blackColor]] retain];
+		attrs_selected=[[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSFont boldSystemFontOfSize:14],NSFontAttributeName,
+			[NSColor alternateSelectedControlTextColor],NSForegroundColorAttributeName,
+		nil] retain];
+
+		[self setAutoresizesOutlineColumn:NO];
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[top_normal release];
+	[bottom_normal release];
+	[attrs_normal release];
+	[top_selected release];
+	[bottom_selected release];
+	[attrs_selected release];
+	[super dealloc];
+}
 
 -(void)drawRow:(int)row clipRect:(NSRect)clip
 {
 	XeePropertyItem *item=[self itemAtRow:row];
-	if([item isSubSection])
+	if([item isSubSection] && [self levelForRow:row]==0)
 	{
 		NSRect rect=[self rectOfRow:row];
 
-		NSColor *top,*bottom,*text;
+		NSColor *top,*bottom;
+		NSDictionary *attrs;
 
 		if([self isRowSelected:row])
 		{
-			top=[[NSColor alternateSelectedControlColor] blendedColorWithFraction:0.2 ofColor:[NSColor whiteColor]];
-			bottom=[[NSColor alternateSelectedControlColor] blendedColorWithFraction:0.2 ofColor:[NSColor blackColor]];
-			text=[NSColor alternateSelectedControlTextColor];
+			top=top_selected;
+			bottom=bottom_selected;
+			attrs=attrs_selected;
 		}
 		else
 		{
-/*			unsigned hash=[[item label] hash];
-			hash=69069*hash+1327217885;
-			hash=69069*hash+1327217885;
-			hash=69069*hash+1327217885;
-			hash=69069*hash+1327217885;
-
-			float hue=(float)(hash%256)/256.0;
-
-			bottom=[NSColor colorWithCalibratedHue:hue saturation:0.05 brightness:1 alpha:1];
-			top=[NSColor colorWithCalibratedHue:hue saturation:0.2 brightness:1 alpha:1];*/
-			float alpha=[[self backgroundColor] alphaComponent];
-			top=[NSColor colorWithCalibratedWhite:0.95 alpha:alpha];
-			bottom=[NSColor colorWithCalibratedWhite:0.8 alpha:alpha];
-			text=[NSColor controlTextColor];
+			top=top_normal;
+			bottom=bottom_normal;
+			attrs=attrs_normal;
 		}
 
 		CGShadingRef shading=XeeMakeGradient(top,bottom,
@@ -272,10 +313,7 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 
 		rect.origin.x+=24;
 		rect.size.width-=24;
-		[[item label] drawInRect:rect withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSFont boldSystemFontOfSize:14],NSFontAttributeName,
-			text,NSForegroundColorAttributeName,
-		nil]];
+		[[item label] drawInRect:rect withAttributes:attrs];
 	}
 	[super drawRow:row clipRect:clip];
 }
@@ -283,13 +321,13 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 -(NSRect)frameOfCellAtColumn:(int)column row:(int)row
 {
 	XeePropertyItem *item=[self itemAtRow:row];
-	if([item isSubSection])
+
+	//if(column<0) return [super frameOfCellAtColumn:-column-1 row:row];
+	if([item isSubSection] && [self levelForRow:row]==0)
 	{
 		return NSZeroRect;
-//		if(column!=0) return NSZeroRect;
-//		return NSUnionRect([super frameOfCellAtColumn:0 row:row],[super frameOfCellAtColumn:1 row:row]);
 	}
-	else if(column==0)
+	else if(column==0 && ![item isSubSection])
 	{
 		NSRect rect=[super frameOfCellAtColumn:column row:row];
 		rect.size.width+=rect.origin.x;
@@ -298,6 +336,24 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 	}
 	else return [super frameOfCellAtColumn:column row:row];
 }
+
+/*-(NSRect)_frameOfOutlineCellAtRow:(int)row;
+{
+	if([self levelForRow:row]==0)
+	{
+//		return [super _frameOfOutlineCellAtRow:row];
+	NSRect rect=[self frameOfCellAtColumn:-1 row:row];
+	rect.size.width=24;
+	return rect;
+	}
+	else
+	{
+		NSRect rect=[self frameOfCellAtColumn:-2 row:row];
+		rect.size.width=24;
+		return rect;
+	}
+//	return [super _frameOfOutlineCellAtRow:row];
+}*/
 
 -(IBAction)copy:(id)sender
 {

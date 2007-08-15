@@ -35,6 +35,10 @@
 
 @interface XeePropertyOutlineView:NSOutlineView
 {
+	NSColor *top_normal,*bottom_normal;
+	NSDictionary *attrs_normal;
+	NSColor *top_selected,*bottom_selected;
+	NSDictionary *attrs_selected;
 }
 
 -(void)drawRow:(int)row clipRect:(NSRect)clip;

@@ -1,13 +1,5 @@
-//
-//  XeeDuckyParser.m
-//  Xee
-//
-//  Created by Dag Ågren on 2007-08-07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
-//
-
 #import "XeeDuckyParser.h"
-#import "XeeImage.h"
+#import "XeeProperties.h"
 
 
 @implementation XeeDuckyParser
@@ -33,21 +25,21 @@
 				case 1: // quality
 					if(len>=4)
 					[props addObject:[XeePropertyItem itemWithLabel:
-					NSLocalizedString(@"Save For Web JPEG quality:",@"Save For Web JPEG quality property title")
+					NSLocalizedString(@"Save For Web JPEG quality",@"Save For Web JPEG quality property title")
 					value:[NSString stringWithFormat:@"%d%%",XeeLEInt16(duckydata+pos+2)]]];
 				break;
 				case 2: // description
 					if(len>=4)
-					[props addObject:[XeePropertyItem itemWithLabel:
-					NSLocalizedString(@"Description:",@"Description property title")
-					value:[[[NSString alloc] initWithBytes:duckydata+pos+4 length:chunklen-4
+					[props addObjectsFromArray:[XeePropertyItem itemsWithLabel:
+					NSLocalizedString(@"Description",@"Description property title")
+					textValue:[[[NSString alloc] initWithBytes:duckydata+pos+4 length:chunklen-4
 					encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16LE)] autorelease]]];
 				break;
 				case 3: // copyright
 					if(len>=4)
-					[props addObject:[XeePropertyItem itemWithLabel:
-					NSLocalizedString(@"Copyright:",@"Copyright property title")
-					value:[[[NSString alloc] initWithBytes:duckydata+pos+4 length:chunklen-4
+					[props addObjectsFromArray:[XeePropertyItem itemsWithLabel:
+					NSLocalizedString(@"Copyright",@"Copyright property title")
+					textValue:[[[NSString alloc] initWithBytes:duckydata+pos+4 length:chunklen-4
 					encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16LE)] autorelease]]];
 				break;
 			}
@@ -63,6 +55,6 @@
 	[super dealloc];
 }
 
--(NSArray *)propertyArray { return props; }
+-(NSArray *)propertyArray { return [[props retain] autorelease]; }
 
 @end

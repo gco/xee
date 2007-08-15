@@ -1,5 +1,5 @@
 #import "XeeEXIFParser.h"
-#import "XeeImage.h"
+#import "XeeProperties.h"
 
 
 @implementation XeeEXIFParser
@@ -125,7 +125,7 @@
 	return NULL;
 }
 
--(NSArray *)propertyArray
+-(NSArray *)propertySections
 {
 	NSMutableArray *array=[NSMutableArray array];
 	NSMutableArray *cameraprops=[NSMutableArray array];
@@ -149,7 +149,6 @@
 		else value=[NSNumber numberWithInt:prop->value];
 
 		NSString *label=[NSString stringWithCString:prop->descr?prop->descr:prop->name encoding:NSISOLatin1StringEncoding];
-		label=[label stringByAppendingString:@":"];
 
 		[props addObject:[XeePropertyItem itemWithLabel:label value:value]];
 	}
@@ -158,21 +157,21 @@
 	{
 		[array addObject:[XeePropertyItem itemWithLabel:
 		NSLocalizedString(@"EXIF camera properties",@"EXIF camera properties section title")
-		value:cameraprops]];
+		value:cameraprops identifier:@"exif.camera"]];
 	}
 
 	if([imageprops count])
 	{
 		[array addObject:[XeePropertyItem itemWithLabel:
 		NSLocalizedString(@"EXIF image properties",@"EXIF image properties section title")
-		value:imageprops]];
+		value:imageprops identifier:@"exif.image"]];
 	}
 
 	if([otherprops count])
 	{
 		[array addObject:[XeePropertyItem itemWithLabel:
 		NSLocalizedString(@"EXIF other properties",@"EXIF other properties section title")
-		value:otherprops]];
+		value:otherprops identifier:@"exif.other"]];
 	}
 
 	return array;

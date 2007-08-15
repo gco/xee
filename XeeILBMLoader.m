@@ -139,13 +139,13 @@
 			//printf("warning: image has DEST chunk\n");
 		break;
 
-		case 'FVER': [self addCommentWithLabel:@"Version:" data:[iff chunkContents]]; break;
-		case 'ANNO': [self addCommentWithLabel:@"Annotation:" data:[iff chunkContents]]; break;
-		case 'AUTH': [self addCommentWithLabel:@"Author:" data:[iff chunkContents]]; break;
+		case 'FVER': [self addCommentWithLabel:@"Version" data:[iff chunkContents]]; break;
+		case 'ANNO': [self addCommentWithLabel:@"Annotation" data:[iff chunkContents]]; break;
+		case 'AUTH': [self addCommentWithLabel:@"Author" data:[iff chunkContents]]; break;
 		case 'CHRS': [self addCommentWithLabel:@"" data:[iff chunkContents]]; break;
-		case 'NAME': [self addCommentWithLabel:@"Name:" data:[iff chunkContents]]; break;
+		case 'NAME': [self addCommentWithLabel:@"Name" data:[iff chunkContents]]; break;
 		case 'TEXT': [self addCommentWithLabel:@"" data:[iff chunkContents]]; break;
-		case '(c) ': [self addCommentWithLabel:@"Copyright:" data:[iff chunkContents]]; break;
+		case '(c) ': [self addCommentWithLabel:@"Copyright" data:[iff chunkContents]]; break;
 
 		case 'CRNG':
 		case 'DRNG':
@@ -487,7 +487,7 @@
 		comments=[NSMutableArray array];
 		[properties addObject:[XeePropertyItem itemWithLabel:
 		NSLocalizedString(@"File comments",@"File comments section title")
-		value:comments]];
+		value:comments identifier:@"common.comments"]];
 	}
 
 	[comments addObject:[XeePropertyItem itemWithLabel:label

@@ -13,8 +13,9 @@
 -(id)initWithData:(NSData *)dataobj;
 -(void)dealloc;
 
--(off_t)offsetInFile;
 -(off_t)fileSize;
+-(off_t)offsetInFile;
+-(BOOL)atEndOfFile;
 
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;

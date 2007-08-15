@@ -44,6 +44,8 @@
 		1B33ECAC093A8E2F00297778 /* button_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B33ECA9093A8E2F00297778 /* button_left.png */; };
 		1B3D30D909351D7A00345FD0 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3D30D809351D7A00345FD0 /* Carbon.framework */; };
 		1B3D33620937B89200345FD0 /* CSKeyboardShortcuts.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3D33610937B89200345FD0 /* CSKeyboardShortcuts.m */; };
+		1B3E44450C6CB82700D63BC0 /* CSSubHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */; };
+		1B3E45920C6E1EDD00D63BC0 /* XeeProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E45910C6E1EDD00D63BC0 /* XeeProperties.m */; };
 		1B3EB0BF08FD76FE00CB908E /* depth_rgb.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0AF08FD76FE00CB908E /* depth_rgb.png */; };
 		1B3EB0C008FD76FE00CB908E /* size.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0B008FD76FE00CB908E /* size.png */; };
 		1B3EB0C108FD76FE00CB908E /* close_4.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0B108FD76FE00CB908E /* close_4.png */; };
@@ -331,6 +333,10 @@
 		1B3D30D809351D7A00345FD0 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1B3D33600937B89100345FD0 /* CSKeyboardShortcuts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSKeyboardShortcuts.h; sourceTree = "<group>"; };
 		1B3D33610937B89200345FD0 /* CSKeyboardShortcuts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSKeyboardShortcuts.m; sourceTree = "<group>"; };
+		1B3E44430C6CB82600D63BC0 /* CSSubHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSubHandle.h; sourceTree = "<group>"; };
+		1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSSubHandle.m; sourceTree = "<group>"; };
+		1B3E45900C6E1EDC00D63BC0 /* XeeProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeProperties.h; sourceTree = "<group>"; };
+		1B3E45910C6E1EDD00D63BC0 /* XeeProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeProperties.m; sourceTree = "<group>"; };
 		1B3EB0AF08FD76FE00CB908E /* depth_rgb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = depth_rgb.png; path = images/depth_rgb.png; sourceTree = "<group>"; };
 		1B3EB0B008FD76FE00CB908E /* size.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = size.png; path = images/size.png; sourceTree = "<group>"; };
 		1B3EB0B108FD76FE00CB908E /* close_4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = close_4.png; path = images/close_4.png; sourceTree = "<group>"; };
@@ -686,6 +692,8 @@
 				1BE5E4F20A824FA300967AD2 /* XeeSampleSet.m */,
 				1B16F6050C0BB10F002B0008 /* XeeStringAdditions.h */,
 				1B16F6060C0BB10F002B0008 /* XeeStringAdditions.m */,
+				1B3E45900C6E1EDC00D63BC0 /* XeeProperties.h */,
+				1B3E45910C6E1EDD00D63BC0 /* XeeProperties.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -712,12 +720,12 @@
 			children = (
 				1BF142400B094403003A8D57 /* XeeEXIFParser.h */,
 				1BF142410B094403003A8D57 /* XeeEXIFParser.m */,
+				1B2825CC0C67B90C00AA7D9C /* XeeXMPParser.h */,
+				1B2825CD0C67B90C00AA7D9C /* XeeXMPParser.m */,
 				1B28247F0C66A0F700AA7D9C /* Xee8BIMParser.h */,
 				1B2824800C66A0F700AA7D9C /* Xee8BIMParser.m */,
 				1B2825C90C67B8FB00AA7D9C /* XeeIPTCParser.h */,
 				1B2825CA0C67B8FB00AA7D9C /* XeeIPTCParser.m */,
-				1B2825CC0C67B90C00AA7D9C /* XeeXMPParser.h */,
-				1B2825CD0C67B90C00AA7D9C /* XeeXMPParser.m */,
 				1B2826540C67DD9500AA7D9C /* XeeDuckyParser.h */,
 				1B2826550C67DD9500AA7D9C /* XeeDuckyParser.m */,
 				1B28247A0C669EAF00AA7D9C /* XeeJPEGQuantizationDatabase.h */,
@@ -891,6 +899,8 @@
 				1BE4C47E08E5CA4200859EE2 /* XeeIFFHandle.m */,
 				1B2826AD0C67E60900AA7D9C /* CSHandle.h */,
 				1B2826A50C67E60900AA7D9C /* CSHandle.m */,
+				1B3E44430C6CB82600D63BC0 /* CSSubHandle.h */,
+				1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */,
 				1B2826A80C67E60900AA7D9C /* CSFileHandle.h */,
 				1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */,
 				1B2826A90C67E60900AA7D9C /* CSMemoryHandle.h */,
@@ -1519,6 +1529,8 @@
 				1B2826AF0C67E60900AA7D9C /* CSHandle.m in Sources */,
 				1B2826B00C67E60900AA7D9C /* CSMemoryHandle.m in Sources */,
 				1B2826B10C67E60900AA7D9C /* CSFileHandle.m in Sources */,
+				1B3E44450C6CB82700D63BC0 /* CSSubHandle.m in Sources */,
+				1B3E45920C6E1EDD00D63BC0 /* XeeProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

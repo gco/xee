@@ -181,7 +181,7 @@ double XeeGetTime()
 // Hex data
 //
 
-NSString *XeeHexDump(uint8 *data,int length,int maxlen)
+NSString *XeeHexDump(const uint8 *data,int length,int maxlen)
 {
 	NSMutableString *str=[NSMutableString string];
 

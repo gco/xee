@@ -122,7 +122,7 @@
 					comments=[NSMutableArray array];
 					[properties addObject:[XeePropertyItem itemWithLabel:
 					NSLocalizedString(@"File comments",@"File comments section title")
-					value:comments]];
+					value:comments identifier:@"common.comments"]];
 				}
 
 				NSMutableData *commentdata=[NSMutableData data];
@@ -234,11 +234,12 @@
 		while(frame=[enumerator nextObject]) totaltime+=[frame time];
 
 		[properties addObject:[XeePropertyItem subSectionItemWithLabel:
-		NSLocalizedString(@"GIF animation properties",@"")
-		labelsAndValues:
-			NSLocalizedString(@"Number of frames:",@"Number of frames GIF property label"),
+		NSLocalizedString(@"GIF animation properties",@"GIF animation properties section title")
+		identifier:@"gif.animation"
+ 		labelsAndValues:
+			NSLocalizedString(@"Number of frames",@"Number of frames GIF property label"),
 			[NSNumber numberWithInt:[frames count]],
-			NSLocalizedString(@"Total playing time:",@"Total playing time GIF property label"),
+			NSLocalizedString(@"Total playing time",@"Total playing time GIF property label"),
 			[NSString stringWithFormat:
 			NSLocalizedString(@"%.2f seconds",@"A time in seconds with two decimals"),
 			(float)totaltime/100.0+0.005],

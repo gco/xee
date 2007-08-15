@@ -55,6 +55,6 @@ static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
 -(BOOL)setRational:(XeeRational)val forTag:(XeeEXIFTag)tag set:(XeeEXIFTagSet)set;
 -(struct exifprop *)exifPropForTag:(XeeEXIFTag)tag set:(XeeEXIFTagSet)set;
 
--(NSArray *)propertyArray;
+-(NSArray *)propertySections;
 
 @end

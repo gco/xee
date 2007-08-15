@@ -84,47 +84,37 @@
 		default: [self setDepth:@"Unknown"]; break;
 	}
 
-
-	NSMutableArray *markerprops=[NSMutableArray array];
-	
-
 	// Parse saved markers (EXIF and comments)
 
-	NSMutableArray *comments=nil;
-	NSMutableArray *psprops=[NSMutableArray array];
+	NSMutableArray *markerprops=[NSMutableArray array];
+	NSMutableArray *comments=[NSMutableArray array];
+	NSArray *exifsections=nil,*xmpsections=nil,*iptcprops=nil,*photoshopprops=nil,*duckyprops=nil;
 
 	for(struct jpeg_marker_struct *marker=cinfo.marker_list;marker;marker=marker->next)
 	{
 		if(marker->marker==JPEG_COM)
 		{
-			if(!comments)
-			{
-				comments=[NSMutableArray array];
-				[properties addObject:[XeePropertyItem itemWithLabel:
-				NSLocalizedString(@"File comments",@"File comments section title")
-				value:comments]];
-			}
-			[comments addObject:[XeePropertyItem itemWithLabel:@""
-			value:[[[NSString alloc] initWithBytes:marker->data length:marker->data_length
+			[comments addObjectsFromArray:[XeePropertyItem itemsWithLabel:@""
+			textValue:[[[NSString alloc] initWithBytes:marker->data length:marker->data_length
 			encoding:NSISOLatin1StringEncoding] autorelease]]];
 		}
 
 		else if(XeeTestJPEGMarker(marker,0,5,"JFIF"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"JFIF APP0 marker:",@"JFIF APP0 marker property title")
+			NSLocalizedString(@"JFIF APP0 marker",@"JFIF APP0 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 		}
 		else if(XeeTestJPEGMarker(marker,0,5,"JFXX"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"Extended JFIF APP0 marker:",@"Extended JFIF APP0 marker property title")
+			NSLocalizedString(@"Extended JFIF APP0 marker",@"Extended JFIF APP0 marker property title")
 			value:@""]];
 		}
 		else if(XeeTestJPEGMarker(marker,1,6,"Exif\000"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"Exif APP1 marker:",@"Exif APP1 marker property title")
+			NSLocalizedString(@"Exif APP1 marker",@"Exif APP1 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
 			XeeEXIFParser *exif=[[XeeEXIFParser alloc] initWithBuffer:marker->data+6 length:marker->data_length-6];
@@ -139,92 +129,110 @@
 					thumb_ptr=marker->data+6+thumb_offs;
 				}
 
-				[properties addObjectsFromArray:[exif propertyArray]];
+				exifsections=[exif propertySections];
 				[exif release];
 			}
 		}
 		else if(XeeTestJPEGMarker(marker,1,29,"http://ns.adobe.com/xap/1.0/"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"XMP APP1 marker:",@"XMP APP1 marker property title")
+			NSLocalizedString(@"XMP APP1 marker",@"XMP APP1 marker property title")
 			value:@""]];
 
 			XeeXMPParser *xmp=[[XeeXMPParser alloc] initWithHandle:
 			[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+29 length:marker->data_length-29]];
 			if(xmp)
 			{
-				[psprops addObjectsFromArray:[xmp propertyArray]];
+				xmpsections=[xmp propertySections];
 				[xmp release];
 			}
 		}
 		else if(XeeTestJPEGMarker(marker,2,12,"ICC_PROFILE"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"ICC profile APP2 marker:",@"ICC profile APP2 marker property title")
+			NSLocalizedString(@"ICC profile APP2 marker",@"ICC profile APP2 marker property title")
 			value:@""]];
 		}
 		else if(XeeTestJPEGMarker(marker,3,6,"META\000")||XeeTestJPEGMarker(marker,3,6,"Meta\000"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"Meta APP3 marker:",@"Meta APP3 marker property title")
+			NSLocalizedString(@"Meta APP3 marker",@"Meta APP3 marker property title")
 			value:@""]];
 		}
 		else if(XeeTestJPEGMarker(marker,12,6,"Ducky"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"Ducky APP12 marker:",@"Ducky APP12 marker property title")
+			NSLocalizedString(@"Ducky APP12 marker",@"Ducky APP12 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
 			XeeDuckyParser *ducky=[[XeeDuckyParser alloc] initWithBuffer:marker->data+6 length:marker->data_length-6];
 			if(ducky)
 			{
-				[psprops addObjectsFromArray:[ducky propertyArray]];
+				duckyprops=[ducky propertyArray];
 				[ducky release];
 			}
 		}
 		else if(XeeTestJPEGMarker(marker,13,14,"Photoshop 3.0"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"Photoshop APP13 marker:",@"Photoshop APP13 marker property title")
+			NSLocalizedString(@"Photoshop APP13 marker",@"Photoshop APP13 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
 			Xee8BIMParser *parser=[[Xee8BIMParser alloc] initWithHandle:
 			[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+14 length:marker->data_length-14]];
 			if(parser)
 			{
-				[psprops addObjectsFromArray:[parser propertyArray]];
-//				XeeIPTCParser *iptc=[parser IPTCParser];
-				//if(iptc) [properties addObjectsFromArray:...]
+				photoshopprops=[parser propertyArray];
+
+				XeeIPTCParser *iptc=[parser IPTCParser];
+				if(iptc) iptcprops=[iptc propertyArray];
+
 				[parser release];
 			}
 		}
 		else if(XeeTestJPEGMarker(marker,14,5,"Adobe"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
-			NSLocalizedString(@"Adobe APP14 marker:",@"Adobe APP14 marker property title")
+			NSLocalizedString(@"Adobe APP14 marker",@"Adobe APP14 marker property title")
 			value:XeeHexDump(&marker->data[5],marker->data_length-5,16)]];
 		}
 		else
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:[NSString stringWithFormat:
-			NSLocalizedString(@"APP%d marker:",@"Unknown APPx marker property title"),marker->marker-JPEG_APP0]
+			NSLocalizedString(@"APP%d marker",@"Unknown APPx marker property title"),marker->marker-JPEG_APP0]
 			value:XeeHexDump(marker->data,marker->data_length,16)]];
 		}
 	}
 
-	NSMutableArray *jpegprops=[NSMutableArray array];
+	if([comments count]) [properties addObject:[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"File comments",@"File comments section title")
+	value:comments identifier:@"common.comments"]];
 
+	if(exifsections) [properties addObjectsFromArray:exifsections];
+/*	if(exifsections) [properties addObject:[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"EXIF",@"")
+	value:exifsections]];*/
+
+	if(xmpsections) [properties addObjectsFromArray:xmpsections];
+
+	if(iptcprops)
+	[properties addObject:[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"IPTC properties",@"IPTC properties section title")
+	value:iptcprops identifier:@"iptc"]];
+
+	NSMutableArray *psprops=[NSMutableArray array];
+	if(photoshopprops) [psprops addObjectsFromArray:photoshopprops];
+	if(duckyprops) [psprops addObjectsFromArray:duckyprops];
+	if([psprops count]) [properties addObject:[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"Photoshop properties",@"Photoshop properties section title")
+	value:psprops identifier:@"8bim"]];
+
+	NSMutableArray *jpegprops=[NSMutableArray array];
 	[jpegprops addObjectsFromArray:[[XeeJPEGQuantizationDatabase defaultDatabase] propertyArrayForTables:&cinfo]];
 	[jpegprops addObjectsFromArray:markerprops];
-
-	if([psprops count])
-	[properties addObject:[XeePropertyItem itemWithLabel:
-	NSLocalizedString(@"Photoshop properties",@"Photoshop properties section title")
-	value:psprops]];
-
-	[properties addObject:[XeePropertyItem itemWithLabel:
+	if(jpegprops) [properties addObject:[XeePropertyItem itemWithLabel:
 	NSLocalizedString(@"JPEG properties",@"JPEG properties section title")
-	value:jpegprops]];
+	value:jpegprops identifier:@"jpeg"]];
 
 	[self setFormat:@"JPEG"];
 

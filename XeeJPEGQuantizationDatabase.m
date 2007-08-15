@@ -1,5 +1,7 @@
 #import "XeeJPEGQuantizationDatabase.h"
-#import "XeeImage.h"
+#import "XeeProperties.h"
+#import "XeeTypes.h"
+
 
 @implementation XeeJPEGQuantizationDatabase
 
@@ -99,7 +101,7 @@
 {
 	NSMutableArray *props=[NSMutableArray array];
 
-	NSString *label=NSLocalizedString(@"Possible file creators:",@"Possible file creators section title");
+	NSString *label=NSLocalizedString(@"Possible file creators",@"Possible file creators section title");
 
 	NSArray *array=[self producersForTables:cinfo];
 	if(!array)
@@ -109,9 +111,7 @@
 	}
 	else
 	{
-		int count=[array count];
-		for(int i=0;i<count;i++)
-		[props addObject:[XeePropertyItem itemWithLabel:i==0?label:@"" value:[array objectAtIndex:i]]];
+		[props addObjectsFromArray:[XeePropertyItem itemsWithLabel:label valueArray:array]];
 	}
 
 	for(int i=0;i<NUM_QUANT_TBLS&&cinfo->quant_tbl_ptrs[i];i++)
@@ -120,7 +120,7 @@
 		{
 			NSString *label=@"";
 			if(j==0) label=[NSString stringWithFormat:
-			NSLocalizedString(@"Quantization table %d:",@"File comments section title"),i];
+			NSLocalizedString(@"Quantization table %d",@"Quantization table property title"),i];
 
 			uint16 *tbl=&cinfo->quant_tbl_ptrs[i]->quantval[j*8];
 

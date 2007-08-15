@@ -225,9 +225,10 @@
 	{
 		id value=[cgproperties objectForKey:key];
 		if(![value isKindOfClass:[NSDictionary class]]) continue;
-		key=[imageio localizedStringForKey:key value:key table:@"CGImageSource"];
-		[array addObject:[XeePropertyItem itemWithLabel:key
-		value:[self convertCGPropertyValues:value imageIOBundle:imageio]]];
+		NSString *keyname=[imageio localizedStringForKey:key value:key table:@"CGImageSource"];
+		[array addObject:[XeePropertyItem itemWithLabel:keyname
+		value:[self convertCGPropertyValues:value imageIOBundle:imageio]
+		identifier:[NSString stringWithFormat:@"%@.%@",@"imageio",key]]];
 	}
 
 	[array sortUsingSelector:@selector(compare:)];
@@ -247,9 +248,12 @@
 	while(key=[enumerator nextObject])
 	{
 		id value=[cgproperties objectForKey:key];
+		key=[imageio localizedStringForKey:key value:key table:@"CGImageSource"];
+
 		if([value isKindOfClass:[NSDictionary class]]) continue;
-		else if([value isKindOfClass:[NSArray class]]) value=[value description]; // ugly!
-		key=[[imageio localizedStringForKey:key value:key table:@"CGImageSource"] stringByAppendingString:@":"];
+		else if([value isKindOfClass:[NSArray class]])
+		[array addObjectsFromArray:[XeePropertyItem itemsWithLabel:key valueArray:value]];
+		else
 		[array addObject:[XeePropertyItem itemWithLabel:key value:value]];
 	}
 	[array sortUsingSelector:@selector(compare:)];

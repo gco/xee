@@ -30,7 +30,8 @@
 	if(self=[super initWithName:descname])
 	{
 		fh=[handle retain];
-		inited=NO;
+		startoffs=[fh offsetInFile];
+		inited=eof=NO;
 
 		zs.zalloc=Z_NULL;
 		zs.zfree=Z_NULL;
@@ -64,20 +65,57 @@
 	return zs.total_out;
 }
 
+-(BOOL)atEndOfFile { return eof; }
+
 
 
 -(void)seekToFileOffset:(off_t)offs
 {
-	uint8_t dummybuf[16384];
-	int skip=offs-zs.total_out;
-
-	if(skip<0) [self _raiseNotSupported];
-
-	while(skip)
+	if(offs==0)
 	{
-		int num=sizeof(dummybuf);
-		if(num>skip) num=skip;
-		skip-=[self readAtMost:num toBuffer:dummybuf];
+		if(zs.total_out==0) return;
+
+		inflateEnd(&zs);
+		inited=NO;
+
+		zs.avail_in=0;
+		zs.next_in=Z_NULL;
+		if(inflateInit(&zs)!=Z_OK) [self _raiseZlib];
+
+		inited=YES;
+	}
+	else
+	{
+		int skip=offs-zs.total_out;
+
+		if(skip>0)
+		{
+			uint8_t dummybuf[16384];
+			while(skip)
+			{
+				int num=sizeof(dummybuf);
+				if(num>skip) num=skip;
+				skip-=[self readAtMost:num toBuffer:dummybuf];
+			}
+		}
+		else
+		{
+			[self seekToFileOffset:0];
+			[self seekToFileOffset:offs];
+		}
+	}
+}
+
+-(void)seekToEndOfFile
+{
+	@try
+	{
+		[self seekToFileOffset:0x7fffffff];
+	}
+	@catch(NSException *e)
+	{
+		if([[e name] isEqual:@"CSEndOfFileException"]) return;
+		@throw e;
 	}
 }
 
@@ -95,7 +133,7 @@
 		}
 
 		int err=inflate(&zs,0);
-		if(err==Z_STREAM_END) break; 
+		if(err==Z_STREAM_END) { eof=YES; break; }
 		else if(err!=Z_OK) [self _raiseZlib];
 	}
 

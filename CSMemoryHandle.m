@@ -40,10 +40,11 @@
 
 
 
+-(off_t)fileSize { return [data length]; }
 
 -(off_t)offsetInFile { return pos; }
 
--(off_t)fileSize { return [data length]; }
+-(BOOL)atEndOfFile { return pos==[data length]; }
 
 
 

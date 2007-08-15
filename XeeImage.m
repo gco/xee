@@ -319,14 +319,15 @@
 
 	[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
 	NSLocalizedString(@"Image properties",@"Image properties section title")
+	identifier:@"common.image"
 	labelsAndValues:
-		NSLocalizedString(@"Image width:",@"Image width property label"),
+		NSLocalizedString(@"Image width",@"Image width property label"),
 		[NSNumber numberWithInt:[self width]],
-		NSLocalizedString(@"Image height:",@"Image height property label"),
+		NSLocalizedString(@"Image height",@"Image height property label"),
 		[NSNumber numberWithInt:[self height]],
-		NSLocalizedString(@"File format:",@"File format property label"),
+		NSLocalizedString(@"File format",@"File format property label"),
 		[self format],
-		NSLocalizedString(@"Colour format:",@"Colour format property label"),
+		NSLocalizedString(@"Colour format",@"Colour format property label"),
 		[self depth],
 	nil]];
 
@@ -335,18 +336,19 @@
 	{
 		[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
 		NSLocalizedString(@"Cropping properties",@"Cropping properties section title")
+		identifier:@"common.cropping"
 		labelsAndValues:
-			NSLocalizedString(@"Full image width:",@"Full image width property label"),
+			NSLocalizedString(@"Full image width",@"Full image width property label"),
 			[NSNumber numberWithInt:[self fullWidth]],
-			NSLocalizedString(@"Full image height:",@"Full image height property label"),
+			NSLocalizedString(@"Full image height",@"Full image height property label"),
 			[NSNumber numberWithInt:[self fullHeight]],
-			NSLocalizedString(@"Cropping top:",@"Cropping top property label"),
+			NSLocalizedString(@"Cropping top",@"Cropping top property label"),
 			[NSNumber numberWithInt:crop.origin.y],
-			NSLocalizedString(@"Cropping bottom:",@"Cropping bottom property label"),
+			NSLocalizedString(@"Cropping bottom",@"Cropping bottom property label"),
 			[NSNumber numberWithInt:[self fullHeight]-crop.size.height-crop.origin.y],
-			NSLocalizedString(@"Cropping left:",@"Cropping left property label"),
+			NSLocalizedString(@"Cropping left",@"Cropping left property label"),
 			[NSNumber numberWithInt:crop.origin.x],
-			NSLocalizedString(@"Cropping right:",@"Cropping right property label"),
+			NSLocalizedString(@"Cropping right",@"Cropping right property label"),
 			[NSNumber numberWithInt:[self fullWidth]-crop.size.width-crop.origin.x],
 		nil]];
 	}
@@ -358,19 +360,20 @@
 
 		[proparray addObject:item=[XeePropertyItem subSectionItemWithLabel:
 		NSLocalizedString(@"File properties",@"File properties section title")
+		identifier:@"common.file"
 		labelsAndValues:
-			NSLocalizedString(@"File name:",@"File name property label"),
+			NSLocalizedString(@"File name",@"File name property label"),
 			[filename lastPathComponent],
-			NSLocalizedString(@"Full path:",@"Full path property label"),
+			NSLocalizedString(@"Full path",@"Full path property label"),
 			filename,
-			NSLocalizedString(@"File size:",@"File size property label"),//	55.92 kB (57264 bytes)
+			NSLocalizedString(@"File size",@"File size property label"),//	55.92 kB (57264 bytes)
 			[NSString stringWithFormat:
 			NSLocalizedString(@"%@ (%d bytes)",@"File size property value (%@ is shortened filesize, %d is exact)"),
 			[self descriptiveFileSize],[self fileSize]],
-			NSLocalizedString(@"Modification date:",@"Modification date property label"),
-			[[attrs fileModificationDate] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M" timeZone:nil locale:nil],
-			NSLocalizedString(@"Creation date:",@"Creation date property label"),
-			[[attrs fileCreationDate] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M" timeZone:nil locale:nil],
+			NSLocalizedString(@"Modification date",@"Modification date property label"),
+			[attrs fileModificationDate],
+			NSLocalizedString(@"Creation date",@"Creation date property label"),
+			[attrs fileCreationDate],
 		nil]];
 
 		NSMutableArray *fileprops=[item value];
@@ -395,8 +398,8 @@
 				if(seconds>1000000000)
 				{
 					[fileprops addObject:[XeePropertyItem itemWithLabel:
-					NSLocalizedString(@"Futaba timestamp:",@"Futaba timestamp property label")
-					value:[[NSDate dateWithTimeIntervalSince1970:seconds] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M" timeZone:nil locale:nil]]];
+					NSLocalizedString(@"Futaba timestamp",@"Futaba timestamp property label")
+					value:[NSDate dateWithTimeIntervalSince1970:seconds]]];
 				}
 			}
 		}
@@ -678,72 +681,5 @@ NSMutableArray *imageclasses=nil;
 -(void)xeeImageDidChange:(XeeImage *)image {}
 -(void)xeeImageSizeDidChange:(XeeImage *)image {}
 -(void)xeeImagePropertiesDidChange:(XeeImage *)image {}
-
-@end
-
-
-
-@implementation XeePropertyItem
-
--(id)initWithLabel:(NSString *)itemlabel value:(id)itemvalue
-{
-	if(self=[super init])
-	{
-		label=[itemlabel retain];
-		value=[itemvalue retain];
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[label release];
-	[value release];
-	[super dealloc];
-}
-
--(NSString *)label { return label; }
--(id)value { return value; }
--(BOOL)isSubSection { return [value isKindOfClass:[NSArray class]]; }
-
--(BOOL)isEqual:(XeePropertyItem *)other
-{
-	return [label caseInsensitiveCompare:[other label]]==NSOrderedSame&&[value isEqual:[other value]];
-}
-
--(NSComparisonResult)compare:(XeePropertyItem *)other
-{
-	return [label caseInsensitiveCompare:[other label]];
-}
-
-+(XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue
-{
-	return [[[self alloc] initWithLabel:itemlabel value:itemvalue] autorelease];
-}
-
-+(XeePropertyItem *)subSectionItemWithLabel:(NSString *)itemlabel labelsAndValues:(id)first,...
-{
-	NSMutableArray *array=[NSMutableArray array];
-	XeePropertyItem *item=[[[self alloc] initWithLabel:itemlabel value:array] autorelease];
-
-	va_list va;
-	va_start(va,first);
-	for(;;)
-	{
-		NSString *label=first?first:va_arg(va,NSString *);
-		id value=va_arg(va,id);
-
-		if(!label||!value) break;
-
-		XeePropertyItem *subitem=[[self alloc] initWithLabel:label value:value];
-		[array addObject:subitem];
-		[subitem release];
-
-		first=nil;
-	}
-	va_end(va);
-
-	return item;
-}
 
 @end

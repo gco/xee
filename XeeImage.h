@@ -3,6 +3,7 @@
 #import "XeeTypes.h"
 #import "XeeFileHandle.h"
 #import "XeeFSRef.h"
+#import "XeeProperties.h"
 
 
 #define XeeCanSaveLosslesslyFlag 1
@@ -154,28 +155,5 @@
 -(void)xeeImageDidChange:(XeeImage *)image;
 -(void)xeeImageSizeDidChange:(XeeImage *)image;
 -(void)xeeImagePropertiesDidChange:(XeeImage *)image;
-
-@end
-
-
-
-@interface XeePropertyItem:NSObject
-{
-	NSString *label;
-	id value;
-}
-
--(id)initWithLabel:(NSString *)itemlabel value:(id)itemvalue;
--(void)dealloc;
-
--(NSString *)label;
--(id)value;
--(BOOL)isSubSection;
-
--(BOOL)isEqual:(XeePropertyItem *)other;
--(NSComparisonResult)compare:(XeePropertyItem *)other;
-
-+(XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue;
-+(XeePropertyItem *)subSectionItemWithLabel:(NSString *)itemlabel labelsAndValues:(id)first,...;
 
 @end

@@ -57,6 +57,13 @@
 
 
 
+-(off_t)fileSize
+{
+	struct stat s;
+	if(fstat(fileno(fh),&s)) [self _raiseError];
+	return s.st_size;
+}
+
 -(off_t)offsetInFile
 {
 	#ifdef __MINGW__
@@ -66,11 +73,9 @@
 	#endif
 }
 
--(off_t)fileSize
+-(BOOL)atEndOfFile
 {
-	struct stat s;
-	if(fstat(fileno(fh),&s)) [self _raiseError];
-	return s.st_size;
+	return feof(fh);
 }
 
 

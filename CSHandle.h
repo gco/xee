@@ -12,8 +12,9 @@
 -(id)initWithName:(NSString *)descname;
 -(void)dealloc;
 
--(off_t)offsetInFile;
 -(off_t)fileSize;
+-(off_t)offsetInFile;
+-(BOOL)atEndOfFile;
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(void)pushBackByte:(int)byte;
@@ -50,6 +51,9 @@
 -(NSData *)readDataOfLength:(int)length;
 -(NSData *)copyDataOfLength:(int)length;
 -(void)readBytes:(int)num toBuffer:(void *)buffer;
+
+-(CSHandle *)subHandleOfLength:(off_t)length;
+-(CSHandle *)subHandleWithRange:(NSRange)range;
 
 -(void)writeInt8:(int8_t)val;
 -(void)writeUInt8:(uint8_t)val;

@@ -216,7 +216,7 @@ int is_png_gray_palette(png_structp png,png_infop info);
 	NSMutableArray *commentarray=[NSMutableArray array];
 	[properties addObject:[XeePropertyItem itemWithLabel:
 	NSLocalizedString(@"File comments",@"File comments section title")
-	value:commentarray]];
+	value:commentarray identifier:@"common.comments"]];
 
 	for(int i=0;i<num_comments;i++)
 	{
@@ -224,19 +224,16 @@ int is_png_gray_palette(png_structp png,png_infop info);
 		NSMutableString *text;
 
 		key=[NSString stringWithCString:comments[i].key encoding:NSISOLatin1StringEncoding];
-		key=[key stringByAppendingString:@":"];
 
 		if(comments[i].lang_key)
 		{
 			NSString *langkey=[NSString stringWithCString:comments[i].lang_key encoding:NSUTF8StringEncoding];
-			key=[NSString stringWithFormat:@"%@ (%@)",langkey,key];
+			if(langkey&&[langkey length]) key=[NSString stringWithFormat:@"%@ (%@)",key,langkey];
 			text=[NSMutableString stringWithCString:comments[i].text encoding:NSUTF8StringEncoding];
 		}
 		else text=[NSMutableString stringWithCString:comments[i].text encoding:NSISOLatin1StringEncoding];
 
-		[text replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0,[text length])];
-
-		[commentarray addObject:[XeePropertyItem itemWithLabel:key value:text]];
+		[commentarray addObjectsFromArray:[XeePropertyItem itemsWithLabel:key textValue:text]];
 	}
 
 	[self triggerPropertyChangeAction];

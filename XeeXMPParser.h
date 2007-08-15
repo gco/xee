@@ -5,11 +5,19 @@
 
 @interface XeeXMPParser:NSObject
 {
+	NSMutableArray *props;
+	NSDictionary *prefixdict,*localnamedict;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;
 -(void)dealloc;
 
--(NSArray *)propertyArray;
+-(NSString *)parsePropertyName:(NSXMLNode *)node;
+-(NSArray *)parsePropertyValue:(NSXMLNode *)node;
+-(NSString *)parseSingleValue:(NSXMLNode *)node;
+
+-(NSString *)reflowName:(NSString *)name capitalize:(BOOL)capitalize exceptions:(NSDictionary *)exceptions;
+
+-(NSArray *)propertySections;
 
 @end

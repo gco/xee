@@ -10,6 +10,7 @@
 
 	int version,fileversion;
 	BOOL hasmerged,copyrighted,watermarked,untagged;
+	XeeIPTCParser *iptc;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

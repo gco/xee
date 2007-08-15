@@ -3,6 +3,7 @@
 
 @interface XeeIPTCParser:NSObject
 {
+	NSMutableArray *props;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

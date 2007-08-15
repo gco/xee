@@ -1,4 +1,5 @@
 #import "CSHandle.h"
+#import "CSSubHandle.h"
 
 #include <sys/stat.h>
 
@@ -43,9 +44,11 @@ static inline uint64_t CSLEUInt64(uint8_t *b) { return ((uint64_t)b[7]<<56)|((ui
 
 
 
+-(off_t)fileSize { [self _raiseNotImplemented]; return 0; }
+
 -(off_t)offsetInFile { [self _raiseNotImplemented]; return 0; }
 
--(off_t)fileSize { [self _raiseNotImplemented]; return 0; }
+-(BOOL)atEndOfFile { [self _raiseNotImplemented]; return NO; }
 
 -(void)seekToFileOffset:(off_t)offs { [self _raiseNotImplemented]; }
 
@@ -167,6 +170,19 @@ CSReadValueImpl(uint32_t,readID,CSBEUInt32)
 {
 	if([self readAtMost:num toBuffer:buffer]!=num) [self _raiseEOF];
 }
+
+
+
+-(CSHandle *)subHandleOfLength:(off_t)length
+{
+	return [[[CSSubHandle alloc] initWithHandle:self from:[self offsetInFile] length:length] autorelease];
+}
+
+-(CSHandle *)subHandleWithRange:(NSRange)range;
+{
+	return [[[CSSubHandle alloc] initWithHandle:self from:range.location length:range.length] autorelease];
+}
+
 
 
 static inline void CSSetBEInt16(uint8_t *b,int16_t n) { b[0]=(n>>8)&0xff; b[1]=n&0xff; }
