@@ -88,7 +88,7 @@
 
 	NSMutableArray *markerprops=[NSMutableArray array];
 	NSMutableArray *comments=[NSMutableArray array];
-	NSArray *exifsections=nil,*xmpsections=nil,*iptcprops=nil,*photoshopprops=nil,*duckyprops=nil;
+	NSArray *exifprops=nil,*xmpprops=nil,*photoshopprops=nil,*duckyprops=nil;
 
 	for(struct jpeg_marker_struct *marker=cinfo.marker_list;marker;marker=marker->next)
 	{
@@ -129,7 +129,7 @@
 					thumb_ptr=marker->data+6+thumb_offs;
 				}
 
-				exifsections=[exif propertySections];
+				exifprops=[exif propertyArray];
 				[exif release];
 			}
 		}
@@ -137,15 +137,12 @@
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
 			NSLocalizedString(@"XMP APP1 marker",@"XMP APP1 marker property title")
-			value:@""]];
+			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
 			XeeXMPParser *xmp=[[XeeXMPParser alloc] initWithHandle:
 			[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+29 length:marker->data_length-29]];
-			if(xmp)
-			{
-				xmpsections=[xmp propertySections];
-				[xmp release];
-			}
+			xmpprops=[xmp propertyArray];
+			[xmp release];
 		}
 		else if(XeeTestJPEGMarker(marker,2,12,"ICC_PROFILE"))
 		{
@@ -159,18 +156,15 @@
 			NSLocalizedString(@"Meta APP3 marker",@"Meta APP3 marker property title")
 			value:@""]];
 		}
-		else if(XeeTestJPEGMarker(marker,12,6,"Ducky"))
+		else if(XeeTestJPEGMarker(marker,12,5,"Ducky"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
 			NSLocalizedString(@"Ducky APP12 marker",@"Ducky APP12 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
-			XeeDuckyParser *ducky=[[XeeDuckyParser alloc] initWithBuffer:marker->data+6 length:marker->data_length-6];
-			if(ducky)
-			{
-				duckyprops=[ducky propertyArray];
-				[ducky release];
-			}
+			XeeDuckyParser *ducky=[[XeeDuckyParser alloc] initWithBuffer:marker->data+5 length:marker->data_length-5];
+			duckyprops=[ducky propertyArray];
+			[ducky release];
 		}
 		else if(XeeTestJPEGMarker(marker,13,14,"Photoshop 3.0"))
 		{
@@ -180,15 +174,8 @@
 
 			Xee8BIMParser *parser=[[Xee8BIMParser alloc] initWithHandle:
 			[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+14 length:marker->data_length-14]];
-			if(parser)
-			{
-				photoshopprops=[parser propertyArray];
-
-				XeeIPTCParser *iptc=[parser IPTCParser];
-				if(iptc) iptcprops=[iptc propertyArray];
-
-				[parser release];
-			}
+			photoshopprops=[parser propertyArray];
+			[parser release];
 		}
 		else if(XeeTestJPEGMarker(marker,14,5,"Adobe"))
 		{
@@ -208,29 +195,15 @@
 	NSLocalizedString(@"File comments",@"File comments section title")
 	value:comments identifier:@"common.comments"]];
 
-	if(exifsections) [properties addObjectsFromArray:exifsections];
-/*	if(exifsections) [properties addObject:[XeePropertyItem itemWithLabel:
-	NSLocalizedString(@"EXIF",@"")
-	value:exifsections]];*/
-
-	if(xmpsections) [properties addObjectsFromArray:xmpsections];
-
-	if(iptcprops)
-	[properties addObject:[XeePropertyItem itemWithLabel:
-	NSLocalizedString(@"IPTC properties",@"IPTC properties section title")
-	value:iptcprops identifier:@"iptc"]];
-
-	NSMutableArray *psprops=[NSMutableArray array];
-	if(photoshopprops) [psprops addObjectsFromArray:photoshopprops];
-	if(duckyprops) [psprops addObjectsFromArray:duckyprops];
-	if([psprops count]) [properties addObject:[XeePropertyItem itemWithLabel:
-	NSLocalizedString(@"Photoshop properties",@"Photoshop properties section title")
-	value:psprops identifier:@"8bim"]];
+	if(exifprops) [properties addObjectsFromArray:exifprops];
+	if(xmpprops) [properties addObjectsFromArray:xmpprops];
+	if(photoshopprops) [properties addObjectsFromArray:photoshopprops];
+	if(duckyprops) [properties addObjectsFromArray:duckyprops];
 
 	NSMutableArray *jpegprops=[NSMutableArray array];
 	[jpegprops addObjectsFromArray:[[XeeJPEGQuantizationDatabase defaultDatabase] propertyArrayForTables:&cinfo]];
 	[jpegprops addObjectsFromArray:markerprops];
-	if(jpegprops) [properties addObject:[XeePropertyItem itemWithLabel:
+	[properties addObject:[XeePropertyItem itemWithLabel:
 	NSLocalizedString(@"JPEG properties",@"JPEG properties section title")
 	value:jpegprops identifier:@"jpeg"]];
 

@@ -22,7 +22,7 @@
 
 -(SEL)initLoader
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	uint32 magic=[fh readID];
 	if(magic=='GBIX')

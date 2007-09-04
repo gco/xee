@@ -18,6 +18,8 @@
 -(NSString *)path;
 -(XeeFSRef *)parent;
 
+-(BOOL)isRemote;
+
 -(NSArray *)directoryContents;
 
 -(BOOL)isEqual:(XeeFSRef *)other;

@@ -9,8 +9,8 @@
 
 -(IBAction)deleteFileFromMenu:(id)sender;
 -(IBAction)askAndDelete:(id)sender;
--(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(NSString *)filename;
--(void)deleteFile:(NSString *)filename;
+-(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(XeeFSRef *)ref;
+-(void)deleteFile:(XeeFSRef *)ref;
 
 -(IBAction)moveFile:(id)sender;
 -(IBAction)copyFile:(id)sender;

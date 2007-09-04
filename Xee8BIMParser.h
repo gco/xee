@@ -2,21 +2,22 @@
 
 #import "XeeTypes.h"
 #import "CSHandle.h"
-#import "XeeIPTCParser.h"
 
 @interface Xee8BIMParser:NSObject
 {
 	NSMutableArray *props;
+	NSArray *xmpprops,*iptcprops,*exifprops;
 
-	int version,fileversion;
+	int numcolours,trans;
 	BOOL hasmerged,copyrighted,watermarked,untagged;
-	XeeIPTCParser *iptc;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;
 -(void)dealloc;
 
--(XeeIPTCParser *)IPTCParser;
+-(BOOL)hasMergedImage;
+-(int)numberOfIndexedColours;
+-(int)indexOfTransparentColour;
 
 -(NSArray *)propertyArray;
 

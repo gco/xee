@@ -18,6 +18,7 @@
 #import "XeeBrokenJPEGLoader.h"
 #import "XeePNGLoader.h"
 #import "XeeGIFLoader.h"
+#import "XeePhotoshopLoader.h"
 #import "XeeILBMLoader.h"
 #import "XeePCXLoader.h"
 #import "XeeMayaLoader.h"
@@ -64,6 +65,7 @@ XeeDelegate *maindelegate=nil;
 	[XeeImage registerImageClass:[XeeJPEGImage class]];
 	[XeeImage registerImageClass:[XeePNGImage class]];
 	[XeeImage registerImageClass:[XeeGIFImage class]];
+	[XeeImage registerImageClass:[XeePhotoshopImage class]];
 	[XeeImage registerImageClass:[XeeILBMImage class]];
 	[XeeImage registerImageClass:[XeePCXImage class]];
 	[XeeImage registerImageClass:[XeeMayaImage class]];

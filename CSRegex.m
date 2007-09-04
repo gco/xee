@@ -72,6 +72,8 @@ static NSString *nullstring=nil;
 		return [NSArray arrayWithArray:array];
 	}
 
+	free(matches);
+
 	return nil;
 }
 

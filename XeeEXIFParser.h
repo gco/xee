@@ -40,6 +40,7 @@ static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
 {
 	struct exiftags *exiftags;
 	uint8 *data;
+	NSData *dataobj;
 }
 
 -(id)initWithBuffer:(uint8 *)exifdata length:(int)len;
@@ -55,6 +56,6 @@ static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
 -(BOOL)setRational:(XeeRational)val forTag:(XeeEXIFTag)tag set:(XeeEXIFTagSet)set;
 -(struct exifprop *)exifPropForTag:(XeeEXIFTag)tag set:(XeeEXIFTagSet)set;
 
--(NSArray *)propertySections;
+-(NSArray *)propertyArray;
 
 @end

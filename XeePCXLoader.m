@@ -67,7 +67,7 @@ struct pcx_header
 
 -(SEL)initLoader
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	header=[[fh readDataOfLength:128] retain];
 	struct pcx_header *pcx=(struct pcx_header *)[header bytes];
@@ -96,7 +96,7 @@ struct pcx_header
 
 -(SEL)startLoading
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	struct pcx_header *pcx=(struct pcx_header *)[header bytes];
 
 	if(![self allocWithType:XeeBitmapTypeRGB8 width:width height:height]) return NULL;
@@ -127,7 +127,7 @@ struct pcx_header
 
 -(SEL)load
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	struct pcx_header *pcx=(struct pcx_header *)[header bytes];
 
 	int bytesperline=XeeLEUInt16(pcx->bytesperline);

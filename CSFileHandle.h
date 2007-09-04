@@ -6,6 +6,10 @@
 {
 	FILE *fh;
 	BOOL close;
+
+	BOOL multi;
+	CSFileHandle *parent;
+	off_t pos;
 }
 
 +(CSFileHandle *)fileHandleForReadingAtPath:(NSString *)path;
@@ -13,6 +17,7 @@
 +(CSFileHandle *)fileHandleForPath:(NSString *)path modes:(NSString *)modes;
 
 -(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc name:(NSString *)descname;
+-(id)initAsCopyOf:(CSFileHandle *)other;
 -(void)dealloc;
 
 -(off_t)fileSize;
@@ -24,6 +29,7 @@
 -(void)pushBackByte:(int)byte;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer;
+-(id)copyWithZone:(NSZone *)zone;
 
 -(void)_raiseError;
 

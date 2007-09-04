@@ -4,9 +4,9 @@
 
 -(id)initWithHandle:(CSHandle *)handle from:(off_t)from length:(off_t)length
 {
-	if(self=[super init])
+	if(self=[super initWithName:[handle name]])
 	{
-		parent=[handle retain];
+		parent=[handle copy];
 		start=from;
 		end=from+length;
 

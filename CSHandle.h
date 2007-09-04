@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <sys/types.h>
 
-@interface CSHandle:NSObject
+@interface CSHandle:NSObject <NSCopying>
 {
 	NSString *name;
 	off_t bitoffs;
@@ -12,6 +12,9 @@
 -(id)initWithName:(NSString *)descname;
 -(void)dealloc;
 
+
+// Methods implemented by subclasses
+
 -(off_t)fileSize;
 -(off_t)offsetInFile;
 -(BOOL)atEndOfFile;
@@ -20,6 +23,11 @@
 -(void)pushBackByte:(int)byte;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer;
+-(id)copyWithZone:(NSZone *)zone;
+
+
+
+// Utility methods
 
 -(void)skipBytes:(off_t)bytes;
 

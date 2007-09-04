@@ -215,8 +215,10 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 
 		int back_x=rect.origin.x>0?rect.origin.x:0;
 		int back_y=rect.origin.y>0?rect.origin.y:0;
-		int back_w=MIN(bounds.size.width,rect.size.width);
-		int back_h=MIN(bounds.size.height,rect.size.height);
+		int back_w=rect.size.width;
+		int back_h=rect.size.height;
+		//int back_w=MIN(bounds.size.width,rect.size.width);
+		//int back_h=MIN(bounds.size.height,rect.size.height);
 
 		if(premultiplied) glBlendFunc(GL_ONE_MINUS_DST_ALPHA,GL_ONE);
 		else glBlendFunc(GL_ONE_MINUS_DST_ALPHA,GL_DST_ALPHA);

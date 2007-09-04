@@ -25,6 +25,7 @@
 {
 	if(self=[super initWithName:[NSString stringWithFormat:@"NSData at 0x%x",(int)dataobj]])
 	{
+		pos=0;
 		data=[dataobj retain];
 	}
 	return self;
@@ -81,6 +82,12 @@
 	pos+=num;
 }
 
+-(id)copyWithZone:(NSZone *)zone;
+{
+	CSMemoryHandle *copy=[[CSMemoryHandle allocWithZone:zone] initWithData:data];
+	[copy seekToFileOffset:pos];
+	return copy;
+}
 
 
 -(NSData *)data { return data; }

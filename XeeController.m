@@ -336,6 +336,8 @@ static BOOL HasAppleMouse()
 
 -(NSDrawer *)drawer { return drawer; }
 
+-(XeeFSRef *)currentRef { return [currimage ref]; }
+
 -(NSString *)currentFilename // should probably be removed
 {
 	return [currimage filename];
@@ -560,13 +562,22 @@ static BOOL HasAppleMouse()
 
 -(void)errorMessage:(NSString *)title text:(NSString *)text
 {
-	NSAlert *alert=[[[NSAlert alloc] init] autorelease];
+	NSAlert *alert=[[NSAlert alloc] init];
 
 	[alert setMessageText:title];
 	[alert setInformativeText:text];
+	[alert setAlertStyle:NSCriticalAlertStyle];
 	[alert addButtonWithTitle:NSLocalizedString(@"OK","OK button")];
 
-	[alert beginSheetModalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+	[self performSelector:@selector(displayAlert:) withObject:alert afterDelay:0];
+}
+
+-(void)displayAlert:(NSAlert *)alert
+{
+	if(fullscreenwindow) [alert runModal];
+	else [alert beginSheetModalForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nil];
+
+	[alert release];
 }
 
 -(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target

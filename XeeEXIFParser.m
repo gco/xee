@@ -16,8 +16,9 @@
 		if(mutable) data=exifdata;
 		else data=NULL;
 
-		exiftags=exifparse(exifdata,len);
+		dataobj=nil;
 
+		exiftags=exifparse(exifdata,len);
 		if(exiftags)
 		{
 			return self;
@@ -27,14 +28,19 @@
 	return nil;
 }
 
--(id)initWithData:(NSData *)data
+-(id)initWithData:(NSData *)dataobject
 {
-	return nil;
+	if(self=[self initWithBuffer:(void *)[dataobject bytes] length:[dataobject length] mutable:NO])
+	{
+		dataobj=[dataobject retain];
+	}
+	return self;
 }
 
 -(void)dealloc
 {
 	exiffree(exiftags);
+	[dataobj release];
 	[super dealloc];
 }
 
@@ -125,7 +131,7 @@
 	return NULL;
 }
 
--(NSArray *)propertySections
+-(NSArray *)propertyArray
 {
 	NSMutableArray *array=[NSMutableArray array];
 	NSMutableArray *cameraprops=[NSMutableArray array];

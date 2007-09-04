@@ -20,7 +20,7 @@
 
 -(SEL)initLoader
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	uint8 prev=0;
 	for(;;)
 	{

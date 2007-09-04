@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "XeeTypes.h"
-#import "XeeFileHandle.h"
+#import "CSFileHandle.h"
 #import "XeeFSRef.h"
 #import "XeeProperties.h"
 
@@ -21,7 +21,7 @@
 {
 	XeeFSRef *ref;
 	NSDictionary *attrs;
-	XeeFileHandle *filehandle;
+	CSFileHandle *filehandle;
 
 	SEL nextselector;
 	BOOL loaded;
@@ -57,7 +57,7 @@
 -(BOOL)needsLoading;
 -(void)stopLoading;
 -(BOOL)hasBeenStopped;
--(XeeFileHandle *)fileHandle;
+-(CSFileHandle *)fileHandle;
 
 -(int)frames;
 -(void)setFrame:(int)frame;
@@ -84,6 +84,7 @@
 -(int)losslessSaveFlags;
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags;
 
+-(XeeFSRef *)ref;
 -(NSString *)filename;
 -(NSString *)format;
 -(NSImage *)icon;

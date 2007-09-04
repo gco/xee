@@ -18,6 +18,6 @@
 
 -(NSString *)reflowName:(NSString *)name capitalize:(BOOL)capitalize exceptions:(NSDictionary *)exceptions;
 
--(NSArray *)propertySections;
+-(NSArray *)propertyArray;
 
 @end

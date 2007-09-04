@@ -60,6 +60,8 @@ static inline uint64_t CSLEUInt64(uint8_t *b) { return ((uint64_t)b[7]<<56)|((ui
 
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer { [self _raiseNotImplemented]; }
 
+-(id)copyWithZone:(NSZone *)zone { [self _raiseNotImplemented]; return nil; }
+
 
 
 -(void)skipBytes:(off_t)bytes
@@ -273,25 +275,25 @@ CSWriteValueImpl(uint32_t,writeID,CSSetBEUInt32)
 -(void)_raiseMemory
 {
 	[NSException raise:@"CSOutOfMemoryException"
-	format:@"Out of memory while attempting to read from file \"%@\".",name];
+	format:@"Out of memory while attempting to read from file \"%@\" (%@).",name,[self class]];
 }
 
 -(void)_raiseEOF
 {
 	[NSException raise:@"CSEndOfFileException"
-	format:@"Attempted to read past the end of file \"%@\".",name];
+	format:@"Attempted to read past the end of file \"%@\" (%@).",name,[self class]];
 }
 
 -(void)_raiseNotImplemented
 {
 	[NSException raise:@"CSNotImplementedException"
-	format:@"Attempted to use unimplemented method when reading from file \"%@\".",name];
+	format:@"Attempted to use unimplemented method when reading from file \"%@\" (%@).",name,[self class]];
 }
 
 -(void)_raiseNotSupported
 {
 	[NSException raise:@"CSNotSupportedException"
-	format:@"Attempted to use unsupported method when reading from file \"%@\".",name];
+	format:@"Attempted to use unsupported method when reading from file \"%@\" (%@).",name,[self class]];
 }
 
 

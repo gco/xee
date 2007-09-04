@@ -59,6 +59,26 @@
 	return [[[XeeFSRef alloc] initWithFSRef:&parent] autorelease];
 }
 
+-(BOOL)isRemote
+{
+	FSCatalogInfo catinfo;
+	FSGetCatalogInfo(&ref,kFSCatInfoVolume,&catinfo,NULL,NULL,NULL);
+
+	HParamBlockRec pb;
+	GetVolParmsInfoBuffer volparms;
+
+	pb.ioParam.ioCompletion=NULL;
+	pb.ioParam.ioNamePtr=NULL;
+	pb.ioParam.ioVRefNum=catinfo.volume;
+	pb.ioParam.ioBuffer=(Ptr)&volparms;
+	pb.ioParam.ioReqCount=sizeof(volparms);
+
+	if(PBHGetVolParmsSync(&pb)!=noErr) return NO;
+
+	if((volparms.vMExtendedAttributes&((1<<bIsOnInternalBus)|(1<<bIsOnExternalBus)))==0) return YES;
+	return NO;
+}
+
 -(NSArray *)directoryContents
 {
 	return nil;

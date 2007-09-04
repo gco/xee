@@ -1,6 +1,10 @@
 #import "Xee8BIMParser.h"
 #import "XeeProperties.h"
 
+#import "XeeXMPParser.h"
+#import "XeeIPTCParser.h"
+#import "XeeExifParser.h"
+
 
 
 @implementation Xee8BIMParser
@@ -10,12 +14,12 @@
 	if(self=[super init])
 	{
 		props=[[NSMutableArray array] retain];
+		xmpprops=iptcprops=exifprops=nil;
 
-		version=fileversion=0;
+		numcolours=0;
+		trans=-1;
 		hasmerged=YES;
 		copyrighted=watermarked=untagged=NO;
-
-		iptc=nil;
 
 		@try
 		{
@@ -46,7 +50,12 @@
 					break;
 
 					case 0x0404: // IPTC
-						iptc=[[XeeIPTCParser alloc] initWithHandle:[handle subHandleOfLength:chunklen]];
+					{
+//NSLog(@"%@",[handle readDataOfLength:chunklen]);
+						XeeIPTCParser *parser=[[XeeIPTCParser alloc] initWithHandle:[handle subHandleOfLength:chunklen]];
+						iptcprops=[[parser propertyArray] retain];
+						[parser release];
+					}
 					break;
 
 					case 0x0406: // JPEG quality
@@ -122,11 +131,11 @@
 					break;
 
 					case 0x0416: // Indexed color table count
-						//count=[handle readUInt16BE];
+						numcolours=[handle readUInt16BE];
 					break;
 
 					case 0x0417: // Transparent index
-						//trans=[handle readUInt16BE];
+						trans=[handle readUInt16BE];
 					break;
 
 					case 0x041b: // Workflow URL
@@ -144,7 +153,7 @@
 
 					case 0x0421: // Version info
 					{
-						version=[handle readUInt32BE];
+						/*version=*/[handle readUInt32BE];
 						hasmerged=[handle readUInt8];
 
 						int writerlen=[handle readUInt32BE];
@@ -155,15 +164,15 @@
 						NSString *reader=[[[NSString alloc] initWithData:[handle readDataOfLength:readerlen*2]
 						encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease];
 
-						fileversion=[handle readUInt32BE];
+						/*fileversion=*/[handle readUInt32BE];
 
-						[props addObject:[XeePropertyItem itemWithLabel:
+						/*[props addObject:[XeePropertyItem itemWithLabel:
 						NSLocalizedString(@"Version",@"Version property title")
 						value:[NSNumber numberWithInt:version]]];
 
 						[props addObject:[XeePropertyItem itemWithLabel:
 						NSLocalizedString(@"File version",@"File version property title")
-						value:[NSNumber numberWithInt:fileversion]]];
+						value:[NSNumber numberWithInt:fileversion]]];*/
 
 						[props addObject:[XeePropertyItem itemWithLabel:
 						NSLocalizedString(@"Contains merged image",@"Contains merged image property title")
@@ -179,13 +188,28 @@
 					}
 					break;
 
+					case 0x0422: // Exif
+					{
+						XeeEXIFParser *parser=[[XeeEXIFParser alloc] initWithData:[handle readDataOfLength:chunklen]];
+						exifprops=[[parser propertyArray] retain];
+						[parser release];
+					}
+					break;
+
+					case 0x0424: // XMP
+					{
+						XeeXMPParser *parser=[[XeeXMPParser alloc] initWithHandle:[handle subHandleOfLength:chunklen]];
+						xmpprops=[[parser propertyArray] retain];
+						[parser release];
+					}
+					break;
+
 					default:
-/*						[props addObject:[XeePropertyItem itemWithLabel:
+						/*[props addObject:[XeePropertyItem itemWithLabel:
 						[NSString stringWithFormat:@"%x",chunkid]
 						value:[handle readDataOfLength:chunklen]]];
 //						value:[[[NSString alloc] initWithData:[handle readDataOfLength:chunklen] encoding:NSISOLatin1StringEncoding] autorelease]]];
-*/
-					break;
+					*/break;
 				}
 
 				[handle seekToFileOffset:next];
@@ -199,12 +223,32 @@
 -(void)dealloc
 {
 	[props release];
-	[iptc release];
+	[xmpprops release];
+	[iptcprops release];
+	[exifprops release];
+
 	[super dealloc];
 }
 
--(XeeIPTCParser *)IPTCParser { return iptc; }
+-(BOOL)hasMergedImage { return hasmerged; }
 
--(NSArray *)propertyArray { return [[props retain] autorelease]; }
+-(int)numberOfIndexedColours { return numcolours; }
+
+-(int)indexOfTransparentColour { return trans; }
+
+-(NSArray *)propertyArray
+{
+	NSMutableArray *array=[NSMutableArray array];
+
+	if(exifprops) [array addObjectsFromArray:exifprops];
+	if(xmpprops) [array addObjectsFromArray:xmpprops];
+	if(iptcprops) [array addObjectsFromArray:iptcprops];
+
+	[array addObject:[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"Photoshop properties",@"Photoshop properties section title")
+	value:props identifier:@"photoshop"]];
+
+	return array;
+}
 
 @end

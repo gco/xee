@@ -63,10 +63,12 @@
 
 -(IBAction)deleteFileFromMenu:(id)sender
 {
+	if([[self currentRef] isRemote]) { [self askAndDelete:sender]; return; }
+
 	if(![self validateAction:_cmd]) { NSBeep(); return; }
 
 	[self setResizeBlockFromSender:sender];
-	[self deleteFile:[self currentFilename]];
+	[self deleteFile:[self currentRef]];
 	[self setResizeBlock:NO];
 }
 
@@ -76,34 +78,49 @@
 
 	[self setResizeBlockFromSender:sender];
 
-	NSString *filename=[[self currentFilename] retain];
+	XeeFSRef *ref=[[self currentRef] retain];
 	NSAlert *alert=[[NSAlert alloc] init];
 
+	if([ref isRemote])
+	{
+		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?\nThe file will be removed immediately.",@"Content of the delete confirmation dialog for remote files"),[[ref path] lastPathComponent]]];
+		[alert setAlertStyle:NSCriticalAlertStyle];
+	}
+	else
+	{
+		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?",@"Content of the delete confirmation dialog"),[[ref path] lastPathComponent]]];
+		[alert setIcon:[[[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/Dock.app/Contents/Resources/trashfull.png"] autorelease]];
+	}
+
 	[alert setMessageText:NSLocalizedString(@"Delete File",@"Title of the delete confirmation dialog")];
-	[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?",@"Content of the delete confirmation dialog"),[filename lastPathComponent]]];
 	[alert addButtonWithTitle:NSLocalizedString(@"Delete",@"Delete button")];
 	[alert addButtonWithTitle:NSLocalizedString(@"Cancel",@"Cancel button")];
-	[alert setIcon:[[[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/Dock.app/Contents/Resources/trashfull.png"] autorelease]];
 
-	if(fullscreenwindow) [self deleteAlertEnd:alert returnCode:[alert runModal] contextInfo:[filename retain]];
-	else  [alert beginSheetModalForWindow:window modalDelegate:self didEndSelector:@selector(deleteAlertEnd:returnCode:contextInfo:) contextInfo:[filename retain]];
+	if(fullscreenwindow) [self deleteAlertEnd:alert returnCode:[alert runModal] contextInfo:ref];
+	else  [alert beginSheetModalForWindow:window modalDelegate:self didEndSelector:@selector(deleteAlertEnd:returnCode:contextInfo:) contextInfo:ref];
 
 	[self setResizeBlock:NO];
 }
 
--(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(NSString *)filename
+-(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(XeeFSRef *)ref
 {
 	if(res==NSAlertFirstButtonReturn)
 	{
-		[self deleteFile:filename];
+		[self deleteFile:ref];
 	}
-	[filename release];
+	[ref release];
 }
 
--(void)deleteFile:(NSString *)filename
+-(void)deleteFile:(XeeFSRef *)ref
 {
-	if([[NSWorkspace sharedWorkspace] performFileOperation:NSWorkspaceRecycleOperation source:[filename stringByDeletingLastPathComponent]
-	destination:nil files:[NSArray arrayWithObject:[filename lastPathComponent]] tag:nil])
+	NSString *filename=[ref path];
+	BOOL res;
+
+	if([ref isRemote]) res=[[NSFileManager defaultManager] removeFileAtPath:filename handler:NULL];
+	else res=[[NSWorkspace sharedWorkspace] performFileOperation:NSWorkspaceRecycleOperation source:[filename stringByDeletingLastPathComponent]
+	destination:nil files:[NSArray arrayWithObject:[filename lastPathComponent]] tag:nil];
+
+	if(res)
 	{
 		// success, let kqueue update list
 		[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/dock/drag to trash.aif"];
@@ -309,6 +326,7 @@
 
 -(void)playSound:(NSString *)filename
 {
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"com.apple.sound.uiaudio.enabled"])
 	[self performSelector:@selector(actuallyPlaySound:) withObject:filename afterDelay:0];
 }
 

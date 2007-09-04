@@ -150,11 +150,11 @@
 
 -(BOOL)hasBeenStopped { return stop; }
 
--(XeeFileHandle *)fileHandle
+-(CSFileHandle *)fileHandle
 {
 	if(!filehandle)
 	{
-		filehandle=[[XeeFileHandle fileHandleWithPath:[self filename]] retain];
+		filehandle=[[CSFileHandle fileHandleForReadingAtPath:[self filename]] retain];
 		if(!filehandle) [NSException raise:@"XeeCouldNotOpenFileException" format:@"Failed to open file \"%@\".",[self filename]];
 	}
 	return filehandle;
@@ -230,6 +230,8 @@
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags { return NO; }
 
 
+
+-(XeeFSRef *)ref { return ref; }
 
 -(NSString *)filename { return [ref path]; }
 

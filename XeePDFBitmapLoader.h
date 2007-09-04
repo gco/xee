@@ -36,11 +36,11 @@
 @interface XeePDFStream:NSObject
 {
 	NSDictionary *dict;
-	XeeFileHandle *fh;
+	CSFileHandle *fh;
 	off_t offs;
 }
 
--(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(XeeFileHandle *)filehandle offset:(off_t)fileoffs;
+-(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSFileHandle *)filehandle offset:(off_t)fileoffs;
 -(void)dealloc;
 -(NSDictionary *)dictionary;
 -(NSString *)description;

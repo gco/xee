@@ -161,6 +161,7 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 {
 	[archive release];
 	[path release];
+	[ref release];
 	[super dealloc];
 }
 

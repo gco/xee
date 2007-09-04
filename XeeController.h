@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+#import "XeeFSRef.h"
+
 #define XeeNoMode 0
 #define XeeMoveMode 1
 #define XeeCopyMode 2
@@ -82,6 +84,7 @@
 -(XeeImageSource *)imageSource;
 -(XeeImage *)image;
 -(NSDrawer *)drawer;
+-(XeeFSRef *)currentRef;
 -(NSString *)currentFilename;
 -(BOOL)isFullscreen;
 

@@ -19,7 +19,7 @@
 
 -(SEL)initLoader
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	objdict=[[NSMutableDictionary dictionary] retain];
 	unresolved=[[NSMutableArray array] retain];
@@ -77,7 +77,7 @@
 
 -(NSDictionary *)parsePDFXref
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	int c;
 
 	if([fh readUInt8]!='x'||[fh readUInt8]!='r'||[fh readUInt8]!='e'||[fh readUInt8]!='f')
@@ -128,7 +128,7 @@
 
 -(id)parsePDFObject
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	int c;
 
 	/*int objnum=*/[self parseSimpleInteger];
@@ -169,7 +169,7 @@
 
 -(int)parseSimpleInteger
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	int c,val=0;
 
 	do { c=[fh readUInt8]; } while(isspace(c));
@@ -190,7 +190,7 @@
 
 -(id)parsePDFType
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	int c;
 	do { c=[fh readUInt8]; } while(isspace(c));
 
@@ -230,7 +230,7 @@
 
 -(NSNull *)parsePDFNull
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	char rest[3];
 	[fh readBytes:3 toBuffer:rest];
@@ -241,7 +241,7 @@
 
 -(NSNumber *)parsePDFBoolStartingWith:(int)c
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	if(c=='t')
 	{
@@ -262,7 +262,7 @@
 
 -(NSNumber *)parsePDFNumberStartingWith:(int)c
 {
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	char str[32]={c};
 	int i;
 
@@ -287,7 +287,7 @@
 -(NSString *)parsePDFWord
 {
 	NSMutableString *str=[NSMutableString string];
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	for(;;)
 	{
@@ -305,7 +305,7 @@
 -(NSString *)parsePDFString
 {
 	NSMutableString *str=[NSMutableString string];
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	for(;;)
 	{
@@ -343,7 +343,7 @@
 -(NSData *)parsePDFHexStringStartingWith:(int)c
 {
 	NSMutableData *data=[NSMutableData data];
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	[fh pushBackByte:c];
 
@@ -375,7 +375,7 @@
 -(NSArray *)parsePDFArray
 {
 	NSMutableArray *array=[NSMutableArray array];
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 
 	for(;;)
 	{
@@ -409,7 +409,7 @@
 -(NSDictionary *)parsePDFDictionary
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
-	XeeFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self fileHandle];
 	id prev_key=nil,prev_value=nil;
 
 	for(;;)
@@ -493,7 +493,7 @@
 
 @implementation XeePDFStream
 
--(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(XeeFileHandle *)filehandle offset:(off_t)fileoffs;
+-(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSFileHandle *)filehandle offset:(off_t)fileoffs;
 {
 	if(self=[super init])
 	{

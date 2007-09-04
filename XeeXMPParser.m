@@ -24,6 +24,7 @@
 			@"Creation date",@"CreateDate",
 			@"Modification date",@"ModifyDate",
 			@"author's position",@"AuthorsPosition",
+			@"HDR luminance",@"HDRLuminance",
 		nil] retain];
 
 		Class xmldocument=NSClassFromString(@"NSXMLDocument");
@@ -31,8 +32,9 @@
 		@try
 		{
 			if(xmldocument)
-			{
-				NSXMLDocument *doc=[[xmldocument alloc] initWithData:[handle remainingFileContents] options:0 error:NULL];
+			{NSData *data;
+				NSXMLDocument *doc=[[xmldocument alloc] initWithData:data=[handle remainingFileContents] options:0 error:NULL];
+
 				if(doc)
 				{
 					[[doc rootElement] addNamespace:[NSXMLNode namespaceWithName:@"rdf" stringValue:@"http://www.w3.org/1999/02/22-rdf-syntax-ns#"]];
@@ -181,9 +183,9 @@
 	else return [node XMLString];
 }
 
-//-(NSArray *)propertySections { return [[props retain] autorelease]; }
--(NSArray *)propertySections
+-(NSArray *)propertyArray
 {
+	if(![props count]) return nil;
 	return [NSArray arrayWithObject:[XeePropertyItem itemWithLabel:
 	NSLocalizedString(@"XMP properties",@"XMP properties section title")
 	value:props identifier:@"xmp"]];

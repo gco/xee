@@ -1,35 +1,75 @@
 #import "XeeMultiImage.h"
 #import "XeeBitmapImage.h"
 
+#define XeePhotoshopBitmapMode 0
+#define XeePhotoshopGreyscaleMode 1
+#define XeePhotoshopIndexedMode 2
+#define XeePhotoshopRGBMode 3
+#define XeePhotoshopCMYKMode 4
+#define XeePhotoshopMultichannelMode 7
+#define XeePhotoshopDuotoneMode 8
+#define XeePhotoshopLabMode 9
+
+
+
 @interface XeePhotoshopImage:XeeMultiImage
 {
+	SEL loadersel;
+	int loaderframe;
 }
 
--(id)initWithFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes;
+-(NSArray *)channelHandlesForHandle:(CSHandle *)handle bytesPerRow:(int)bpr rows:(int)rows channels:(int)numchannels;
+
+-(id)init;
 -(void)dealloc;
-
--(void)load;
-
-+(NSArray *)fileTypes;
+-(SEL)initLoader;
 
 @end
 
-@interface XeePhotoshopSubImage:XeeBitmapImage
+
+
+@interface XeePackbitsHandle:CSHandle
 {
+	CSHandle *parent;
+	int (*readatmost_ptr)(id,SEL,int,void *);
+	int rows,bytesperrow;
+	off_t pos,totalsize,*offsets;
+
+	int spanleft;
+	uint8 spanbyte;
+	BOOL literal;
 }
 
-//-(id)initWithFilehandle:(FILE *)fh offset:(size_t)offset ...
+-(id)initWithHandle:(CSHandle *)handle rows:(int)numrows bytesPerRow:(int)bpr channel:(int)channel of:(int)numchannels previousSize:(off_t)prevsize;
 -(void)dealloc;
 
--(void)load;
+-(off_t)offsetInFile;
+-(int)readAtMost:(int)num toBuffer:(void *)buffer;
+
+-(off_t)totalSize;
 
 @end
 
+@interface XeeDeltaHandle:CSHandle
+{
+	CSHandle *parent;
+	//int (*readatmost_ptr)(id,SEL,int,void *);
+	int cols,depth;
+	uint16 curr;
+}
+
+-(id)initWithHandle:(CSHandle *)handle depth:(int)bitdepth columns:(int)columns;
+-(void)dealloc;
+
+-(off_t)offsetInFile;
+-(int)readAtMost:(int)num toBuffer:(void *)buffer;
+
+@end
 
 /*
 @interface XeePhotoshopChannel : NSObject
 {
-    XeeFileHandle *fh;
+    CSFileHandle *fh;
     int rows;
     int cols;
     int inbufsize;

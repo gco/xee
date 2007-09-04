@@ -95,9 +95,17 @@ static NSString *XeeLookupIPTCTag(int record,int dataset,int *type);
 	[super dealloc];
 }
 
--(NSArray *)propertyArray { return [[props retain] autorelease]; }
+-(NSArray *)propertyArray
+{
+	if(![props count]) return nil;
+	return [NSArray arrayWithObject:[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"IPTC properties",@"IPTC properties section title")
+	value:props identifier:@"iptc"]];
+}
 
 @end
+
+
 
 static NSString *XeeLookupIPTCTag(int record,int dataset,int *type)
 {

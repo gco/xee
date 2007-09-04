@@ -1,6 +1,7 @@
-#import "XeeFileHandle.h"
+#import "CSFileHandle.h"
+	#import "XeeTypes.h"
 
-@interface XeeIFFHandle:XeeFileHandle
+@interface XeeIFFHandle:CSFileHandle
 {
 	uint32 file_id,file_end,file_type;
 	uint32 next_chunk;
