@@ -10,8 +10,10 @@ typedef void (*XeeReadPixelFunction)(uint8 *row,int x,int pixelsize,uint8 *dest)
 
 @interface XeeTileImage:XeeImage
 {
+	@public
 	uint8 *data;
 	int bytesperpixel,bytesperrow;
+	@protected
 	BOOL freedata,premultiplied;
 	GLuint texintformat,texformat,textype;
 
@@ -23,7 +25,7 @@ typedef void (*XeeReadPixelFunction)(uint8 *row,int x,int pixelsize,uint8 *dest)
 	NSOpenGLContext *context;
 }
 
--(id)init;
+-(id)initWithParentImage:(XeeMultiImage *)parent;
 -(void)dealloc;
 
 -(void)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
@@ -59,3 +61,5 @@ glInternalFormat:(int)intformat glFormat:(int)format glType:(int)type;
 -(XeeReadPixelFunction)readPixelFunctionForCGImage;
 
 @end
+
+static inline uint8 *XeeImageDataRow(XeeTileImage *image,int row) { return image->data+row*image->bytesperrow; }

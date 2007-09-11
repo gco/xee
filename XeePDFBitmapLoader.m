@@ -19,7 +19,7 @@
 
 -(SEL)initLoader
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	objdict=[[NSMutableDictionary dictionary] retain];
 	unresolved=[[NSMutableArray array] retain];
@@ -77,7 +77,7 @@
 
 -(NSDictionary *)parsePDFXref
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 	int c;
 
 	if([fh readUInt8]!='x'||[fh readUInt8]!='r'||[fh readUInt8]!='e'||[fh readUInt8]!='f')
@@ -128,7 +128,7 @@
 
 -(id)parsePDFObject
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 	int c;
 
 	/*int objnum=*/[self parseSimpleInteger];
@@ -169,7 +169,7 @@
 
 -(int)parseSimpleInteger
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 	int c,val=0;
 
 	do { c=[fh readUInt8]; } while(isspace(c));
@@ -190,7 +190,7 @@
 
 -(id)parsePDFType
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 	int c;
 	do { c=[fh readUInt8]; } while(isspace(c));
 
@@ -230,7 +230,7 @@
 
 -(NSNull *)parsePDFNull
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	char rest[3];
 	[fh readBytes:3 toBuffer:rest];
@@ -241,7 +241,7 @@
 
 -(NSNumber *)parsePDFBoolStartingWith:(int)c
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	if(c=='t')
 	{
@@ -262,7 +262,7 @@
 
 -(NSNumber *)parsePDFNumberStartingWith:(int)c
 {
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 	char str[32]={c};
 	int i;
 
@@ -287,7 +287,7 @@
 -(NSString *)parsePDFWord
 {
 	NSMutableString *str=[NSMutableString string];
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	for(;;)
 	{
@@ -305,7 +305,7 @@
 -(NSString *)parsePDFString
 {
 	NSMutableString *str=[NSMutableString string];
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	for(;;)
 	{
@@ -343,7 +343,7 @@
 -(NSData *)parsePDFHexStringStartingWith:(int)c
 {
 	NSMutableData *data=[NSMutableData data];
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	[fh pushBackByte:c];
 
@@ -375,7 +375,7 @@
 -(NSArray *)parsePDFArray
 {
 	NSMutableArray *array=[NSMutableArray array];
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 
 	for(;;)
 	{
@@ -409,7 +409,7 @@
 -(NSDictionary *)parsePDFDictionary
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
-	CSFileHandle *fh=[self fileHandle];
+	CSFileHandle *fh=[self handle];
 	id prev_key=nil,prev_value=nil;
 
 	for(;;)

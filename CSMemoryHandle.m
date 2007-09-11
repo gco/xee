@@ -51,7 +51,7 @@
 
 -(void)seekToFileOffset:(off_t)offs
 {
-	if(offs<0) [self _raiseNotSupported];
+	if(offs<0) [self _raiseNotSupported:_cmd];
 	if(offs>[data length]) [self _raiseEOF];
 	pos=offs;
 }
@@ -74,7 +74,7 @@
 
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer
 {
-	if(![data isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported];
+	if(![data isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported:_cmd];
 	NSMutableData *mdata=(NSMutableData *)data;
 
 	if(pos+num>[mdata length]) [mdata setLength:pos+num];
@@ -94,7 +94,7 @@
 
 -(NSMutableData *)mutableData
 {
-	if(![data isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported];
+	if(![data isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported:_cmd];
 	return (NSMutableData *)data;
 }
 

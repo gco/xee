@@ -41,23 +41,23 @@
 
 #ifdef __BIG_ENDIAN__
 #define XeeMakeARGB8(a,r,g,b) (((a)<<24)|((r)<<16)|((g)<<8)|(b))
-#define XeeMakeNRGB32(r,g,b) ((0xff<<24)|((r)<<16)|((g)<<8)|(b))
+#define XeeMakeNRGB8(r,g,b) ((0xff<<24)|((r)<<16)|((g)<<8)|(b))
 #define XeeGetAFromARGB8(argb) (((argb)>>24)&0xff)
 #define XeeGetRFromARGB8(argb) (((argb)>>16)&0xff)
 #define XeeGetGFromARGB8(argb) (((argb)>>8)&0xff)
 #define XeeGetBFromARGB8(argb) (((argb))&0xff)
 #else
 #define XeeMakeARGB8(a,r,g,b) ((a)|((r)<<8)|((g)<<16)|((b)<<24))
-#define XeeMakeNRGB32(r,g,b) ((0xff)|((r)<<8)|((g)<<16)|((b)<<24))
+#define XeeMakeNRGB8(r,g,b) ((0xff)|((r)<<8)|((g)<<16)|((b)<<24))
 #define XeeGetAFromARGB8(argb) (((argb))&0xff)
 #define XeeGetRFromARGB8(argb) (((argb)>>8)&0xff)
 #define XeeGetGFromARGB8(argb) (((argb)>>16)&0xff)
 #define XeeGetBFromARGB8(argb) (((argb)>>24)&0xff)
 #endif
 
-#define XeeGetRFromNRGB32 XeeGetRFromARGB8
-#define XeeGetGFromNRGB32 XeeGetGFromARGB8
-#define XeeGetbFromNRGB32 XeeGetBFromARGB8
+#define XeeGetRFromNRGB8 XeeGetRFromARGB8
+#define XeeGetGFromNRGB8 XeeGetGFromARGB8
+#define XeeGetbFromNRGB8 XeeGetBFromARGB8
 
 
 
@@ -70,8 +70,9 @@
 	int colourmode,alphatype,modeflags;
 }
 
--(id)init;
+-(id)initWithParentImage:(XeeMultiImage *)parent;
 -(id)initWithType:(int)pixeltype width:(int)framewidth height:(int)frameheight;
+-(id)initWithType:(int)pixeltype width:(int)framewidth height:(int)frameheight parentImage:(XeeMultiImage *)parent;
 -(void)dealloc;
 
 -(BOOL)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight

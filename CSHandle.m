@@ -44,23 +44,23 @@ static inline uint64_t CSLEUInt64(uint8_t *b) { return ((uint64_t)b[7]<<56)|((ui
 
 
 
--(off_t)fileSize { [self _raiseNotImplemented]; return 0; }
+-(off_t)fileSize { [self _raiseNotImplemented:_cmd]; return 0; }
 
--(off_t)offsetInFile { [self _raiseNotImplemented]; return 0; }
+-(off_t)offsetInFile { [self _raiseNotImplemented:_cmd]; return 0; }
 
--(BOOL)atEndOfFile { [self _raiseNotImplemented]; return NO; }
+-(BOOL)atEndOfFile { [self _raiseNotImplemented:_cmd]; return NO; }
 
--(void)seekToFileOffset:(off_t)offs { [self _raiseNotImplemented]; }
+-(void)seekToFileOffset:(off_t)offs { [self _raiseNotImplemented:_cmd]; }
 
--(void)seekToEndOfFile { [self _raiseNotImplemented]; }
+-(void)seekToEndOfFile { [self _raiseNotImplemented:_cmd]; }
 
--(void)pushBackByte:(int)byte { [self _raiseNotImplemented]; }
+-(void)pushBackByte:(int)byte { [self _raiseNotImplemented:_cmd]; }
 
--(int)readAtMost:(int)num toBuffer:(void *)buffer { [self _raiseNotImplemented]; return 0; }
+-(int)readAtMost:(int)num toBuffer:(void *)buffer { [self _raiseNotImplemented:_cmd]; return 0; }
 
--(void)writeBytes:(int)num fromBuffer:(const void *)buffer { [self _raiseNotImplemented]; }
+-(void)writeBytes:(int)num fromBuffer:(const void *)buffer { [self _raiseNotImplemented:_cmd]; }
 
--(id)copyWithZone:(NSZone *)zone { [self _raiseNotImplemented]; return nil; }
+-(id)copyWithZone:(NSZone *)zone { [self _raiseNotImplemented:_cmd]; return nil; }
 
 
 
@@ -160,11 +160,25 @@ CSReadValueImpl(uint32_t,readID,CSBEUInt32)
 	return [[self copyDataOfLength:length] autorelease];
 }
 
+-(NSData *)readDataOfLengthAtMost:(int)length;
+{
+	return [[self copyDataOfLengthAtMost:length] autorelease];
+}
+
 -(NSData *)copyDataOfLength:(int)length
 {
 	NSMutableData *data=[[NSMutableData alloc] initWithLength:length];
 	if(!data) [self _raiseMemory];
 	[self readBytes:length toBuffer:[data mutableBytes]];
+	return data;
+}
+
+-(NSData *)copyDataOfLengthAtMost:(int)length
+{
+	NSMutableData *data=[[NSMutableData alloc] initWithLength:length];
+	if(!data) [self _raiseMemory];
+	int actual=[self readAtMost:length toBuffer:[data mutableBytes]];
+	[data setLength:actual];
 	return data;
 }
 
@@ -284,16 +298,16 @@ CSWriteValueImpl(uint32_t,writeID,CSSetBEUInt32)
 	format:@"Attempted to read past the end of file \"%@\" (%@).",name,[self class]];
 }
 
--(void)_raiseNotImplemented
+-(void)_raiseNotImplemented:(SEL)selector
 {
 	[NSException raise:@"CSNotImplementedException"
-	format:@"Attempted to use unimplemented method when reading from file \"%@\" (%@).",name,[self class]];
+	format:@"Attempted to use unimplemented method +[%@ %@] when reading from file \"%@\".",[self class],NSStringFromSelector(selector),name];
 }
 
--(void)_raiseNotSupported
+-(void)_raiseNotSupported:(SEL)selector
 {
 	[NSException raise:@"CSNotSupportedException"
-	format:@"Attempted to use unsupported method when reading from file \"%@\" (%@).",name,[self class]];
+	format:@"Attempted to use unsupported method +[%@ %@] when reading from file \"%@\".",[self class],NSStringFromSelector(selector),name];
 }
 
 

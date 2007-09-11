@@ -96,9 +96,9 @@
 	[super seekToFileOffset:newpos];
 }
 
--(void)seekToEndOfFile { [self _raiseNotSupported]; }
+-(void)seekToEndOfFile { [self _raiseNotSupported:_cmd]; }
 
--(void)seekToFileOffset:(off_t)offs { [self _raiseNotSupported]; }
+-(void)seekToFileOffset:(off_t)offs { [self _raiseNotSupported:_cmd]; }
 
 -(void)skipBytes:(off_t)bytes
 {

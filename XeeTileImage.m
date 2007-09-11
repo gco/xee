@@ -27,9 +27,9 @@ struct XeeTileImageProviderInfo
 
 @implementation XeeTileImage
 
--(id)init
+-(id)initWithParentImage:(XeeMultiImage *)parent
 {
-	if(self=[super init])
+	if(self=[super initWithParentImage:parent])
 	{
 		data=NULL;
 

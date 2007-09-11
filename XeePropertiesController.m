@@ -87,7 +87,7 @@
 -(void)frontImageDidChange:(NSNotification *)notification
 {
 	[dataarray release];
-	dataarray=[[[notification object] properties] retain];
+	dataarray=[[[notification object] fullProperties] retain];
 
 	[outlineview reloadData];
 	[self restoreCollapsedStatusForArray:dataarray];

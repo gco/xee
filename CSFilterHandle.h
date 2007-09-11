@@ -24,13 +24,13 @@
 
 @end
 
-#define CSFilterGet() __CSFilterGet(readatmost_ptr,parent)
+#define CSFilterGet() __CSFilterGet(readatmost_ptr,parent,coro)
 #define CSFilterPut(b) __CSFilterPut(b,&pos,&left,&ptr,coro)
 
-static uint8 inline __CSFilterGet(int (*readatmost_ptr)(id,SEL,int,void *),CSHandle *parent)
+static uint8 inline __CSFilterGet(int (*readatmost_ptr)(id,SEL,int,void *),CSHandle *parent,CSCoroutine *coro)
 {
 	uint8 b;
-	readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,&b);
+	if(readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,&b)!=1) [coro returnFrom];
 	return b;
 }
 

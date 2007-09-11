@@ -115,7 +115,7 @@
 
 -(void)pushBackByte:(int)byte
 {
-	if(multi) [self _raiseNotSupported];
+	if(multi) [self _raiseNotSupported:_cmd];
 	if(ungetc(byte,fh)==EOF) [self _raiseError];
 }
 

@@ -57,7 +57,9 @@
 -(NSData *)fileContents;
 -(NSData *)remainingFileContents;
 -(NSData *)readDataOfLength:(int)length;
+-(NSData *)readDataOfLengthAtMost:(int)length;
 -(NSData *)copyDataOfLength:(int)length;
+-(NSData *)copyDataOfLengthAtMost:(int)length;
 -(void)readBytes:(int)num toBuffer:(void *)buffer;
 
 -(CSHandle *)subHandleOfLength:(off_t)length;
@@ -91,8 +93,8 @@
 //-(void)_raiseClosed;
 -(void)_raiseMemory;
 -(void)_raiseEOF;
--(void)_raiseNotImplemented;
--(void)_raiseNotSupported;
+-(void)_raiseNotImplemented:(SEL)selector;
+-(void)_raiseNotSupported:(SEL)selector;
 
 -(NSString *)name;
 -(NSString *)description;

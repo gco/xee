@@ -19,6 +19,5 @@
 -(int)numberOfIndexedColours;
 -(int)indexOfTransparentColour;
 
--(NSArray *)propertyArray;
-
+-(NSArray *)propertyArrayWithPhotoshopFirst:(BOOL)psfirst;
 @end

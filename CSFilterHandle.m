@@ -1,7 +1,5 @@
 #import "CSFilterHandle.h"
 
-static void CSFilterCoro(CSFilterHandle *self) { [self runFilter]; }
-
 @implementation CSFilterHandle
 
 -(id)initWithHandle:(CSHandle *)handle

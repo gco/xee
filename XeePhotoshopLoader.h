@@ -14,15 +14,20 @@
 
 @interface XeePhotoshopImage:XeeMultiImage
 {
+	int bitdepth,mode,channels;
+
 	SEL loadersel;
 	int loaderframe;
 }
 
--(NSArray *)channelHandlesForHandle:(CSHandle *)handle bytesPerRow:(int)bpr rows:(int)rows channels:(int)numchannels;
+-(CSHandle *)handleForNumberOfChannels:(int)requiredchannels alpha:(BOOL)alpha;
 
 -(id)init;
 -(void)dealloc;
 -(SEL)initLoader;
+
+-(int)bitDepth;
+-(int)mode;
 
 @end
 

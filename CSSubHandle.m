@@ -43,7 +43,7 @@
 
 -(void)seekToFileOffset:(off_t)offs
 {
-	if(offs<0) [self _raiseNotSupported];
+	if(offs<0) [self _raiseNotSupported:_cmd];
 	if(offs>end) [self _raiseEOF];
 	[parent seekToFileOffset:offs+start];
 }

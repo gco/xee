@@ -205,7 +205,7 @@
 					break;
 
 					default:
-						/*[props addObject:[XeePropertyItem itemWithLabel:
+					/*	[props addObject:[XeePropertyItem itemWithLabel:
 						[NSString stringWithFormat:@"%x",chunkid]
 						value:[handle readDataOfLength:chunklen]]];
 //						value:[[[NSString alloc] initWithData:[handle readDataOfLength:chunklen] encoding:NSISOLatin1StringEncoding] autorelease]]];
@@ -236,17 +236,20 @@
 
 -(int)indexOfTransparentColour { return trans; }
 
--(NSArray *)propertyArray
+-(NSArray *)propertyArrayWithPhotoshopFirst:(BOOL)psfirst
 {
 	NSMutableArray *array=[NSMutableArray array];
+	XeePropertyItem *psitem=[XeePropertyItem itemWithLabel:
+	NSLocalizedString(@"Photoshop properties",@"Photoshop properties section title")
+	value:props identifier:@"photoshop"];
+
+	if(psfirst) [array addObject:psitem];
 
 	if(exifprops) [array addObjectsFromArray:exifprops];
 	if(xmpprops) [array addObjectsFromArray:xmpprops];
 	if(iptcprops) [array addObjectsFromArray:iptcprops];
 
-	[array addObject:[XeePropertyItem itemWithLabel:
-	NSLocalizedString(@"Photoshop properties",@"Photoshop properties section title")
-	value:props identifier:@"photoshop"]];
+	if(!psfirst) [array addObject:psitem];
 
 	return array;
 }

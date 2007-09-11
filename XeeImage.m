@@ -1,4 +1,5 @@
 #import "XeeImage.h"
+#import "XeeMultiImage.h"
 
 #import <pthread.h>
 
@@ -7,11 +8,16 @@
 
 -(id)init
 {
+	return [self initWithParentImage:nil];
+}
+
+-(id)initWithParentImage:(XeeMultiImage *)parent
+{
 	if(self=[super init])
 	{
 		ref=nil;
 		attrs=nil;
-		filehandle=nil;
+		handle=nil;
 
 		nextselector=NULL;
 		loaded=YES;
@@ -32,6 +38,15 @@
 		delegate=nil;
 
 		properties=[[NSMutableArray array] retain];
+
+		if(parent)
+		{
+			[self setDepth:[parent depth]];
+			[self setDepthIcon:[parent depthIcon]];
+			XeeTransformation correct=[parent correctOrientation];
+			if(correct) [self setCorrectOrientation:correct];
+			[parent addSubImage:self];
+		}
 	}
 
 	return self;
@@ -43,7 +58,7 @@
 
 	[ref release];
 	[attrs release];
-	[filehandle release];
+	[handle release];
 
 	[format release];
 	[depth release];
@@ -64,16 +79,12 @@
 
 
 
--(BOOL)startLoaderForFile:(NSString *)name attributes:(NSDictionary *)attributes
+-(BOOL)startLoaderForHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
 {
-	return [self startLoaderForRef:[XeeFSRef refForPath:name] attributes:attributes];
-}
-
--(BOOL)startLoaderForRef:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
-{
+	handle=[fh retain];
 	ref=[fsref retain];
 	attrs=[attributes retain];
-	icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
+	icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain]; // needs fixing!
 	[icon setSize:NSMakeSize(16,16)];
 
 	nextselector=@selector(initLoader);
@@ -134,9 +145,52 @@
 -(void)endLoader
 {
 	[self deallocLoader];
-	[filehandle release];
-	filehandle=nil;
+	[handle release];
+	handle=nil;
 }
+
+
+
+-(BOOL)startLoaderForRef2:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
+{ 
+	ref=[fsref retain];
+	attrs=[attributes retain];
+	icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
+	[icon setSize:NSMakeSize(16,16)];
+
+	stop=NO;
+	loaded=NO;
+
+	coro=[self newCoroutine];
+
+	@try { [(id)coro load2]; }
+	@catch(id e)
+	{
+		NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
+	}
+
+	if(!nextselector) [self endLoader];
+
+	return nextselector!=NULL;
+}
+
+-(void)runLoader2
+{
+	stop=NO;
+	@try { [coro switchTo]; }
+	@catch(id e)
+	{
+		NSLog(@"Exception during loading of \"%@\": %@",[self filename],e);
+	}
+
+	if(!nextselector)
+	{
+		[self endLoader];
+		[self triggerChangeAction];
+	}
+}
+
+-(void)load2 {}
 
 
 
@@ -150,14 +204,13 @@
 
 -(BOOL)hasBeenStopped { return stop; }
 
+-(CSHandle *)handle { return handle; }
+
 -(CSFileHandle *)fileHandle
 {
-	if(!filehandle)
-	{
-		filehandle=[[CSFileHandle fileHandleForReadingAtPath:[self filename]] retain];
-		if(!filehandle) [NSException raise:@"XeeCouldNotOpenFileException" format:@"Failed to open file \"%@\".",[self filename]];
-	}
-	return filehandle;
+	if([handle isKindOfClass:[CSFileHandle class]]) return (CSFileHandle *)handle;
+	else [NSException raise:@"XeeHandleNotAFileHandleException" format:@"The image class %@ can only load image from files.",[self class]];
+	return nil;
 }
 
 
@@ -315,7 +368,9 @@
 		[self transformationMatrix]);
 }
 
--(NSArray *)properties
+-(NSArray *)properties { return properties; }
+
+-(NSArray *)fullProperties
 {
 	NSMutableArray *proparray=[NSMutableArray array];
 
@@ -355,9 +410,9 @@
 		nil]];
 	}
 
-	NSString *filename=[self filename];
-	if(filename&&attrs)
+	if(ref&&attrs)
 	{
+		NSString *filename=[self filename];
 		XeePropertyItem *item;
 
 		[proparray addObject:item=[XeePropertyItem subSectionItemWithLabel:
@@ -407,7 +462,7 @@
 		}
 	}
 
-	[proparray addObjectsFromArray:properties];
+	[proparray addObjectsFromArray:[self properties]];
 
 	return proparray;
 }
@@ -439,6 +494,8 @@
 -(void)setFormat:(NSString *)fmt { [format autorelease]; format=[fmt retain]; }
 
 -(void)setBackgroundColor:(NSColor *)col { [back autorelease]; back=[col retain]; }
+
+-(void)setProperties:(NSArray *)newproperties { [properties removeAllObjects]; [properties addObjectsFromArray:newproperties]; }
 
 -(void)setOrientation:(XeeTransformation)transformation
 {
@@ -610,13 +667,13 @@ NSMutableArray *imageclasses=nil;
 	NSDictionary *attrs=[[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
 	if(!attrs) return nil;
 
-	NSFileHandle *file=[NSFileHandle fileHandleForReadingAtPath:filename];
-	if(!file) return nil;
+	CSFileHandle *fh=[CSFileHandle fileHandleForReadingAtPath:filename];
+	if(!fh) return nil;
 
-	NSData *block=[file readDataOfLength:512];
+	NSData *block=[fh readDataOfLengthAtMost:512];
 	if(!block) return nil;
 
-	[file closeFile];
+	[fh seekToFileOffset:0];
 
 	NSEnumerator *enumerator=[imageclasses objectEnumerator];
 	Class class;
@@ -627,7 +684,7 @@ NSMutableArray *imageclasses=nil;
 			XeeImage *image=[[class alloc] init];
 			if(image)
 			{
-				if([image startLoaderForRef:ref attributes:attrs])
+				if([image startLoaderForHandle:fh ref:ref attributes:attrs])
 				{
 					return [image autorelease];
 				}

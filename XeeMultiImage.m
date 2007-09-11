@@ -4,9 +4,9 @@
 
 @implementation XeeMultiImage
 
--(id)init
+-(id)initWithParentImage:(XeeMultiImage *)parent
 {
-	if(self=[super init])
+	if(self=[super initWithParentImage:parent])
 	{
 		currindex=0;
 		subimages=[[NSMutableArray array] retain];
@@ -197,6 +197,20 @@
 	XeeImage *curr=[self currentSubImage];
 	if(curr) return [curr orientation];
 	else return [super orientation];
+}
+
+-(NSArray *)properties
+{
+	XeeImage *curr=[self currentSubImage];
+	NSArray *subproperties=[curr properties];
+
+	if(subproperties)
+	{
+		NSMutableArray *array=[NSMutableArray arrayWithArray:subproperties];
+		[array addObjectsFromArray:[super properties]];
+		return array;
+	}
+	else return [super properties];
 }
 
 -(void)setOrientation:(XeeTransformation)trans

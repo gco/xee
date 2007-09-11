@@ -75,7 +75,7 @@
 +(NSArray *)itemsWithLabel:(NSString *)itemlabel textValue:(NSString *)text
 {
 	NSMutableArray *array=[NSMutableArray arrayWithArray:[text componentsSeparatedByString:@"\n"]];
-	while([[array lastObject] length]==0) [array removeLastObject];
+	while([array lastObject]&&[[array lastObject] length]==0) [array removeLastObject];
 	return [self itemsWithLabel:itemlabel valueArray:array];
 }
 

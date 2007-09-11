@@ -2,6 +2,7 @@
 
 #import "XeeTypes.h"
 #import "CSFileHandle.h"
+#import "CSCoroutine.h"
 #import "XeeFSRef.h"
 #import "XeeProperties.h"
 
@@ -17,15 +18,19 @@
 
 //#define Xee
 
+@class XeeMultiImage;
+
 @interface XeeImage:NSObject
 {
 	XeeFSRef *ref;
 	NSDictionary *attrs;
-	CSFileHandle *filehandle;
+	CSHandle *handle;
 
 	SEL nextselector;
 	BOOL loaded;
 	BOOL thumbonly,stop;
+
+	CSCoroutine *coro;
 
 	NSString *format;
 	int width,height;
@@ -41,22 +46,27 @@
 }
 
 -(id)init;
+-(id)initWithParentImage:(XeeMultiImage *)parent;
 -(void)dealloc;
 
 -(SEL)initLoader;
 -(void)deallocLoader;
 
--(BOOL)startLoaderForFile:(NSString *)name attributes:(NSDictionary *)attributes;
--(BOOL)startLoaderForRef:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
+-(BOOL)startLoaderForHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
 -(void)runLoader;
 -(void)runLoaderForThumbnail;
 -(void)endLoader;
+
+-(BOOL)startLoaderForRef2:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
+-(void)runLoader2;
+-(void)load2;
 
 -(BOOL)loaded;
 -(BOOL)failed;
 -(BOOL)needsLoading;
 -(void)stopLoading;
 -(BOOL)hasBeenStopped;
+-(CSHandle *)handle;
 -(CSFileHandle *)fileHandle;
 
 -(int)frames;
@@ -107,6 +117,7 @@
 -(XeeMatrix)transformationMatrixInRect:(NSRect)rect;
 
 -(NSArray *)properties;
+-(NSArray *)fullProperties;
 
 -(int)fileSize;
 -(NSString *)descriptiveFileSize;
@@ -115,6 +126,7 @@
 //-(void)setFilename:(NSString *)name;
 -(void)setFormat:(NSString *)fmt;
 -(void)setBackgroundColor:(NSColor *)col;
+-(void)setProperties:(NSArray *)newproperties;
 
 -(void)setOrientation:(XeeTransformation)transformation;
 -(void)setCorrectOrientation:(XeeTransformation)transformation;
@@ -147,6 +159,11 @@
 +(NSArray *)fileTypes;
 
 @end
+
+#define XeeImageLoaderYield() { if(stop) [coro returnFrom]; }
+#define XeeImageLoaderHeaderDone() { [coro returnFrom]; }
+#define XeeImageLoaderDone(success) { loaded=success; [coro returnFrom]; }
+
 
 
 

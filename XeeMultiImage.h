@@ -8,7 +8,7 @@
 	int currindex;
 }
 
--(id)init;
+-(id)initWithParentImage:(XeeMultiImage *)parent;
 -(void)dealloc;
 
 -(void)addSubImage:(XeeImage *)subimage;
@@ -42,6 +42,8 @@
 -(NSColor *)backgroundColor;
 -(NSRect)croppingRect;
 -(XeeTransformation)orientation;
+
+-(NSArray *)properties;
 
 -(void)setOrientation:(XeeTransformation)trans;
 -(void)setCroppingRect:(NSRect)rect;
