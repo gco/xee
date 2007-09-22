@@ -65,7 +65,8 @@
 {
 	off_t curr=[parent offsetInFile];
 	if(curr+num>end) num=end-curr;
-	return [parent readAtMost:num toBuffer:buffer];
+	if(num<=0) return 0;
+	else return [parent readAtMost:num toBuffer:buffer];
 }
 
 @end

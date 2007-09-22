@@ -11,7 +11,7 @@
 
 -(int)losslessSaveFlags
 {
-	if(currindex!=0) return 0;
+	if(currindex!=0) return [super losslessSaveFlags];
 
 	int flags=XeeCanSaveLosslesslyFlag;
 
@@ -43,9 +43,13 @@
 	return flags;
 }
 
+-(NSString *)losslessFormat { return @"JPEG"; }
+
+-(NSString *)losslessExtension { return @"jpg"; }
+
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags
 {
-	if(currindex!=0) return 0;
+	if(currindex!=0) return [super losslessSaveTo:path flags:flags];
 
 	BOOL res=NO;
 
@@ -129,6 +133,7 @@
 	struct jpeg_decompress_struct src={0};
 	struct jpeg_compress_struct dest={0};
 	struct jpeg_error_mgr srcerr,desterr;
+	struct XeeJPEGSource srcsrc;
 	jvirt_barray_ptr *src_coef_arrays;
 	jvirt_barray_ptr *dest_coef_arrays;
 	FILE *fh=NULL;
@@ -141,13 +146,11 @@
 		jpeg_create_decompress(&src);
 		jpeg_create_compress(&dest);
 
-		fh=fopen([[self filename] fileSystemRepresentation],"rb");
-		if(!fh) @throw @"Couldn't open source file";
+		[[self handle] seekToFileOffset:0];
+		src.src=XeeJPEGSourceManager(&srcsrc,[self handle]);
 
-		jpeg_stdio_src(&src,fh);
-
-		jpeg_save_markers(&src,JPEG_COM,0xFFFF);
-		for(int i=0;i<16;i++) jpeg_save_markers(&src,JPEG_APP0+i,0xFFFF);
+		jpeg_save_markers(&src,JPEG_COM,0xffff);
+		for(int i=0;i<16;i++) jpeg_save_markers(&src,JPEG_APP0+i,0xffff);
 
 		jpeg_read_header(&src,TRUE);
 
@@ -165,8 +168,7 @@
 		// also find out which set of coefficient arrays will hold the output.
 		dest_coef_arrays=jtransform_adjust_parameters(&src,&dest,src_coef_arrays,&xform);
 
-		// Close input file and open output file.
-		fclose(fh);
+		// /*Close input file and*/ open output file.
 		fh=fopen([path fileSystemRepresentation],"wb");
 		if(!fh) @throw @"Couldn't open destination file";
 		jpeg_stdio_dest(&dest,fh);

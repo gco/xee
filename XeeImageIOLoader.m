@@ -4,6 +4,11 @@
 
 @implementation XeeImageIOImage
 
+static size_t XeeImageIOGetBytes(void *info, void *buffer, size_t count) { return [(CSHandle *)info readAtMost:count toBuffer:buffer]; }
+static void XeeImageIOSkipBytes(void *info, size_t count) { [(CSHandle *)info skipBytes:count]; }
+static void XeeImageIORewind(void *info) { [(CSHandle *)info seekToFileOffset:0]; }
+static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
+
 +(NSArray *)fileTypes
 {
 	return [NSBitmapImageRep imageFileTypes];
@@ -11,6 +16,7 @@
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
 {
+return NO;
 	return floor(NSAppKitVersionNumber)>NSAppKitVersionNumber10_3;
 }
 
@@ -18,27 +24,31 @@
 {
 	source=NULL;
 
-	NSString *type=(NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-	(CFStringRef)[[self filename] pathExtension],CFSTR("public.data"));
-
-	NSDictionary *options=[NSDictionary dictionaryWithObjectsAndKeys:
+	NSMutableDictionary *options=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:YES],kCGImageSourceShouldAllowFloat,
-		type,kCGImageSourceTypeIdentifierHint,
 	nil];
 
-	[type release];
+	if(ref)
+	{
+		NSString *type=[(NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
+		(CFStringRef)[[self filename] pathExtension],CFSTR("public.data")) autorelease];
+		//if([type isEqual:(NSString *)kUTTypePICT]) return NULL;
+		[options setObject:type forKey:(NSString *)kCGImageSourceTypeIdentifierHint];
+	}
 
-	CGDataProviderRef provider=CGDataProviderCreateWithURL((CFURLRef)[NSURL fileURLWithPath:[self filename]]);
+
+//	CGDataProviderRef provider=CGDataProviderCreateWithURL((CFURLRef)[NSURL fileURLWithPath:[self filename]]);
+	CGDataProviderCallbacks callbacks=
+	{ XeeImageIOGetBytes,XeeImageIOSkipBytes,XeeImageIORewind,XeeImageIOReleaseInfo };
+	CGDataProviderRef provider=CGDataProviderCreate([[self handle] retain],&callbacks);
 	if(!provider) return NULL;
 
 	source=CGImageSourceCreateWithDataProvider(provider,(CFDictionaryRef)options);
 	CGDataProviderRelease(provider);
 	if(!source) return NULL;
 
-	// discard PSDs, as the ImageIO PSD loader sucks
-	if([(id)CGImageSourceGetType(source) isEqual:@"com.adobe.photoshop-image"]) return NULL;
-
 	NSDictionary *cgproperties=[(id)CGImageSourceCopyPropertiesAtIndex(source,0,(CFDictionaryRef)options) autorelease];
+	if(!cgproperties) return NULL;
 
 	width=[[cgproperties objectForKey:(NSString *)kCGImagePropertyPixelWidth] intValue];
 	height=[[cgproperties objectForKey:(NSString *)kCGImagePropertyPixelHeight] intValue];

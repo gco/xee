@@ -22,7 +22,7 @@ int XeeNumberOfZoomLevels=21;
 
 		if(cgimage)
 		{
-			[[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObjects:NSTIFFPboardType,NSPICTPboardType,nil] owner:self];
+			[[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObjects:NSTIFFPboardType/*,NSPICTPboardType*/,nil] owner:self];
 
 			copiedcgimage=cgimage;
 			[self retain];
@@ -37,10 +37,10 @@ int XeeNumberOfZoomLevels=21;
 	if(!copiedcgimage) return;
 
 	CFStringRef uttype;
-	if([type isEqual:NSTIFFPboardType]) uttype=kUTTypeTIFF;
-	else uttype=kUTTypePICT;
-NSLog(@"provide: %@",type);
-
+//	if([type isEqual:NSTIFFPboardType]) uttype=kUTTypeTIFF;
+//	else uttype=kUTTypePICT;
+//NSLog(@"provide: %@",type);
+uttype=kUTTypeTIFF;
 	NSMutableData *data=[NSMutableData data];
 
 	CGImageDestinationRef dest=CGImageDestinationCreateWithData((CFMutableDataRef)data,uttype,1,NULL);

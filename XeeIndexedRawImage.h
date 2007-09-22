@@ -6,18 +6,16 @@
 {
 	XeePalette *pal;
 	uint8 *buffer;
-	int inbpr,row;
+	int inbpr;
 }
 
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
-palette:(XeePalette *)palette parentImage:(XeeMultiImage *)parent;
+palette:(XeePalette *)palette;
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
-palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow parentImage:(XeeMultiImage *)parent;
+palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow;
 -(void)dealloc;
 
--(SEL)initLoader;
--(void)deallocLoader;
--(SEL)load;
+-(void)load;
 
 @end
 
@@ -27,6 +25,8 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow parentImage:(Xee
 	int numcolours;
 	BOOL istrans;
 }
+
++(XeePalette *)palette;
 
 -(int)numberOfColours;
 -(uint32)colourAtIndex:(int)index;

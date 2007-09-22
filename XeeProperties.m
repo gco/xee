@@ -65,7 +65,7 @@
 
 	id value;
 	int pos=1;
-	while(value=va_arg(va,id)) [self itemWithLabel:@"" value:value heading:heading position:pos++];
+	while(value=va_arg(va,id)) [items addObject:[self itemWithLabel:@"" value:value heading:heading position:pos++]];
 
 	va_end(va);
 

@@ -32,8 +32,8 @@
 		@try
 		{
 			if(xmldocument)
-			{NSData *data;
-				NSXMLDocument *doc=[[xmldocument alloc] initWithData:data=[handle remainingFileContents] options:0 error:NULL];
+			{
+				NSXMLDocument *doc=[[[xmldocument alloc] initWithData:[handle remainingFileContents] options:0 error:NULL] autorelease];
 
 				if(doc)
 				{

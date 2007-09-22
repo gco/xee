@@ -28,19 +28,16 @@ static inline uint16 clamp16(int a) { if(a<0) return 0; else if(a>65535) return 
 
 -(id)initWithHandle:(CSHandle *)inhandle width:(int)framewidth height:(int)frameheight
 depth:(int)framedepth colourSpace:(int)space flags:(int)flags
-parentImage:(XeeMultiImage *)parent
 {
 	return [self initWithHandle:inhandle width:framewidth height:frameheight depth:framedepth
-	colourSpace:space flags:flags bytesPerRow:0 parentImage:parent];
+	colourSpace:space flags:flags bytesPerRow:0];
 }
 
 -(id)initWithHandle:(CSHandle *)inhandle width:(int)framewidth height:(int)frameheight
 depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)bytesperinputrow
-parentImage:(XeeMultiImage *)parent
 {
-	if(self=[super initWithParentImage:parent])
+	if(self=[super initWithHandle:inhandle])
 	{
-		handle=[inhandle retain];
 		width=framewidth;
 		height=frameheight;
 		bitdepth=framedepth;
@@ -49,9 +46,10 @@ parentImage:(XeeMultiImage *)parent
 		BOOL alphafirst=flags&XeeAlphaFirstRawFlag;
 		BOOL alphalast=flags&XeeAlphaLastRawFlag;
 		BOOL hasalpha=alphafirst||alphalast;
+		BOOL skipalpha=hasalpha&&(flags&XeeSkipAlphaRawFlag);
 		BOOL premult=hasalpha&&(flags&XeeAlphaPremultipliedRawFlag);
+		BOOL precomp=hasalpha&&(flags&XeeAlphaPrecomposedRawFlag);
 		BOOL isfloat=flags&XeeFloatingPointRawFlag;
-
 
 		transformation=uncomposition=0;
 		buffer=NULL;
@@ -63,7 +61,7 @@ parentImage:(XeeMultiImage *)parent
 		flipendian=(flags&XeeBigEndianRawFlag)?YES:NO;
 		#endif
 
-		if(hasalpha&&(flags&XeeAlphaPrecomposedRawFlag))
+		if(precomp)
 		{
 			if(bitdepth==8)
 			{
@@ -84,22 +82,28 @@ parentImage:(XeeMultiImage *)parent
 			}
 		}
 
+		int modealphafirst,modealphalast;
+		if(!hasalpha) { modealphafirst=XeeAlphaNone; modealphalast=XeeAlphaNone; }
+		else if(skipalpha) { modealphafirst=XeeAlphaNoneSkipFirst; modealphalast=XeeAlphaNoneSkipLast; }
+		else if(premult) { modealphafirst=XeeAlphaPremultipliedFirst; modealphalast=XeeAlphaPremultipliedLast; }
+		else { modealphafirst=XeeAlphaFirst; modealphalast=XeeAlphaLast; }
+
 		switch(space)
 		{
 			case XeeGreyRawColourSpace:
 				if(bitdepth==8)
 				{
-					type=XeeBitmapType(XeeGreyBitmap,8,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeGreyBitmap,8,modealphalast,0);
 					if(alphafirst) transformation=XeeRawFlipGreyAlpha8;
 				}
 				else if(bitdepth==16)
 				{
-					type=XeeBitmapType(XeeGreyBitmap,16,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeGreyBitmap,16,modealphalast,0);
 					if(alphafirst) transformation=XeeRawFlipGreyAlpha16;
 				}
 				else if(bitdepth==32)
 				{
-					type=XeeBitmapType(XeeGreyBitmap,32,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,isfloat?XeeBitmapFloatingPointFlag:0);
+					type=XeeBitmapType(XeeGreyBitmap,32,modealphalast,isfloat?XeeBitmapFloatingPointFlag:0);
 					if(alphafirst) transformation=XeeRawFlipGreyAlpha32;
 				}
 				channels=1;
@@ -108,17 +112,17 @@ parentImage:(XeeMultiImage *)parent
 			case XeeRGBRawColourSpace:
 				if(bitdepth==8)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,8,hasalpha?(premult?XeeAlphaPremultipliedFirst:XeeAlphaFirst):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeRGBBitmap,8,modealphafirst,0);
 					if(alphalast) transformation=XeeRawReverseFlipRGBAlpha8;
 				}
 				else if(bitdepth==16)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,16,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeRGBBitmap,16,modealphalast,0);
 					if(alphafirst) transformation=XeeRawFlipRGBAlpha16;
 				}
 				else if(bitdepth==32)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,32,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,isfloat?XeeBitmapFloatingPointFlag:0);
+					type=XeeBitmapType(XeeRGBBitmap,32,modealphalast,isfloat?XeeBitmapFloatingPointFlag:0);
 					if(alphafirst) transformation=XeeRawFlipRGBAlpha32;
 				}
 				channels=3;
@@ -127,14 +131,14 @@ parentImage:(XeeMultiImage *)parent
 			case XeeCMYKRawColourSpace:
 				if(bitdepth==8&&!alphafirst)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,8,hasalpha?(premult?XeeAlphaPremultipliedFirst:XeeAlphaFirst):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeRGBBitmap,8,modealphafirst,0);
 					if(hasalpha) transformation=XeeRawCMYKAConversion8;
 					else transformation=XeeRawCMYKConversion8;
 					needsbuffer=YES;
 				}
 				else if(bitdepth==16&&!alphafirst)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,16,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeRGBBitmap,16,modealphalast,0);
 					if(hasalpha) transformation=XeeRawCMYKAConversion16;
 					else transformation=XeeRawCMYKConversion16;
 					needsbuffer=YES;
@@ -145,12 +149,12 @@ parentImage:(XeeMultiImage *)parent
 			case XeeLabRawColourSpace:
 				if(bitdepth==8&&!alphafirst)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,8,hasalpha?(premult?XeeAlphaPremultipliedFirst:XeeAlphaFirst):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeRGBBitmap,8,modealphafirst,0);
 					transformation=XeeRawLabConversion8;
 				}
 				else if(bitdepth==16&&!alphafirst)
 				{
-					type=XeeBitmapType(XeeRGBBitmap,16,hasalpha?(premult?XeeAlphaPremultipliedLast:XeeAlphaLast):XeeAlphaNone,0);
+					type=XeeBitmapType(XeeRGBBitmap,16,modealphalast,0);
 					transformation=XeeRawLabConversion16;
 				}
 				channels=3;
@@ -175,35 +179,22 @@ parentImage:(XeeMultiImage *)parent
 	[super dealloc];
 }
 
--(SEL)initLoader
+-(void)load
 {
-	if(!handle) return NULL;
+	if(!handle) XeeImageLoaderDone(NO);
+	XeeImageLoaderHeaderDone();
 
-	if(![self allocWithType:type width:width height:height]) return NULL;
+	if(![self allocWithType:type width:width height:height]) XeeImageLoaderDone(NO);
+
+	int bytesperinputrow=(bitdepth/8)*width*channels;
 
 	if(needsbuffer)
 	{
-		buffer=malloc((bitdepth/8)*width*channels);
-		if(!buffer) return NULL;
+		buffer=malloc(bytesperinputrow);
+		if(!buffer) XeeImageLoaderDone(NO);
 	}
 
-	row=0;
-	return @selector(load);
-}
-
--(void)deallocLoader
-{
-	[handle release];
-	handle=nil;
-	free(buffer);
-	buffer=NULL;
-}
-
--(SEL)load
-{
-	int bytesperinputrow=(bitdepth/8)*width*channels;
-
-	while(!stop)
+	for(int row=0;row<height;row++)
 	{
 		uint8 *datarow;
 		if(buffer) datarow=buffer;
@@ -453,15 +444,14 @@ parentImage:(XeeMultiImage *)parent
 			break;
 		}
 
-		row++;
-		[self setCompletedRowCount:row];
-		if(row>=height)
-		{
-			loaded=YES;
-			return NULL;
-		}
+		[self setCompletedRowCount:row+1];
+		XeeImageLoaderYield();
 	}
-	return @selector(load);
+
+	free(buffer);
+	buffer=NULL;
+
+	XeeImageLoaderDone(YES);
 }
 
 @end

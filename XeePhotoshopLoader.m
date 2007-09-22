@@ -56,7 +56,7 @@
 	XeePalette *pal=nil;
 	if(mode==XeePhotoshopIndexedMode&&colourlen>=768)
 	{
-		pal=[[[XeePalette alloc] init] autorelease];
+		pal=[XeePalette palette];
 		uint8 palbuf[768];
 		[fh readBytes:768 toBuffer:palbuf];
 		for(int i=0;i<256;i++)
@@ -255,50 +255,53 @@
 		{
 			case XeePhotoshopBitmapMode:
 				mainimage=[[[XeeBitmapRawImage alloc] initWithHandle:[self handleForNumberOfChannels:1 alpha:NO]
-				width:width height:height parentImage:self] autorelease];
+				width:width height:height] autorelease];
 			break;
 
 			case XeePhotoshopIndexedMode:
 				mainimage=[[[XeeIndexedRawImage alloc] initWithHandle:[self handleForNumberOfChannels:1 alpha:NO]
-				width:width height:height palette:pal parentImage:self] autorelease];
+				width:width height:height palette:pal] autorelease];
 			break;
 
 			case XeePhotoshopGreyscaleMode:
 			case XeePhotoshopDuotoneMode:
 				mainimage=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:1 alpha:hasalpha]
 				width:width height:height depth:bitdepth colourSpace:XeeGreyRawColourSpace
-				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(bitdepth==32?XeeFloatingPointRawFlag:0)
-				parentImage:self] autorelease];
+				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(bitdepth==32?XeeFloatingPointRawFlag:0)]
+				autorelease];
 			break;
 
 			case XeePhotoshopRGBMode:
 				mainimage=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:3 alpha:hasalpha]
 				width:width height:height depth:bitdepth colourSpace:XeeRGBRawColourSpace
-				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(bitdepth==32?XeeFloatingPointRawFlag:0)
-				parentImage:self] autorelease];
+				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(bitdepth==32?XeeFloatingPointRawFlag:0)]
+				autorelease];
 			break;
 
 			case XeePhotoshopCMYKMode:
 				mainimage=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:4 alpha:hasalpha]
 				width:width height:height depth:bitdepth colourSpace:XeeCMYKRawColourSpace
-				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)
-				parentImage:self] autorelease];
+				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)]
+				autorelease];
 			break;
 
 			case XeePhotoshopLabMode:
 				mainimage=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:3 alpha:hasalpha]
 				width:width height:height depth:bitdepth colourSpace:XeeLabRawColourSpace
-				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)
-				parentImage:self] autorelease];
+				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)]
+				autorelease];
 			break;
 		}
+
+		[self addSubImage:mainimage];
 	}
 
 	NSEnumerator *enumerator=[layers objectEnumerator];
 	XeePhotoshopLayerParser *layer;
 	while(layer=[enumerator nextObject])
 	{
-		/*XeeImage *image=*/[layer image];
+		XeeImage *image=[layer image];
+		[self addSubImage:image];
 	}
 
 	[self setFormat:@"PSD"];
@@ -306,15 +309,23 @@
 	loadersel=NULL;
 	loaderframe=-1;
 
-	return @selector(load);
+	return @selector(loadImage);
 }
 
 -(void)deallocLoader
 {
 }
 
--(SEL)load
+-(SEL)loadImage
 {
+	int count=[subimages count];
+	for(int i=0;i<count;i++)
+	{
+		[self runLoaderOnSubImage:[subimages objectAtIndex:i]];
+	}
+	loaded=YES;
+	return NULL;
+/*
 	if(!loadersel)
 	{
 		if(loaderframe>=0) [[subimages objectAtIndex:loaderframe] deallocLoader];
@@ -327,7 +338,7 @@
 		loadersel=@selector(initLoader);
 	}
 	loadersel=(SEL)[[subimages objectAtIndex:loaderframe] performSelector:loadersel];
-	return @selector(load);
+	return @selector(loadImage);*/
 }
 
 -(CSHandle *)handleForNumberOfChannels:(int)requiredchannels alpha:(BOOL)alpha;

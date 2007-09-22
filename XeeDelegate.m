@@ -15,7 +15,6 @@
 #import "XeeImageIOLoader.h"
 #import "XeeQuicktimeLoader.h"
 #import "XeeJPEGLoader.h"
-#import "XeeBrokenJPEGLoader.h"
 #import "XeePNGLoader.h"
 #import "XeeGIFLoader.h"
 #import "XeePhotoshopLoader.h"
@@ -23,6 +22,7 @@
 #import "XeePCXLoader.h"
 #import "XeeMayaLoader.h"
 #import "XeePDFBitmapLoader.h"
+#import "XeeSWFLoader.h"
 //#import "XeeFlashBitmapLoader.h"
 //#import "XeeDreamcastLoader.h"
 
@@ -69,9 +69,9 @@ XeeDelegate *maindelegate=nil;
 	[XeeImage registerImageClass:[XeeILBMImage class]];
 	[XeeImage registerImageClass:[XeePCXImage class]];
 	[XeeImage registerImageClass:[XeeMayaImage class]];
+	[XeeImage registerImageClass:[XeeSWFImage class]];
 //	[XeeImage registerImageClass:[XeePDFBitmapImage class]];
 //	[XeeImage registerImageClass:[XeeDreamcastImage class]];
-	[XeeImage registerImageClass:[XeeBrokenJPEGImage class]];
 	[XeeImage registerImageClass:[XeeImageIOImage class]];
 	[XeeImage registerImageClass:[XeeQuicktimeImage class]];
 

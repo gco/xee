@@ -411,7 +411,7 @@
 	switch(mode)
 	{
 		case XeePhotoshopBitmapMode:
-			image=[[[XeeBitmapRawImage alloc] initWithHandle:[self handleForChannel:0] width:width height:height parentImage:parent] autorelease];
+			image=[[[XeeBitmapRawImage alloc] initWithHandle:[self handleForChannel:0] width:width height:height] autorelease];
 			[image setDepthBitmap];
 		break;
 
@@ -421,8 +421,8 @@
 		case XeePhotoshopDuotoneMode:
 			image=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:1]
 			width:width height:height depth:depth colourSpace:XeeGreyRawColourSpace
-			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(depth==32?XeeFloatingPointRawFlag:0)
-			parentImage:parent] autorelease];
+			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(depth==32?XeeFloatingPointRawFlag:0)]
+			autorelease];
 
 			if(mode==XeePhotoshopGreyscaleMode) [image setDepthGrey:depth alpha:hasalpha floating:depth==32?YES:NO];
 			else [image setDepth:[NSString stringWithFormat:NSLocalizedString(@"%d bits duotone",@"Description for duotone (Photoshop) images"),depth]
@@ -432,8 +432,8 @@
 		case XeePhotoshopRGBMode:
 			image=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:3]
 			width:width height:height depth:depth colourSpace:XeeRGBRawColourSpace
-			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(depth==32?XeeFloatingPointRawFlag:0)
-			parentImage:parent] autorelease];
+			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)|(depth==32?XeeFloatingPointRawFlag:0)]
+			autorelease];
 
 			[image setDepthRGB:depth alpha:hasalpha floating:depth==32?YES:NO];
  		break;
@@ -441,8 +441,8 @@
 		case XeePhotoshopCMYKMode:
 			image=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:4]
 			width:width height:height depth:depth colourSpace:XeeCMYKRawColourSpace
-			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)
-			parentImage:parent] autorelease];
+			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)]
+			autorelease];
 
 			[image setDepthCMYK:depth alpha:hasalpha];
  		break;
@@ -450,8 +450,8 @@
 		case XeePhotoshopLabMode:
 			image=[[[XeeRawImage alloc] initWithHandle:[self handleForNumberOfChannels:3]
 			width:width height:height depth:depth colourSpace:XeeLabRawColourSpace
-			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)
-			parentImage:parent] autorelease];
+			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)]
+			autorelease];
 
 			[image setDepthLab:depth alpha:hasalpha];
  		break;

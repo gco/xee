@@ -231,6 +231,33 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 	}
 }
 
+/*#import "FinderCompare.h"
+
+@implementation NSString (FinderCompare)
+
+- (NSComparisonResult)finderCompare:(NSString *)aString
+{
+	SInt32 compareResult;
+	
+	CFIndex lhsLen = [self length];;
+    CFIndex rhsLen = [aString length];
+	
+	UniChar *lhsBuf = malloc(lhsLen * sizeof(UniChar));
+	UniChar *rhsBuf = malloc(rhsLen * sizeof(UniChar));
+	
+	[self getCharacters:lhsBuf];
+	[aString getCharacters:rhsBuf];
+	
+	(void) UCCompareTextDefault(kUCCollateComposeInsensitiveMask | kUCCollateWidthInsensitiveMask | kUCCollateCaseInsensitiveMask | kUCCollateDigitsOverrideMask | kUCCollateDigitsAsNumberMask| kUCCollatePunctuationSignificantMask,lhsBuf,lhsLen,rhsBuf,rhsLen,NULL,&compareResult);
+	
+	free(lhsBuf);
+	free(rhsBuf);
+	
+	return (CFComparisonResult) compareResult;
+}
+
+@end*/
+
 
 
 -(void)lockList

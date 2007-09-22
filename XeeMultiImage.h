@@ -6,9 +6,10 @@
 {
 	NSMutableArray *subimages;
 	int currindex;
+	XeeImage *currloading;
 }
 
--(id)initWithParentImage:(XeeMultiImage *)parent;
+-(id)init;
 -(void)dealloc;
 
 -(void)addSubImage:(XeeImage *)subimage;
@@ -21,6 +22,13 @@
 
 -(XeeImage *)currentSubImage;
 
+/*-(BOOL)loaded;
+-(BOOL)failed;
+-(BOOL)needsLoading;*/
+-(void)stopLoading;
+
+-(void)runLoaderOnSubImage:(XeeImage *)image;
+
 -(int)frames;
 -(void)setFrame:(int)frame;
 -(int)frame;
@@ -30,6 +38,8 @@
 
 -(CGImageRef)createCGImage;
 -(int)losslessSaveFlags;
+-(NSString *)losslessFormat;
+-(NSString *)losslessExtension;
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags;
 
 -(int)width;

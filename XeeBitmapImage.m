@@ -6,9 +6,9 @@ static void XeeBitmapImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest);
 
 @implementation XeeBitmapImage
 
--(id)initWithParentImage:(XeeMultiImage *)parent
+-(id)init
 {
-	if(self=[super initWithParentImage:parent])
+	if(self=[super init])
 	{
 		bitsperpixel=bitspercomponent=0;
 		colourmode=alphatype=modeflags=0;
@@ -18,12 +18,7 @@ static void XeeBitmapImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest);
 
 -(id)initWithType:(int)pixelgltype width:(int)framewidth height:(int)frameheight
 {
-	return [self initWithType:pixelgltype width:framewidth height:frameheight parentImage:nil];
-}
-
--(id)initWithType:(int)pixelgltype width:(int)framewidth height:(int)frameheight parentImage:(XeeMultiImage *)parent
-{
-	if(self=[super initWithParentImage:parent])
+	if(self=[super init])
 	{
 		bitsperpixel=bitspercomponent=0;
 		colourmode=alphatype=modeflags=0;

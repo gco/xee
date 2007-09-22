@@ -11,12 +11,7 @@ static void XeeBuildYUVConversionTables();
 
 -(id)initWithWidth:(int)pixelwidth height:(int)pixelheight
 {
-	return [self initWithWidth:pixelwidth height:pixelheight parentImage:nil];
-}
-
--(id)initWithWidth:(int)pixelwidth height:(int)pixelheight parentImage:(XeeMultiImage *)parent
-{
-	if(self=[super initWithParentImage:parent])
+	if(self=[super init])
 	{
 		if([self allocWithWidth:pixelwidth height:pixelheight]) return self;
 		[self release];

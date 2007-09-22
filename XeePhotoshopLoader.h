@@ -111,7 +111,7 @@
 - (id)initWithImage:(id)fp8 width:(int)fp12 height:(int)fp16 depth:(int)fp20 mode:(int)fp24 channels:(id)fp28;
 - (void)deallocLoader;
 - (SEL)startLoading;
-- (SEL)load;
+- (SEL)loadImage;
 - (void)expandBitmapData:(char *)fp8 toImage:(char *)fp12;
 - (void)expandIndexedData:(char *)fp8 toImage:(char *)fp12;
 - (void)convertCMYKData:(char *)fp8 toImage:(char *)fp12 stride:(int)fp16;

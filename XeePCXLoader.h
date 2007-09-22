@@ -14,6 +14,6 @@
 -(SEL)initLoader;
 -(void)deallocLoader;
 -(SEL)startLoading;
--(SEL)load;
+-(SEL)loadImage;
 
 @end

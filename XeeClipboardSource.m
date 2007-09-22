@@ -1,13 +1,19 @@
 #import "XeeClipboardSource.h"
-#import "XeeNSImage.h"
-
+//#import "XeeNSImage.h"
+#import "CSMemoryHandle.h"
+#import "CSMultiHandle.h"
+#import "XeeImage.h"
 
 
 @implementation XeeClipboardSource
 
 +(BOOL)canInitWithPasteboard:(NSPasteboard *)pboard
 {
-	return [NSBitmapImageRep canInitWithPasteboard:[NSPasteboard generalPasteboard]];
+//	return [NSBitmapImageRep canInitWithPasteboard:[NSPasteboard generalPasteboard]];
+
+	if([[pboard types] containsObject:NSTIFFPboardType]) return YES;
+	if([[pboard types] containsObject:NSPICTPboardType]) return YES;
+	return NO;
 }
 
 +(BOOL)canInitWithGeneralPasteboard
@@ -21,15 +27,35 @@
 	{
 		image=nil;
 
-		NSBitmapImageRep *rep=[NSBitmapImageRep imageRepWithPasteboard:pboard];
+		NSString *type=[pboard availableTypeFromArray:[NSArray arrayWithObjects:NSTIFFPboardType,NSPICTPboardType,nil]];
+		NSData *data=[pboard dataForType:type];
+
+		CSHandle *handle;
+		if([type isEqual:NSPICTPboardType])
+		{
+			NSMutableData *head=[NSMutableData dataWithLength:512];
+			handle=[CSMultiHandle multiHandleWithHandles:
+				[CSMemoryHandle memoryHandleForReadingData:head],
+				[CSMemoryHandle memoryHandleForReadingData:data],
+			nil];
+		}
+		else handle=[CSMemoryHandle memoryHandleForReadingData:data];
+
+[[handle remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
+
+		image=[[XeeImage imageForHandle:handle] retain];
+		if(image) return self;
+		else NSBeep();
+
+/*		NSBitmapImageRep *rep=[NSBitmapImageRep imageRepWithPasteboard:pboard];
 		if(rep)
 		{
 			image=[[XeeNSImage alloc] initWithNSBitmapImageRep:rep];
-			if(rep) return self;
-		}
+			if(image) return self;
+		}*/
+		[self release];
 	}
 
-	[self release];
 	return nil;
 }
 
@@ -52,7 +78,11 @@
 
 -(BOOL)isNavigatable { return NO; }
 
--(void)pickImageAtIndex:(int)index next:(int)next { [self triggerImageChangeAction:image]; }
+-(void)pickImageAtIndex:(int)index next:(int)next
+{
+	if(![image loaded]) [image runLoader];
+	[self triggerImageChangeAction:image];
+}
 
 
 @end

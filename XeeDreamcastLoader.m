@@ -80,7 +80,7 @@
 	return NULL;
 }
 
--(SEL)load
+-(SEL)loadImage
 {
 	return NULL;
 }

@@ -4,18 +4,16 @@
 @implementation XeeIndexedRawImage
 
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
-palette:(XeePalette *)palette parentImage:(XeeMultiImage *)parent
+palette:(XeePalette *)palette
 {
-	return [self initWithHandle:fh width:framewidth height:frameheight
-	palette:palette bytesPerRow:0 parentImage:parent];
+	return [self initWithHandle:fh width:framewidth height:frameheight palette:palette bytesPerRow:0];
 }
 
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
-palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow parentImage:(XeeMultiImage *)parent
+palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow
 {
-	if(self=[super initWithParentImage:parent])
+	if(self=[super initWithHandle:fh])
 	{
-		handle=[fh retain];
 		pal=[palette retain];
 		width=framewidth;
 		height=frameheight;
@@ -26,36 +24,22 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow parentImage:(Xee
 
 -(void)dealloc
 {
-	//[handle release];
+	free(buffer);
 	[pal release];
 	[super dealloc];
 }
 
--(SEL)initLoader
+-(void)load
 {
-	if(!handle) return NULL;
+	if(!handle) XeeImageLoaderDone(NO);
+	XeeImageLoaderHeaderDone();
 
-	if(![self allocWithType:[pal isTransparent]?XeeBitmapTypeARGB8:XeeBitmapTypeRGB8 width:width height:height]) return NULL;
+	if(![self allocWithType:[pal isTransparent]?XeeBitmapTypeARGB8:XeeBitmapTypeRGB8 width:width height:height]) XeeImageLoaderDone(NO);
 
 	buffer=malloc(width);
-	if(!buffer) return NULL;
+	if(!buffer) XeeImageLoaderDone(NO);
 
-	row=0;
-	return @selector(load);
-}
-
-
--(void)deallocLoader
-{
-	[handle release];
-	handle=nil;
-	free(buffer);
-	buffer=NULL;
-}
-
--(SEL)load
-{
-	while(!stop)
+	for(int row=0;row<height;row++)
 	{
 		[handle readBytes:width toBuffer:buffer];
 		if(inbpr&&inbpr!=width) [handle skipBytes:inbpr-width];
@@ -64,15 +48,14 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow parentImage:(Xee
 		if(transparent) [pal convertIndexes:buffer count:width toARGB8:rowptr];
 		else [pal convertIndexes:buffer count:width toRGB8:rowptr];
 
-		row++;
-		[self setCompletedRowCount:row];
-		if(row>=height)
-		{
-			loaded=YES;
-			return NULL;
-		}
+		[self setCompletedRowCount:row+1];
+		XeeImageLoaderYield();
 	}
-	return @selector(load);
+
+	free(buffer);
+	buffer=NULL;
+
+	XeeImageLoaderDone(YES);
 }
 
 @end
@@ -80,6 +63,8 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow parentImage:(Xee
 
 
 @implementation XeePalette
+
++(XeePalette *)palette { return [[[self alloc] init] autorelease]; }
 
 -(id)init
 {

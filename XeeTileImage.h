@@ -25,7 +25,7 @@ typedef void (*XeeReadPixelFunction)(uint8 *row,int x,int pixelsize,uint8 *dest)
 	NSOpenGLContext *context;
 }
 
--(id)initWithParentImage:(XeeMultiImage *)parent;
+-(id)init;
 -(void)dealloc;
 
 -(void)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight

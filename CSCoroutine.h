@@ -4,17 +4,20 @@
 
 @interface CSCoroutine:NSProxy
 {
-	jmp_buf env;
+	id target;
 	size_t stacksize;
 	void *stack;
-	id target;
+	BOOL fired;
+
+	CSCoroutine *caller;
+	jmp_buf env;
+
 	SEL selector;
 	marg_list arguments;
 	int argsize;
-	BOOL fired;
-	CSCoroutine *caller;
+
+	NSInvocation *inv;
 }
-+(void)initialize;
 +(CSCoroutine *)mainCoroutine;
 +(CSCoroutine *)currentCoroutine;
 +(void)returnFromCurrent;

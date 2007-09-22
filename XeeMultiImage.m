@@ -4,12 +4,14 @@
 
 @implementation XeeMultiImage
 
--(id)initWithParentImage:(XeeMultiImage *)parent
+-(id)init
 {
-	if(self=[super initWithParentImage:parent])
+	if(self=[super init])
 	{
-		currindex=0;
 		subimages=[[NSMutableArray array] retain];
+		currindex=0;
+		currloading=nil;
+
 		if(subimages) return self;
 
 		[self release];
@@ -21,6 +23,7 @@
 -(void)dealloc
 {
 	[subimages release];
+	[currloading release];
 
 	[super dealloc];
 }
@@ -75,20 +78,73 @@
 
 
 
--(int)frames { return [subimages count]; }
+/*-(BOOL)loaded;
+-(BOOL)failed;*/
+
+-(BOOL)needsLoading
+{
+	// check subimages here
+	return [super needsLoading];
+}
+
+-(void)stopLoading
+{
+	// order?
+	if(currloading) [currloading stopLoading];
+	[super stopLoading];
+}
+
+-(void)runLoaderOnSubImage:(XeeImage *)image
+{
+	currloading=[image retain];
+
+	while([currloading needsLoading])
+	{
+		[currloading runLoader];
+		XeeImageLoaderYield();
+	}
+
+	[currloading autorelease];
+	currloading=nil;
+}
+
+-(int)frames
+{
+	NSEnumerator *enumerator=[subimages objectEnumerator];
+	XeeImage *image;
+	int frames=0;
+	while(image=[enumerator nextObject]) frames+=[image frames];
+	return frames;
+}
 
 -(void)setFrame:(int)frame
 {
 	if([subimages count]==0) return;
 
 	if(frame<0) frame=0;
-	if(frame>=[subimages count]) frame=[subimages count]-1;
-	if(frame==currindex) return;
+	if(frame==[self frame]) return;
+
+	int count=[subimages count];
+	int newindex,prevframes=0;
+	for(newindex=0;newindex<count-1;newindex++)
+	{
+		int frames=[[subimages objectAtIndex:newindex] frames];
+		if(prevframes+frames>frame) break;
+		else prevframes+=frames;
+	}
+
+	XeeImage *subimage=[subimages objectAtIndex:newindex];
+	int frames=[subimage frames];
+	int subframe=frame-prevframes;
+	if(subframe>=frames) subframe=frames-1;
 
 	int oldwidth=[self width];
 	int oldheight=[self height];
 
-	currindex=frame;
+	currindex=newindex;
+	[subimage setDelegate:nil];
+	[subimage setFrame:subframe];
+	[subimage setDelegate:self];
 
 	if(oldwidth!=[self width]||oldheight!=[self height]) [self triggerSizeChangeAction];
 	else [self triggerChangeAction];
@@ -98,7 +154,9 @@
 
 -(int)frame
 {
-	return currindex;
+	int prevframes=0;
+	for(int i=0;i<currindex;i++) prevframes+=[[subimages objectAtIndex:i] frames];
+	return prevframes+[(XeeImage *)[subimages objectAtIndex:currindex] frame];
 }
 
 
@@ -120,6 +178,10 @@
 -(CGImageRef)createCGImage { return [[self currentSubImage] createCGImage]; }
 
 -(int)losslessSaveFlags { return [[self currentSubImage] losslessSaveFlags]; }
+
+-(NSString *)losslessFormat { return [[self currentSubImage] losslessFormat]; }
+
+-(NSString *)losslessExtension { return [[self currentSubImage] losslessExtension]; }
 
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags { return [[self currentSubImage] losslessSaveTo:path flags:flags]; }
 
@@ -156,14 +218,16 @@
 -(NSString *)depth
 {
 	XeeImage *curr=[self currentSubImage];
-	if(curr) return [curr depth];
+	NSString *currdepth=[curr depth];
+	if(currdepth) return currdepth;
 	else return [super depth];
 }
 
 -(NSImage *)depthIcon
 {
 	XeeImage *curr=[self currentSubImage];
-	if(curr) return [curr depthIcon];
+	NSImage *currdepthicon=[curr depthIcon];
+	if(currdepthicon) return currdepthicon;
 	else return [super depthIcon];
 }
 
@@ -177,7 +241,8 @@
 -(NSColor *)backgroundColor
 {
 	XeeImage *curr=[self currentSubImage];
-	if(curr) return [curr backgroundColor];
+	NSColor *background=[curr backgroundColor];
+	if(background) return background;
 	else return [super backgroundColor];
 }
 
@@ -195,7 +260,8 @@
 -(XeeTransformation)orientation
 {
 	XeeImage *curr=[self currentSubImage];
-	if(curr) return [curr orientation];
+	XeeTransformation orient=[curr orientation];
+	if(curr&&orient) return orient;
 	else return [super orientation];
 }
 

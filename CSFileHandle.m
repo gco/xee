@@ -124,7 +124,7 @@
 	if(num==0) return 0;
 	if(multi) fseek(fh,pos,SEEK_SET);
 	int n=fread(buffer,1,num,fh);
-	if(n<=0) [self _raiseError];
+	if(n<=0&&!feof(fh)) [self _raiseError];
 	if(multi) pos=FTELL(fh);
 	return n;
 }

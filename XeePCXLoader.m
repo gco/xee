@@ -122,10 +122,10 @@ struct pcx_header
 		memcpy(palette,pcx->colormap,48);
 	}
 
-	return @selector(load);
+	return @selector(loadImage);
 }
 
--(SEL)load
+-(SEL)loadImage
 {
 	CSHandle *fh=[self handle];
 	struct pcx_header *pcx=(struct pcx_header *)[header bytes];
@@ -204,7 +204,7 @@ struct pcx_header
 		loaded=YES;
 		return NULL;
 	}
-	return @selector(load);
+	return @selector(loadImage);
 }
 
 

@@ -27,12 +27,11 @@ struct XeeTileImageProviderInfo
 
 @implementation XeeTileImage
 
--(id)initWithParentImage:(XeeMultiImage *)parent
+-(id)init
 {
-	if(self=[super initWithParentImage:parent])
+	if(self=[super init])
 	{
 		data=NULL;
-
 		bytesperpixel=bytesperrow=0;
 		freedata=NO;
 		premultiplied=NO;

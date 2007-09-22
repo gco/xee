@@ -1,4 +1,5 @@
 #import "XeeMultiImage.h"
+#import "XeeJPEGUtilities.h"
 
 #include "libjpeg/jpeglib.h"
 
@@ -11,6 +12,7 @@
 	BOOL jpeg_created;
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
+	struct XeeJPEGSource jsrc;
 
 	int mcu_width,mcu_height;
 

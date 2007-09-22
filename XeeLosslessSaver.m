@@ -44,12 +44,12 @@
 {
 	return [NSString stringWithFormat:
 	NSLocalizedString(@"%@, Without Recompressing",@"Save panel format name for lossless saving (%@ is the format name, currently always JPEG)"),
-	[image format]];
+	[image losslessFormat]];
 }
 
 -(NSString *)extension
 {
-	return [[image filename] pathExtension];
+	return [image losslessExtension];
 }
 
 -(BOOL)save:(NSString *)filename

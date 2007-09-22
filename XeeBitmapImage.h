@@ -70,9 +70,8 @@
 	int colourmode,alphatype,modeflags;
 }
 
--(id)initWithParentImage:(XeeMultiImage *)parent;
+-(id)init;
 -(id)initWithType:(int)pixeltype width:(int)framewidth height:(int)frameheight;
--(id)initWithType:(int)pixeltype width:(int)framewidth height:(int)frameheight parentImage:(XeeMultiImage *)parent;
 -(void)dealloc;
 
 -(BOOL)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight

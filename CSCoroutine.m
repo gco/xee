@@ -1,15 +1,48 @@
+#ifndef MAC_OS_X_VERSION_MIN_REQUIRED
+#define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_1
+#endif
+#ifndef MAC_OS_X_VERSION_MAX_ALLOWED
+#define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_4
+#endif
 #import "CSCoroutine.h"
 #import <pthread.h>
 #import <objc/objc-runtime.h>
+
 
 @interface NSProxy (Hidden)
 -(void)doesNotRecognizeSelector:(SEL)sel;
 @end
 
-@implementation CSCoroutine
+static pthread_key_t currkey,mainkey;
 
 static void CSCoroutineFreeMain(CSCoroutine *main) { [main release]; }
-static pthread_key_t currkey,mainkey;
+
+static CSCoroutine *CSMainCoroutine()
+{
+	CSCoroutine *main=(CSCoroutine *)pthread_getspecific(mainkey);
+	if(!main)
+	{
+		main=[[CSCoroutine alloc] initWithTarget:nil stackSize:0];
+		pthread_setspecific(mainkey,main);
+	}
+	return main;
+}
+
+static CSCoroutine *CSCurrentCoroutine()
+{
+	CSCoroutine *curr=(CSCoroutine *)pthread_getspecific(currkey);
+	if(curr) return curr;
+	else return CSMainCoroutine();
+}
+
+static CSCoroutine *CSSetCurrentCoroutine(CSCoroutine *new)
+{
+	CSCoroutine *curr=CSCurrentCoroutine();
+	pthread_setspecific(currkey,new);
+	return curr;
+}
+
+@implementation CSCoroutine
 
 +(void)initialize
 {
@@ -17,34 +50,21 @@ static pthread_key_t currkey,mainkey;
 	pthread_key_create(&mainkey,(void (*)())CSCoroutineFreeMain);
 }
 
-+(CSCoroutine *)mainCoroutine
-{
-	CSCoroutine *main=(CSCoroutine *)pthread_getspecific(mainkey);
-	if(!main)
-	{
-		main=[[self alloc] initWithTarget:nil stackSize:0];
-		pthread_setspecific(mainkey,main);
-	}
-	return main;
-}
++(CSCoroutine *)mainCoroutine { return CSMainCoroutine(); }
 
-+(CSCoroutine *)currentCoroutine
-{
-	CSCoroutine *curr=(CSCoroutine *)pthread_getspecific(currkey);
-	if(curr) return curr;
-	else return [self mainCoroutine];
-}
++(CSCoroutine *)currentCoroutine { return CSCurrentCoroutine(); }
 
-+(void)returnFromCurrent { [[self currentCoroutine] returnFrom]; }
++(void)returnFromCurrent { [CSCurrentCoroutine() returnFrom]; }
 
 -(id)initWithTarget:(id)targetobj stackSize:(size_t)stackbytes
 {
 	target=targetobj;
 	stacksize=stackbytes;
-	caller=nil;
+	if(stacksize) stack=malloc(stacksize);
 	fired=target?NO:YES;
 
-	if(stacksize) stack=calloc(1,stacksize+16);
+	caller=nil;
+	inv=nil;
 
 	return self;
 }
@@ -52,18 +72,34 @@ static pthread_key_t currkey,mainkey;
 -(void)dealloc
 {
 	free(stack);
+	[inv release];
 	[super dealloc];
 }
 
-static void CSCoroutineStart()
+-(void)switchTo
 {
-	CSCoroutine *coro=[CSCoroutine currentCoroutine];
+	CSCoroutine *curr=CSSetCurrentCoroutine(self);
+	caller=curr;
+	if(_setjmp(curr->env)==0) _longjmp(env,1);
+}
+
+-(void)returnFrom
+{
+	/*CSCoroutine *curr=*/CSSetCurrentCoroutine(caller);
+	if(_setjmp(env)==0) _longjmp(caller->env,1);
+}
+
+
+
+static void CSTigerCoroutineStart()
+{
+	CSCoroutine *coro=CSCurrentCoroutine();
 	objc_msgSendv(coro->target,coro->selector,coro->argsize,coro->arguments);
 	[coro returnFrom];
 	[NSException raise:@"CSCoroutineException" format:@"Attempted to switch to a coroutine that has ended"];
 }
 
--forward:(SEL)sel :(marg_list)args
+-forward:(SEL)sel :(marg_list)args // Tiger forwarding
 {
 	if(fired) [NSException raise:@"CSCoroutineException" format:@"Attempted to start a coroutine that is already running"];
 	fired=YES;
@@ -73,30 +109,51 @@ static void CSCoroutineStart()
 	Method method=class_getInstanceMethod([target class],sel);
 	if(!method) { [self doesNotRecognizeSelector:sel]; return nil; }
 	argsize=method_getSizeOfArguments(method);
-	caller=[CSCoroutine currentCoroutine];
 
 	_setjmp(env);
 	#if defined(__i386__)
-	env[9]=(((int)stack+stacksize)&~15)-4; // Why -4? I have no idea.
-	env[12]=(int)CSCoroutineStart;
+	env[9]=(((int)stack+stacksize)&~15)-4; // -4 to pretend that a return address has just been pushed onto the stack
+	env[12]=(int)CSTigerCoroutineStart;
 	#else
 	env[0]=((int)stack+stacksize-64)&~3;
-	env[21]=(int)CSCoroutineStart;
+	env[21]=(int)CSTigerCoroutineStart;
 	#endif
 
 	[self switchTo];
 	return nil;
 }
 
--(void)switchTo
+
+
+-(NSMethodSignature *)methodSignatureForSelector:(SEL)sel { return [target methodSignatureForSelector:sel]; }
+
+static void CSLeopardCoroutineStart()
 {
-	CSCoroutine *curr=(CSCoroutine *)pthread_getspecific(currkey);
-	if(!curr) curr=[CSCoroutine mainCoroutine];
-	pthread_setspecific(currkey,self);
-	if(_setjmp(curr->env)==0) _longjmp(env,1);
+	CSCoroutine *coro=CSCurrentCoroutine();
+	[coro->inv invoke];
+	[coro returnFrom];
+	[NSException raise:@"CSCoroutineException" format:@"Attempted to switch to a coroutine that has ended"];
 }
 
--(void)returnFrom { [caller switchTo]; }
+-(void)forwardInvocation:(NSInvocation *)invocation
+{
+	if(fired) [NSException raise:@"CSCoroutineException" format:@"Attempted to start a coroutine that is already running"];
+	fired=YES;
+
+	inv=[invocation retain];
+	[inv setTarget:target];
+
+	_setjmp(env);
+	#if defined(__i386__)
+	env[9]=(((int)stack+stacksize)&~15)-4; // -4 to pretend that a return address has just been pushed onto the stack
+	env[12]=(int)CSLeopardCoroutineStart;
+	#else
+	env[0]=((int)stack+stacksize-64)&~3;
+	env[21]=(int)CSLeopardCoroutineStart;
+	#endif
+
+	[self switchTo];
+}
 
 @end
 
@@ -105,13 +162,9 @@ static void CSCoroutineStart()
 @implementation NSObject (CSCoroutine)
 
 -(CSCoroutine *)newCoroutine
-{
-	return [[CSCoroutine alloc] initWithTarget:self stackSize:1024*1024];
-}
+{ return [[CSCoroutine alloc] initWithTarget:self stackSize:1024*1024]; }
 
 -(CSCoroutine *)newCoroutineWithStackSize:(size_t)stacksize
-{
-	return [[CSCoroutine alloc] initWithTarget:self stackSize:stacksize];
-}
+{ return [[CSCoroutine alloc] initWithTarget:self stackSize:stacksize]; }
 
 @end

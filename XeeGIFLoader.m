@@ -41,9 +41,14 @@
 	[super dealloc];
 }
 
+static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
+{
+	return [(CSHandle *)gif->UserData readAtMost:len toBuffer:buf];
+}
+
 -(SEL)initLoader
 {
-	gif=DGifOpenFileName([[self filename] fileSystemRepresentation]);
+	gif=DGifOpen([self handle],XeeGIFReadData);
 	if(!gif) return NULL;
 
 	width=gif->SWidth;

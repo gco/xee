@@ -5,6 +5,11 @@ int is_png_gray_palette(png_structp png,png_infop info);
 
 @implementation XeePNGImage
 
+static void XeePNGReadData(png_structp png,png_bytep buf,png_size_t len)
+{
+	[(CSHandle *)png->io_ptr readBytes:len toBuffer:buf];
+}
+
 +(NSArray *)fileTypes
 {
 	return [NSArray arrayWithObjects:@"png",@"'PNG '",@"'PNGf'",nil];
@@ -29,7 +34,7 @@ int is_png_gray_palette(png_structp png,png_infop info);
 
 	if(setjmp(png_jmpbuf(png))) return NULL;
 
-	png_init_io(png,[[self fileHandle] filePointer]);
+	png_set_read_fn(png,[self handle],XeePNGReadData);
 	png_read_info(png,info); // read all PNG info up to image data
 
 	width=png_get_image_width(png,info);
@@ -174,10 +179,10 @@ int is_png_gray_palette(png_structp png,png_infop info);
 //	value:comments]];
 
 
-	return @selector(load);
+	return @selector(loadImage);
 }
 
--(SEL)load
+-(SEL)loadImage
 {
     if(setjmp(png_jmpbuf(png))) return NULL;
 
@@ -199,7 +204,7 @@ int is_png_gray_palette(png_structp png,png_infop info);
 		}
 	}
 
-	return @selector(load);
+	return @selector(loadImage);
 }
 
 -(SEL)finishLoading

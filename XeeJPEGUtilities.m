@@ -27,7 +27,7 @@ struct jpeg_error_mgr *XeeJPEGErrorManager(struct jpeg_error_mgr *err)
 }
 
 
-
+/*
 static void XeeMemoryJPEGInitSource(j_decompress_ptr cinfo) {}
 
 static boolean XeeMemoryJPEGFillInputBuffer(j_decompress_ptr cinfo)
@@ -59,6 +59,64 @@ struct jpeg_source_mgr *XeeMemoryJPEGSourceManager(struct jpeg_source_mgr *src,c
 	src->bytes_in_buffer=len;
 	src->next_input_byte=bytes;
 	return src;
+}
+*/
+
+
+
+static void XeeJPEGInitSource(j_decompress_ptr cinfo) {}
+
+static boolean XeeJPEGFillInputBuffer(j_decompress_ptr cinfo)
+{
+	struct XeeJPEGSource *src=(struct XeeJPEGSource *)cinfo->src;
+
+	int actual=[src->handle readAtMost:XeeJPEGSourceBufferSize toBuffer:src->buffer];
+	if(actual)
+	{
+		src->pub.next_input_byte=src->buffer;
+		src->pub.bytes_in_buffer=actual;
+	}
+	else
+	{
+		src->buffer[0]=0xff;
+		src->buffer[1]=JPEG_EOI;
+		src->pub.next_input_byte=src->buffer;
+		src->pub.bytes_in_buffer=2;
+	}
+	return TRUE;
+}
+
+static void XeeJPEGSkipInputData(j_decompress_ptr cinfo,long num)
+{
+	struct XeeJPEGSource *src=(struct XeeJPEGSource *)cinfo->src;
+
+	if(num>0)
+	{
+		while (num>src->pub.bytes_in_buffer)
+		{
+			num-=src->pub.bytes_in_buffer;
+			src->pub.fill_input_buffer(cinfo);
+		}
+		src->pub.next_input_byte+=num;
+		src->pub.bytes_in_buffer-=num;
+	}
+}
+
+static void XeeJPEGTermSource(j_decompress_ptr cinfo) {}
+
+struct jpeg_source_mgr *XeeJPEGSourceManager(struct XeeJPEGSource *src,CSHandle *handle)
+{
+	src->pub.init_source=XeeJPEGInitSource;
+	src->pub.fill_input_buffer=XeeJPEGFillInputBuffer;
+	src->pub.skip_input_data=XeeJPEGSkipInputData;
+	src->pub.resync_to_restart=jpeg_resync_to_restart;
+	src->pub.term_source=XeeJPEGTermSource;
+	src->pub.bytes_in_buffer=0;
+	src->pub.next_input_byte=NULL;
+
+	src->handle=handle;
+
+	return &src->pub;
 }
 
 

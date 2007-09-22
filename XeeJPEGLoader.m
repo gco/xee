@@ -1,7 +1,6 @@
 #import "XeeJPEGLoader.h"
 #import "XeeBitmapImage.h"
 #import "XeeYUVImage.h"
-#import "XeeMemoryJPEGImage.h"
 #import "XeeJPEGUtilities.h"
 #import "XeeJPEGQuantizationDatabase.h"
 #import "XeeEXIFParser.h"
@@ -382,7 +381,7 @@
 {
 	if(thumb_ptr)
 	{
-		XeeImage *thumbnail=[[XeeMemoryJPEGImage alloc] initWithBytes:thumb_ptr length:thumb_len];
+		XeeJPEGImage *thumbnail=[[XeeJPEGImage alloc] initWithHandle:[CSMemoryHandle memoryHandleForReadingBuffer:thumb_ptr length:thumb_len]];
 		if(thumbnail)
 		{
 			if(correctorientation) [thumbnail setCorrectOrientation:correctorientation];
@@ -402,10 +401,7 @@
 
 
 
-
-
-
--(void)load2
+-(void)load
 {
 //	jpeg_created=NO;
 	cinfo.err=XeeJPEGErrorManager(&jerr);
@@ -418,7 +414,7 @@
 	for(int i=0;i<16;i++) jpeg_save_markers(&cinfo,JPEG_APP0+i,0xffff);
 	jpeg_save_markers(&cinfo,JPEG_COM,0xffff);
 
-	jpeg_stdio_src(&cinfo,[[self fileHandle] filePointer]);
+	cinfo.src=XeeJPEGSourceManager(&jsrc,[self handle]);
 	jpeg_read_header(&cinfo,TRUE);
 
 	width=cinfo.image_width;
@@ -591,8 +587,9 @@
 		&&cinfo.comp_info[1].h_samp_factor==1&&cinfo.comp_info[1].v_samp_factor==1
 		&&cinfo.comp_info[2].h_samp_factor==1&&cinfo.comp_info[2].v_samp_factor==1)
 		{
-			mainimage=[[[XeeYUVImage alloc] initWithWidth:width height:height parentImage:self] autorelease];
+			mainimage=[[[XeeYUVImage alloc] initWithWidth:width height:height] autorelease];
 			if(!mainimage) XeeImageLoaderDone(NO);
+			[self addSubImage:mainimage];
 
 			int num_lines=8*cinfo.comp_info[0].v_samp_factor;
 			int y_width=(width+7)&~7;
@@ -601,7 +598,7 @@
 			uint8 y_buf[y_rows*y_width];
 			uint8 cb_buf[8*cbcr_width];
 			uint8 cr_buf[8*cbcr_width];
-			JSAMPROW y_lines[16],cb_lines[16],cr_lines[16];
+			JSAMPROW y_lines[y_rows],cb_lines[8],cr_lines[8];
 			JSAMPARRAY image[3]={y_lines,cb_lines,cr_lines};
 
 			for(int i=0;i<y_rows;i++) y_lines[i]=y_buf+i*y_width;
@@ -627,12 +624,14 @@
 				}
 
 				[mainimage setCompletedRowCount:cinfo.output_scanline];
+				XeeImageLoaderYield();
 			}
 		}
 		else if(cinfo.out_color_space==JCS_CMYK)
 		{
-			mainimage=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeRGB8 width:width height:height parentImage:self] autorelease];
+			mainimage=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeRGB8 width:width height:height] autorelease];
 			if(!mainimage) XeeImageLoaderDone(NO);
+			[self addSubImage:mainimage];
 
 			uint8 cmyk_buffer[width*4];
 			//JSAMPARRAY ...
@@ -643,7 +642,7 @@
 				uint8 *cmyk=cmyk_buffer;
 				uint8 *rgb=XeeImageDataRow(mainimage,cinfo.output_scanline);
 
-				jpeg_read_scanlines(&cinfo,&cmyk_buffer,1);
+				jpeg_read_scanlines(&cinfo,&cmyk,1);
 
 				// super-lame CMYK conversion
 				for(int x=0;x<width;x++)
@@ -667,6 +666,7 @@
 					}
 				}
 				[mainimage setCompletedRowCount:cinfo.output_scanline];
+				XeeImageLoaderYield();
 			}
 		}
 		else
@@ -674,6 +674,7 @@
 			if(cinfo.jpeg_color_space==JCS_GRAYSCALE) mainimage=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeLuma8 width:width height:height] autorelease];
 			else mainimage=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeRGB8 width:width height:height] autorelease];
 			if(!mainimage) XeeImageLoaderDone(NO);
+			[self addSubImage:mainimage];
 
 			jpeg_start_decompress(&cinfo);
 			while(cinfo.output_scanline<cinfo.output_height)
@@ -681,17 +682,19 @@
 				uint8 *row=XeeImageDataRow(mainimage,cinfo.output_scanline);
 				jpeg_read_scanlines(&cinfo,&row,1);
 				[mainimage setCompletedRowCount:cinfo.output_scanline];
+				XeeImageLoaderYield();
 			}
 		}
 	}
 
 	if(thumb_ptr)
 	{
-		XeeImage *thumbnail=[[XeeMemoryJPEGImage alloc] initWithBytes:thumb_ptr length:thumb_len];
+		XeeJPEGImage *thumbnail=[[XeeJPEGImage alloc] initWithHandle:[CSMemoryHandle memoryHandleForReadingBuffer:thumb_ptr length:thumb_len]];
 		if(thumbnail)
 		{
 			if(correctorientation) [thumbnail setCorrectOrientation:correctorientation];
 			[self addSubImage:thumbnail];
+			[self runLoaderOnSubImage:thumbnail];
 			[thumbnail release];
 		}
 	}

@@ -50,6 +50,29 @@
 	return nil;
 }
 
+-(id)initAsCopyOf:(CSZlibHandle *)other
+{
+	if(self=[super initWithName:[[other name] stringByAppendingString:@" (copy)"]])
+	{
+		fh=[other->fh copy];
+		startoffs=other->startoffs;
+		inited=NO;
+		eof=other->eof;
+
+		if(inflateCopy(&zs,&other->zs)==Z_OK)
+		{
+			zs.next_in=inbuffer;
+			memcpy(inbuffer,other->zs.next_in,zs.avail_in);
+
+			inited=YES;
+			return self;
+		}
+
+		[self release];
+	}
+	return nil;
+}
+
 -(void)dealloc
 {
 	if(inited) inflateEnd(&zs);
@@ -71,38 +94,23 @@
 
 -(void)seekToFileOffset:(off_t)offs
 {
-	if(offs==0)
+	if(offs<zs.total_out)
 	{
 		if(zs.total_out==0) return;
 
-		inflateEnd(&zs);
-		inited=NO;
-
 		zs.avail_in=0;
 		zs.next_in=Z_NULL;
-		if(inflateInit(&zs)!=Z_OK) [self _raiseZlib];
-
-		inited=YES;
+		if(inflateReset(&zs)!=Z_OK) [self _raiseZlib];
+		[fh seekToFileOffset:startoffs];
 	}
-	else
-	{
-		int skip=offs-zs.total_out;
 
-		if(skip>0)
-		{
-			uint8_t dummybuf[16384];
-			while(skip)
-			{
-				int num=sizeof(dummybuf);
-				if(num>skip) num=skip;
-				skip-=[self readAtMost:num toBuffer:dummybuf];
-			}
-		}
-		else
-		{
-			[self seekToFileOffset:0];
-			[self seekToFileOffset:offs];
-		}
+	int skip=offs-zs.total_out;
+	uint8_t dummybuf[16384];
+	while(skip)
+	{
+		int num=sizeof(dummybuf);
+		if(num>skip) num=skip;
+		skip-=[self readAtMost:num toBuffer:dummybuf];
 	}
 }
 
@@ -121,6 +129,8 @@
 
 -(int)readAtMost:(int)num toBuffer:(void *)buffer
 {
+	if(eof) return 0;
+
 	zs.next_out=buffer;
 	zs.avail_out=num;
 
@@ -128,6 +138,7 @@
 	{
 		if(!zs.avail_in)
 		{
+			if([fh atEndOfFile]) { eof=YES; break; }
 			zs.avail_in=[fh readAtMost:sizeof(inbuffer) toBuffer:inbuffer];
 			zs.next_in=inbuffer;
 		}
@@ -137,9 +148,12 @@
 		else if(err!=Z_OK) [self _raiseZlib];
 	}
 
-	if(zs.avail_out==num) [self _raiseEOF];
-
 	return num-zs.avail_out;
+}
+
+-(id)copyWithZone:(NSZone *)zone
+{
+	return [[CSZlibHandle allocWithZone:zone] initAsCopyOf:self];
 }
 
 

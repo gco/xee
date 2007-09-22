@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		1B00E3590A796D980094B997 /* XeeTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B00E3580A796D980094B997 /* XeeTileImage.m */; };
 		1B00E36A0A7999070094B997 /* XeeYUVImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B00E3690A7999070094B997 /* XeeYUVImage.m */; };
+		1B0707850C9F3BC500FA8EBD /* XeeSWFLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */; };
+		1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B07078A0C9F3DA700FA8EBD /* SWFParser.m */; };
+		1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */; };
 		1B0FF4CF0C96F78C000CED68 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */; };
 		1B16F6070C0BB10F002B0008 /* XeeStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B16F6060C0BB10F002B0008 /* XeeStringAdditions.m */; };
 		1B1B96580B06AD5B00EC8324 /* XeeBitmapTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B96570B06AD5B00EC8324 /* XeeBitmapTile.m */; };
@@ -95,6 +98,7 @@
 		1B86FDF10B813FE200E302DB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BE4C13108E2303200859EE2 /* libz.dylib */; };
 		1B9094D90C7525F8009E5ACE /* XeePhotoshopLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE5DEB40A7E9B6900967AD2 /* XeePhotoshopLoader.m */; };
 		1B9099D10C91BE1A009E5ACE /* XeeInterleavingHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B9099D00C91BE1A009E5ACE /* XeeInterleavingHandle.m */; };
+		1B909CCA0C9A175B009E5ACE /* CSMultiHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */; };
 		1B996C250928EE9E0026832A /* jpeg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C230928EE9E0026832A /* jpeg.icns */; };
 		1B996C260928EE9E0026832A /* Xee.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C240928EE9E0026832A /* Xee.icns */; };
 		1B996C52092929DA0026832A /* gif.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C4E092929DA0026832A /* gif.icns */; };
@@ -255,8 +259,6 @@
 		1BF28B740B5B1A9200481BED /* IconSetWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1BF28B730B5B1A9200481BED /* IconSetWindow.nib */; };
 		1BF28B760B5B1A9D00481BED /* SlideshowDelayPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1BF28B750B5B1A9D00481BED /* SlideshowDelayPanel.nib */; };
 		1BFB09940B0F935E0088CDB4 /* transupp.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB09930B0F935E0088CDB4 /* transupp.c */; };
-		1BFB09C10B0FE29F0088CDB4 /* XeeMemoryJPEGImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB09C00B0FE29F0088CDB4 /* XeeMemoryJPEGImage.m */; };
-		1BFB09C60B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB09C50B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.m */; };
 		1BFB09CB0B0FE2C90088CDB4 /* XeeJPEGUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB09CA0B0FE2C90088CDB4 /* XeeJPEGUtilities.m */; };
 		1BFB0CD60B11EE040088CDB4 /* XeeImageThumbnailing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB0CD50B11EE040088CDB4 /* XeeImageThumbnailing.m */; };
 		1BFB0D000B1200AB0088CDB4 /* XeeJPEGLosslessSaving.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB0CFF0B1200AB0088CDB4 /* XeeJPEGLosslessSaving.m */; };
@@ -288,6 +290,12 @@
 		1B00E3690A7999070094B997 /* XeeYUVImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeYUVImage.m; sourceTree = "<group>"; };
 		1B00E4590A7AEAE70094B997 /* XeeImageIOLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeImageIOLoader.h; sourceTree = "<group>"; };
 		1B00E45A0A7AEAE70094B997 /* XeeImageIOLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeImageIOLoader.m; sourceTree = "<group>"; };
+		1B0707830C9F3BC500FA8EBD /* XeeSWFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeSWFLoader.h; sourceTree = "<group>"; };
+		1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeSWFLoader.m; sourceTree = "<group>"; };
+		1B07078A0C9F3DA700FA8EBD /* SWFParser.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SWFParser.m; sourceTree = "<group>"; };
+		1B07078B0C9F3DA700FA8EBD /* SWFParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFParser.h; sourceTree = "<group>"; };
+		1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFGeometry.h; sourceTree = "<group>"; };
+		1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SWFGeometry.m; sourceTree = "<group>"; };
 		1B0FF4CD0C96F78B000CED68 /* CSHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHexDump.h; sourceTree = "<group>"; };
 		1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
 		1B16F6050C0BB10F002B0008 /* XeeStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeStringAdditions.h; sourceTree = "<group>"; };
@@ -392,6 +400,8 @@
 		1B9096B20C887180009E5ACE /* CSFilterHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSFilterHandle.m; sourceTree = "<group>"; };
 		1B9099CF0C91BE1A009E5ACE /* XeeInterleavingHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XeeInterleavingHandle.h; sourceTree = "<group>"; };
 		1B9099D00C91BE1A009E5ACE /* XeeInterleavingHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XeeInterleavingHandle.m; sourceTree = "<group>"; };
+		1B909CC80C9A175B009E5ACE /* CSMultiHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSMultiHandle.h; sourceTree = "<group>"; };
+		1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSMultiHandle.m; sourceTree = "<group>"; };
 		1B996C230928EE9E0026832A /* jpeg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = jpeg.icns; path = icons/jpeg.icns; sourceTree = "<group>"; };
 		1B996C240928EE9E0026832A /* Xee.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Xee.icns; path = icons/Xee.icns; sourceTree = "<group>"; };
 		1B996C4E092929DA0026832A /* gif.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = gif.icns; path = icons/gif.icns; sourceTree = "<group>"; };
@@ -609,10 +619,6 @@
 		1BF9A79A0B5C3EA000A79EA7 /* XeeDreamcastLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeDreamcastLoader.m; sourceTree = "<group>"; };
 		1BFB09920B0F935E0088CDB4 /* transupp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = transupp.h; sourceTree = "<group>"; };
 		1BFB09930B0F935E0088CDB4 /* transupp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = transupp.c; sourceTree = "<group>"; };
-		1BFB09BF0B0FE29F0088CDB4 /* XeeMemoryJPEGImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeMemoryJPEGImage.h; sourceTree = "<group>"; };
-		1BFB09C00B0FE29F0088CDB4 /* XeeMemoryJPEGImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeMemoryJPEGImage.m; sourceTree = "<group>"; };
-		1BFB09C40B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeBrokenJPEGLoader.h; sourceTree = "<group>"; };
-		1BFB09C50B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeBrokenJPEGLoader.m; sourceTree = "<group>"; };
 		1BFB09C90B0FE2C90088CDB4 /* XeeJPEGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeJPEGUtilities.h; sourceTree = "<group>"; };
 		1BFB09CA0B0FE2C90088CDB4 /* XeeJPEGUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeJPEGUtilities.m; sourceTree = "<group>"; };
 		1BFB0CD40B11EE040088CDB4 /* XeeImageThumbnailing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeImageThumbnailing.h; sourceTree = "<group>"; };
@@ -758,6 +764,29 @@
 			name = "Image Metadata";
 			sourceTree = "<group>";
 		};
+		1B909CC70C9A172E009E5ACE /* CSHandle */ = {
+			isa = PBXGroup;
+			children = (
+				1B2826AD0C67E60900AA7D9C /* CSHandle.h */,
+				1B2826A50C67E60900AA7D9C /* CSHandle.m */,
+				1B3E44430C6CB82600D63BC0 /* CSSubHandle.h */,
+				1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */,
+				1B909CC80C9A175B009E5ACE /* CSMultiHandle.h */,
+				1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */,
+				1B9096B10C887180009E5ACE /* CSFilterHandle.h */,
+				1B9096B20C887180009E5ACE /* CSFilterHandle.m */,
+				1B2826A80C67E60900AA7D9C /* CSFileHandle.h */,
+				1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */,
+				1B2826A90C67E60900AA7D9C /* CSMemoryHandle.h */,
+				1B2826A70C67E60900AA7D9C /* CSMemoryHandle.m */,
+				1B2826AB0C67E60900AA7D9C /* CSIFFHandle.h */,
+				1B2826AC0C67E60900AA7D9C /* CSIFFHandle.m */,
+				1B2826A60C67E60900AA7D9C /* CSZlibHandle.h */,
+				1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */,
+			);
+			name = CSHandle;
+			sourceTree = "<group>";
+		};
 		1BDBF95F08EC71A600C83392 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -892,8 +921,6 @@
 				1B00E45A0A7AEAE70094B997 /* XeeImageIOLoader.m */,
 				1BE5DEAE0A7E9B5D00967AD2 /* XeeJPEGLoader.h */,
 				1BE5DEAF0A7E9B5D00967AD2 /* XeeJPEGLoader.m */,
-				1BFB09C40B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.h */,
-				1BFB09C50B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.m */,
 				1BE4C03A08E0DC5500859EE2 /* XeePNGLoader.h */,
 				1BE4C03B08E0DC5500859EE2 /* XeePNGLoader.m */,
 				1B262C3808BE6A5900648EBC /* XeeGIFLoader.h */,
@@ -912,6 +939,8 @@
 				1BB9863E0B19FBC0000B4425 /* XeePDFBitmapLoader.m */,
 				1BF9A7990B5C3EA000A79EA7 /* XeeDreamcastLoader.h */,
 				1BF9A79A0B5C3EA000A79EA7 /* XeeDreamcastLoader.m */,
+				1B0707830C9F3BC500FA8EBD /* XeeSWFLoader.h */,
+				1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */,
 			);
 			name = "Image Loading";
 			sourceTree = "<group>";
@@ -919,22 +948,9 @@
 		1BE4C35208E4C46300859EE2 /* External Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1B909CC70C9A172E009E5ACE /* CSHandle */,
 				1BE4C47D08E5CA4200859EE2 /* XeeIFFHandle.h */,
 				1BE4C47E08E5CA4200859EE2 /* XeeIFFHandle.m */,
-				1B2826AD0C67E60900AA7D9C /* CSHandle.h */,
-				1B2826A50C67E60900AA7D9C /* CSHandle.m */,
-				1B3E44430C6CB82600D63BC0 /* CSSubHandle.h */,
-				1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */,
-				1B9096B10C887180009E5ACE /* CSFilterHandle.h */,
-				1B9096B20C887180009E5ACE /* CSFilterHandle.m */,
-				1B2826A80C67E60900AA7D9C /* CSFileHandle.h */,
-				1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */,
-				1B2826A90C67E60900AA7D9C /* CSMemoryHandle.h */,
-				1B2826A70C67E60900AA7D9C /* CSMemoryHandle.m */,
-				1B2826AB0C67E60900AA7D9C /* CSIFFHandle.h */,
-				1B2826AC0C67E60900AA7D9C /* CSIFFHandle.m */,
-				1B2826A60C67E60900AA7D9C /* CSZlibHandle.h */,
-				1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */,
 				1B3D33600937B89100345FD0 /* CSKeyboardShortcuts.h */,
 				1B3D33610937B89200345FD0 /* CSKeyboardShortcuts.m */,
 				1BB984050B18C479000B4425 /* CSFileTypeList.h */,
@@ -947,6 +963,10 @@
 				1B5553E90B28DCF700DC7FF3 /* CSDesktopServices.m */,
 				1B0FF4CD0C96F78B000CED68 /* CSHexDump.h */,
 				1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */,
+				1B07078B0C9F3DA700FA8EBD /* SWFParser.h */,
+				1B07078A0C9F3DA700FA8EBD /* SWFParser.m */,
+				1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */,
+				1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */,
 				1BE4B80B08D7655400859EE2 /* KFTypeSelectTableView.h */,
 				1BE4B80C08D7655400859EE2 /* KFTypeSelectTableView.m */,
 				1BFB11DE0B179CF90088CDB4 /* XADArchive.h */,
@@ -1065,8 +1085,6 @@
 				1B1D53500B0405F4009AA7EB /* XeeNSImage.m */,
 				1B00E3680A7999070094B997 /* XeeYUVImage.h */,
 				1B00E3690A7999070094B997 /* XeeYUVImage.m */,
-				1BFB09BF0B0FE29F0088CDB4 /* XeeMemoryJPEGImage.h */,
-				1BFB09C00B0FE29F0088CDB4 /* XeeMemoryJPEGImage.m */,
 				1B2B5DBA0C78AF1F0057B42F /* XeeRawImage.h */,
 				1B2B5DBB0C78AF1F0057B42F /* XeeRawImage.m */,
 				1B2B5DAC0C78AEDD0057B42F /* XeeBitmapRawImage.h */,
@@ -1530,8 +1548,6 @@
 				1BF142420B094404003A8D57 /* XeeEXIFParser.m in Sources */,
 				1BF143370B0A6364003A8D57 /* XeePropertiesController.m in Sources */,
 				1BFB09940B0F935E0088CDB4 /* transupp.c in Sources */,
-				1BFB09C10B0FE29F0088CDB4 /* XeeMemoryJPEGImage.m in Sources */,
-				1BFB09C60B0FE2B50088CDB4 /* XeeBrokenJPEGLoader.m in Sources */,
 				1BFB09CB0B0FE2C90088CDB4 /* XeeJPEGUtilities.m in Sources */,
 				1BFB0CD60B11EE040088CDB4 /* XeeImageThumbnailing.m in Sources */,
 				1BFB0D000B1200AB0088CDB4 /* XeeJPEGLosslessSaving.m in Sources */,
@@ -1575,6 +1591,10 @@
 				1B5E0A420C8A37DA00F22867 /* CSCoroutine.m in Sources */,
 				1B9099D10C91BE1A009E5ACE /* XeeInterleavingHandle.m in Sources */,
 				1B0FF4CF0C96F78C000CED68 /* CSHexDump.m in Sources */,
+				1B909CCA0C9A175B009E5ACE /* CSMultiHandle.m in Sources */,
+				1B0707850C9F3BC500FA8EBD /* XeeSWFLoader.m in Sources */,
+				1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */,
+				1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

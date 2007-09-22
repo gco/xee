@@ -8,20 +8,17 @@
 
 -(id)init
 {
-	return [self initWithParentImage:nil];
-}
-
--(id)initWithParentImage:(XeeMultiImage *)parent
-{
 	if(self=[super init])
 	{
+		handle=nil;
 		ref=nil;
 		attrs=nil;
-		handle=nil;
 
 		nextselector=NULL;
-		loaded=YES;
+		finished=loaded=YES;
 		thumbonly=stop=NO;
+
+		coro=nil;
 
 		format=nil;
 		width=height=0;
@@ -39,26 +36,103 @@
 
 		properties=[[NSMutableArray array] retain];
 
-		if(parent)
-		{
-			[self setDepth:[parent depth]];
-			[self setDepthIcon:[parent depthIcon]];
-			XeeTransformation correct=[parent correctOrientation];
-			if(correct) [self setCorrectOrientation:correct];
-			[parent addSubImage:self];
-		}
 	}
 
 	return self;
 }
 
+-(id)initWithHandle:(CSHandle *)fh
+{
+	return [self initWithHandle:fh ref:nil attributes:nil];
+}
+
+-(id)initWithHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
+{
+	if(self=[self init])
+	{
+		handle=[fh retain];
+		ref=[fsref retain];
+		attrs=[attributes retain];
+
+		if(ref)
+		{
+			icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
+			[icon setSize:NSMakeSize(16,16)];
+		}
+		else icon=nil;
+
+		finished=loaded=NO;
+
+		coro=[self newCoroutine];
+
+		@try { [(XeeImage *)coro load]; }
+		@catch(id e)
+		{
+			NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
+			finished=YES;
+		}
+
+		if(finished) { [coro release]; coro=nil; }
+
+		if(!finished||loaded)
+		{
+			return self;
+		}
+
+		[self release];
+	}
+	return nil;
+}
+
+-(id)initWithHandle2:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
+{
+	if(self=[self init])
+	{
+		handle=[fh retain];
+		ref=[fsref retain];
+		attrs=[attributes retain];
+		icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain]; // needs fixing!
+		[icon setSize:NSMakeSize(16,16)];
+
+		nextselector=@selector(initLoader);
+		stop=NO;
+		loaded=NO;
+
+		@try
+		{
+			do {
+				NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
+				nextselector=(SEL)[self performSelector:nextselector];
+				[pool release];
+			} while(nextselector&&!width&&!height);
+		}
+		@catch(id e)
+		{
+			NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
+			nextselector=NULL;
+		}
+
+		if(nextselector||loaded)
+		{
+			return self;
+		}
+
+		[self release];
+	}
+	return nil;
+}
+
+
+
 -(void)dealloc
 {
-	if(nextselector) [self endLoader];
+	if(nextselector) [self deallocLoader];
 
+	[handle release];
 	[ref release];
 	[attrs release];
-	[handle release];
+
+	[coro release];
 
 	[format release];
 	[depth release];
@@ -72,45 +146,56 @@
 }
 
 
+-(void)runLoader
+{
+	if(finished) return;
+
+	@try { [coro switchTo]; }
+	@catch(id e)
+	{
+		NSLog(@"Exception during loading of \"%@\" (%@): %@",[self filename],[self class],e);
+		finished=YES;
+	}
+
+	if(finished)
+	{
+		[coro release];
+		coro=nil;
+		[self triggerChangeAction];
+	}
+}
+
+-(void)runLoaderForThumbnail
+{
+	thumbonly=YES;
+	[self runLoader];
+}
+
+-(void)load
+{
+	nextselector=@selector(initLoader);
+	do
+	{
+		BOOL hashead=(width&&height);
+
+		nextselector=(SEL)[self performSelector:nextselector];
+
+		if(!hashead&&(width&&height)) { XeeImageLoaderHeaderDone(); }
+		else { XeeImageLoaderYield(); }
+	} while(nextselector);
+
+	[self deallocLoader];
+	XeeImageLoaderDone(loaded);
+}
+
+
+
 
 -(SEL)initLoader { return NULL; }
 
 -(void)deallocLoader { }
 
-
-
--(BOOL)startLoaderForHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
-{
-	handle=[fh retain];
-	ref=[fsref retain];
-	attrs=[attributes retain];
-	icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain]; // needs fixing!
-	[icon setSize:NSMakeSize(16,16)];
-
-	nextselector=@selector(initLoader);
-	stop=NO;
-	loaded=NO;
-
-	@try
-	{
-		do {
-			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-			nextselector=(SEL)[self performSelector:nextselector];
-			[pool release];
-		} while(nextselector&&!width&&!height);
-	}
-	@catch(id e)
-	{
-		NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
-		nextselector=NULL;
-	}
-
-	if(!nextselector) [self endLoader];
-
-	return nextselector!=NULL;
-}
-
--(void)runLoader
+-(void)runLoader2
 {
 	if(!nextselector) return;
 
@@ -131,74 +216,22 @@
 
 	if(!nextselector)
 	{
-		[self endLoader];
+		[self deallocLoader];
 		[self triggerChangeAction];
 	}
 }
-
--(void)runLoaderForThumbnail
-{
-	thumbonly=YES;
-	[self runLoader];
-}
-
--(void)endLoader
-{
-	[self deallocLoader];
-	[handle release];
-	handle=nil;
-}
-
-
-
--(BOOL)startLoaderForRef2:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
-{ 
-	ref=[fsref retain];
-	attrs=[attributes retain];
-	icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
-	[icon setSize:NSMakeSize(16,16)];
-
-	stop=NO;
-	loaded=NO;
-
-	coro=[self newCoroutine];
-
-	@try { [(id)coro load2]; }
-	@catch(id e)
-	{
-		NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
-	}
-
-	if(!nextselector) [self endLoader];
-
-	return nextselector!=NULL;
-}
-
--(void)runLoader2
-{
-	stop=NO;
-	@try { [coro switchTo]; }
-	@catch(id e)
-	{
-		NSLog(@"Exception during loading of \"%@\": %@",[self filename],e);
-	}
-
-	if(!nextselector)
-	{
-		[self endLoader];
-		[self triggerChangeAction];
-	}
-}
-
--(void)load2 {}
 
 
 
 -(BOOL)loaded { return loaded; }
 
--(BOOL)failed { return nextselector==NULL&&!loaded; }
+//-(BOOL)failed { return nextselector==NULL&&!loaded; }
 
--(BOOL)needsLoading { return nextselector!=NULL; }
+//-(BOOL)needsLoading { return nextselector!=NULL; }
+
+-(BOOL)failed { return finished&&!loaded; }
+
+-(BOOL)needsLoading { return !finished; }
 
 -(void)stopLoading { stop=YES; }
 
@@ -215,7 +248,7 @@
 
 
 
--(int)frames { return 0; }
+-(int)frames { return 1; }
 
 -(void)setFrame:(int)frame { }
 
@@ -279,6 +312,10 @@
 -(CGImageRef)createCGImage { return NULL; }
 
 -(int)losslessSaveFlags { return 0; }
+
+-(NSString *)losslessFormat { return nil; }
+
+-(NSString *)losslessExtension { return nil; }
 
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags { return NO; }
 
@@ -660,8 +697,6 @@ NSMutableArray *imageclasses=nil;
 
 +(XeeImage *)imageForRef:(XeeFSRef *)ref
 {
-	if(!imageclasses) return nil;
-
 	NSString *filename=[ref path];
 
 	NSDictionary *attrs=[[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
@@ -669,6 +704,20 @@ NSMutableArray *imageclasses=nil;
 
 	CSFileHandle *fh=[CSFileHandle fileHandleForReadingAtPath:filename];
 	if(!fh) return nil;
+
+	return [self imageForHandle:fh ref:ref attributes:attrs];
+}
+
++(XeeImage *)imageForHandle:(CSHandle *)fh 
+{
+	return [self imageForHandle:fh ref:nil attributes:nil];
+}
+
++(XeeImage *)imageForHandle:(CSHandle *)fh ref:(XeeFSRef *)ref attributes:(NSDictionary *)attrs
+{
+	if(!imageclasses) return nil;
+
+	NSString *filename=[ref path];
 
 	NSData *block=[fh readDataOfLengthAtMost:512];
 	if(!block) return nil;
@@ -681,20 +730,18 @@ NSMutableArray *imageclasses=nil;
 	{
 		if([class canOpenFile:filename firstBlock:block attributes:attrs])
 		{
-			XeeImage *image=[[class alloc] init];
+			XeeImage *image=[[class alloc] initWithHandle:fh ref:ref attributes:attrs];
 			if(image)
 			{
-				if([image startLoaderForHandle:fh ref:ref attributes:attrs])
-				{
-					return [image autorelease];
-				}
-				[image release];
+				return [image autorelease];
 			}
+			[fh seekToFileOffset:0];
 		}
 	}
 
 	return nil;
 }
+
 
 +(NSArray *)allFileTypes
 {

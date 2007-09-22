@@ -15,6 +15,11 @@
 	return [[[CSMemoryHandle alloc] initWithData:[NSData dataWithBytesNoCopy:buf length:len freeWhenDone:NO]] autorelease];
 }
 
++(CSMemoryHandle *)memoryHandleForReadingMappedFile:(NSString *)filename
+{
+	return [[[CSMemoryHandle alloc] initWithData:[NSData dataWithContentsOfMappedFile:filename]] autorelease];
+}
+
 +(CSMemoryHandle *)memoryHandleForWriting
 {
 	return [[[CSMemoryHandle alloc] initWithData:[NSMutableData data]] autorelease];
@@ -23,7 +28,7 @@
 
 -(id)initWithData:(NSData *)dataobj
 {
-	if(self=[super initWithName:[NSString stringWithFormat:@"NSData at 0x%x",(int)dataobj]])
+	if(self=[super initWithName:[NSString stringWithFormat:@"%@ at 0x%x",[dataobj class],(int)dataobj]])
 	{
 		pos=0;
 		data=[dataobj retain];
@@ -64,8 +69,8 @@
 {
 	if(!num) return 0;
 
-	int len=[data length];
-	if(pos==len) [self _raiseEOF];
+	unsigned int len=[data length];
+	if(pos==len) return 0;
 	if(pos+num>len) num=len-pos;
 	memcpy(buffer,(uint8_t *)[data bytes]+pos,num);
 	pos+=num;
@@ -88,6 +93,31 @@
 	[copy seekToFileOffset:pos];
 	return copy;
 }
+
+
+
+-(NSData *)readDataOfLength:(int)length
+{
+	unsigned int totallen=[data length];
+	if(pos+length>totallen) [self _raiseEOF];
+	NSData *subdata=[data subdataWithRange:NSMakeRange(pos,length)];
+	pos+=length;
+	return subdata;
+}
+
+-(NSData *)readDataOfLengthAtMost:(int)length;
+{
+	unsigned int totallen=[data length];
+	if(pos+length>totallen) length=totallen-pos;
+	NSData *subdata=[data subdataWithRange:NSMakeRange(pos,length)];
+	pos+=length;
+	return subdata;
+}
+
+-(NSData *)copyDataOfLength:(int)length { return [[self readDataOfLength:length] retain]; }
+
+-(NSData *)copyDataOfLengthAtMost:(int)length { return [[self readDataOfLengthAtMost:length] retain]; }
+
 
 
 -(NSData *)data { return data; }

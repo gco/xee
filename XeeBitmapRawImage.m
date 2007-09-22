@@ -3,16 +3,15 @@
 
 @implementation XeeBitmapRawImage
 
--(id)initWithHandle:(CSHandle *)fh width:(int)w height:(int)h parentImage:(XeeMultiImage *)parent
+-(id)initWithHandle:(CSHandle *)fh width:(int)w height:(int)h
 {
-	return [self initWithHandle:fh width:w height:h bytesPerRow:(w+7)/8 parentImage:parent];
+	return [self initWithHandle:fh width:w height:h bytesPerRow:(w+7)/8];
 }
 
--(id)initWithHandle:(CSHandle *)fh width:(int)w height:(int)h bytesPerRow:(int)bpr parentImage:(XeeMultiImage *)parent
+-(id)initWithHandle:(CSHandle *)fh width:(int)w height:(int)h bytesPerRow:(int)bpr
 {
-	if(self=[super initWithParentImage:parent])
+	if(self=[super initWithHandle:fh])
 	{
-		handle=[fh retain];
 		width=w;
 		height=h;
 		bytesperfilerow=bpr;
@@ -24,34 +23,20 @@
 -(void)dealloc
 {
 	free(buffer);
-	//[handle release];
 	[super dealloc];
 }
 
--(SEL)initLoader
+-(void)load
 {
-	if(!handle) return NULL;
+	if(!handle) XeeImageLoaderDone(NO);
+	XeeImageLoaderHeaderDone();
 
-	if(![self allocWithType:XeeBitmapTypeLuma8 width:width height:height]) return NULL;
+	if(![self allocWithType:XeeBitmapTypeLuma8 width:width height:height]) XeeImageLoaderDone(NO);
 
 	buffer=malloc(bytesperfilerow);
-	if(!buffer) return NULL;
+	if(!buffer) XeeImageLoaderDone(NO);
 
-	row=0;
-	return @selector(load);
-}
-
--(void)deallocLoader
-{
-	[handle release];
-	handle=nil;
-	free(buffer);
-	buffer=NULL;
-}
-
--(SEL)load
-{
-	while(!stop)
+	for(int row=0;row<height;row++)
 	{
 		[handle readBytes:bytesperfilerow toBuffer:buffer];
 
@@ -62,15 +47,14 @@
 			else *rowptr++=0xff;
 		}
 
-		row++;
-		[self setCompletedRowCount:row];
-		if(row>=height)
-		{
-			loaded=YES;
-			return NULL;
-		}
+		[self setCompletedRowCount:row+1];
+		XeeImageLoaderYield();
 	}
-	return @selector(load);
+
+	free(buffer);
+	buffer=NULL;
+
+	XeeImageLoaderDone(YES);
 }
 
 @end

@@ -215,7 +215,7 @@
 				[handle seekToFileOffset:next];
 			}
 		}
-		@catch(id e) { NSLog(@"Error parsing Photoshop metadata: %@",e); }
+		@catch(id e) { NSLog(@"Error parsing Photoshop metadata: %@ %@",e,props); }
 	}
 	return self;
 }

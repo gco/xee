@@ -18,17 +18,15 @@
 
 //#define Xee
 
-@class XeeMultiImage;
-
 @interface XeeImage:NSObject
 {
+	CSHandle *handle;
 	XeeFSRef *ref;
 	NSDictionary *attrs;
-	CSHandle *handle;
 
 	SEL nextselector;
-	BOOL loaded;
-	BOOL thumbonly,stop;
+	BOOL finished,loaded,thumbonly;
+	volatile BOOL stop;
 
 	CSCoroutine *coro;
 
@@ -46,20 +44,19 @@
 }
 
 -(id)init;
--(id)initWithParentImage:(XeeMultiImage *)parent;
+-(id)initWithHandle:(CSHandle *)fh;
+-(id)initWithHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
+-(id)initWithHandle2:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
 -(void)dealloc;
 
 -(SEL)initLoader;
 -(void)deallocLoader;
 
--(BOOL)startLoaderForHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
 -(void)runLoader;
 -(void)runLoaderForThumbnail;
--(void)endLoader;
 
--(BOOL)startLoaderForRef2:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
 -(void)runLoader2;
--(void)load2;
+-(void)load;
 
 -(BOOL)loaded;
 -(BOOL)failed;
@@ -92,6 +89,8 @@
 -(CGImageRef)createCGImage;
 
 -(int)losslessSaveFlags;
+-(NSString *)losslessFormat;
+-(NSString *)losslessExtension;
 -(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags;
 
 -(XeeFSRef *)ref;
@@ -152,6 +151,8 @@
 
 +(XeeImage *)imageForFilename:(NSString *)filename;
 +(XeeImage *)imageForRef:(XeeFSRef *)ref;
++(XeeImage *)imageForHandle:(CSHandle *)fh;
++(XeeImage *)imageForHandle:(CSHandle *)fh ref:(XeeFSRef *)ref attributes:(NSDictionary *)attrs;
 +(NSArray *)allFileTypes;
 +(void)registerImageClass:(Class)class;
 
@@ -160,10 +161,11 @@
 
 @end
 
-#define XeeImageLoaderYield() { if(stop) [coro returnFrom]; }
-#define XeeImageLoaderHeaderDone() { [coro returnFrom]; }
-#define XeeImageLoaderDone(success) { loaded=success; [coro returnFrom]; }
-
+static inline void __XeeImageLoaderYield(volatile BOOL *stop,CSCoroutine *coro) { if(*stop) { *stop=NO; [coro returnFrom]; } }
+static inline void __XeeImageLoaderDone(BOOL success,BOOL *loaded,BOOL *finished,CSCoroutine *coro) { *loaded=success; *finished=YES; for(;;) [coro returnFrom]; }
+#define XeeImageLoaderHeaderDone() [coro returnFrom]
+#define XeeImageLoaderYield() __XeeImageLoaderYield(&stop,coro)
+#define XeeImageLoaderDone(success) __XeeImageLoaderDone(success,&loaded,&finished,coro)
 
 
 
