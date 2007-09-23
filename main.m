@@ -1,5 +1,6 @@
-
 #import <Cocoa/Cocoa.h>
+
+extern BOOL finderlaunch;
 
 int main(int argc, char *argv[])
 {
@@ -26,11 +27,14 @@ int main(int argc, char *argv[])
 		@"5",@"slideshowDelay",
 		@"0",@"slideshowCustomDelay",
 		@"0",@"defaultSortingOrder",
+		@"YES",@"openFilePanelOnLaunch",
 		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],@"defaultImageBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"windowBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"fullScreenBackground",
 	nil]];
     [pool release];
+
+	finderlaunch=argc!=1;
 
     return NSApplicationMain(argc,(const char **)argv);
 }

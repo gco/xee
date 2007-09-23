@@ -54,6 +54,8 @@ static CSCoroutine *CSSetCurrentCoroutine(CSCoroutine *new)
 
 +(CSCoroutine *)currentCoroutine { return CSCurrentCoroutine(); }
 
++(void)setCurrentCoroutine:(CSCoroutine *)curr { CSSetCurrentCoroutine(curr); }
+
 +(void)returnFromCurrent { [CSCurrentCoroutine() returnFrom]; }
 
 -(id)initWithTarget:(id)targetobj stackSize:(size_t)stackbytes

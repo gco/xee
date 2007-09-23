@@ -65,9 +65,11 @@
 
 		coro=[self newCoroutine];
 
+		CSCoroutine *currcoro=[CSCoroutine currentCoroutine];
 		@try { [(XeeImage *)coro load]; }
 		@catch(id e)
 		{
+			[CSCoroutine setCurrentCoroutine:currcoro];
 			NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
 			finished=YES;
 		}
@@ -150,9 +152,11 @@
 {
 	if(finished) return;
 
+	CSCoroutine *currcoro=[CSCoroutine currentCoroutine];
 	@try { [coro switchTo]; }
 	@catch(id e)
 	{
+		[CSCoroutine setCurrentCoroutine:currcoro];
 		NSLog(@"Exception during loading of \"%@\" (%@): %@",[self filename],[self class],e);
 		finished=YES;
 	}

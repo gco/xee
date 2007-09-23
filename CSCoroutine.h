@@ -20,6 +20,7 @@
 }
 +(CSCoroutine *)mainCoroutine;
 +(CSCoroutine *)currentCoroutine;
++(void)setCurrentCoroutine:(CSCoroutine *)curr;
 +(void)returnFromCurrent;
 
 -(id)initWithTarget:(id)targetobj stackSize:(size_t)stackbytes;

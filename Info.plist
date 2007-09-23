@@ -1044,9 +1044,9 @@
 	<key>CFBundleSignature</key>
 	<string>xee!</string>
 	<key>CFBundleVersion</key>
-	<string>2.0</string>
+	<string>2.1 alpha 1</string>
 	<key>CFShortVersion</key>
-	<string>2.0</string>
+	<string>2.1 alpha 1</string>
 	<key>CSHiddenDocumentTypes</key>
 	<array>
 		<string>com.pkware.zip-archive</string>

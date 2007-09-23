@@ -32,6 +32,7 @@
 
 
 XeeDelegate *maindelegate=nil;
+BOOL finderlaunch;
 
 
 @implementation XeeDelegate
@@ -275,7 +276,7 @@ XeeDelegate *maindelegate=nil;
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-	if(!filesopened) [self openDocument:self];
+	if(!filesopened&&finderlaunch) [self openDocument:self];
 }
 
 -(BOOL)application:(NSApplication *)app openFile:(NSString *)filename
