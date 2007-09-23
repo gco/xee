@@ -127,7 +127,7 @@
 					int numcols=[fh readUInt8];
 					CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:fh];
 					XeePalette *pal=[XeePalette palette];
-					for(int i=0;i<numcols;i++)
+					for(int i=0;i<numcols+1;i++)
 					{
 						if(tag==SWFDefineBitsLosslessTag)
 						{
@@ -145,11 +145,11 @@
 							[pal setColourAtIndex:i red:r green:g blue:b alpha:a];
 						}
 					}
-					for(int i=numcols;i<256;i++) [pal setColourAtIndex:i red:255 green:255 blue:255];
+					//for(int i=numcols;i<256;i++) [pal setColourAtIndex:i red:255 green:255 blue:255];
 
 					image=[[[XeeIndexedRawImage alloc] initWithHandle:zh width:framewidth height:frameheight
 					palette:pal bytesPerRow:(framewidth+3)&~3] autorelease];
-					[image setDepthIndexed:numcols];
+					[image setDepthIndexed:numcols+1];
 				}
 				break;
 
