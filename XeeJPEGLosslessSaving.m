@@ -15,6 +15,8 @@
 
 	int flags=XeeCanSaveLosslesslyFlag;
 
+	if(ref&&!overwriting) flags|=XeeCanOverwriteLosslesslyFlag;
+
 	int orient=[mainimage orientation];
 	int trimmed_width=width-width%mcu_width;
 	int trimmed_height=height-height%mcu_height;
@@ -51,7 +53,11 @@
 {
 	if(currindex!=0) return [super losslessSaveTo:path flags:flags];
 
+	overwriting=YES;
+
 	BOOL res=NO;
+//	NSString *tmppath=[[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
+//	[NSString stringWithFormat:@".xee__%@.tmp",[path lastPathComponent]]];
 
 	static JXFORM_CODE transform_table[9]=
 	{
@@ -169,6 +175,7 @@
 		dest_coef_arrays=jtransform_adjust_parameters(&src,&dest,src_coef_arrays,&xform);
 
 		// /*Close input file and*/ open output file.
+//		fh=fopen([tmppath fileSystemRepresentation],"wb");
 		fh=fopen([path fileSystemRepresentation],"wb");
 		if(!fh) @throw @"Couldn't open destination file";
 		jpeg_stdio_dest(&dest,fh);
@@ -194,13 +201,11 @@
 			continue;
 
 			// Modify EXIF
-			if(marker->marker==JPEG_APP0+1&&marker->data_length>6&&
-			marker->data[0]=='E'&&marker->data[1]=='x'&&marker->data[2]=='i'&&
-			marker->data[3]=='f'&&marker->data[4]==0&&marker->data[5]==0)
+			if(XeeTestJPEGMarker(marker,1,6,"Exif\000"))
 			{
-				XeeEXIFParser *exif=[[[XeeEXIFParser alloc] initWithBuffer:marker->data length:marker->data_length mutable:YES] autorelease];
+				XeeEXIFParser *exif=[[[XeeEXIFParser alloc] initWithBuffer:marker->data+6 length:marker->data_length-6 mutable:YES] autorelease];
 
-				[exif setLong:0 forTag:XeeOrientationTag set:XeeStandardTagSet];
+				[exif setLong:1 forTag:XeeOrientationTag set:XeeStandardTagSet];
 
 				// Flip axis-dependent values if needed
 				if(XeeTransformationIsFlipped(orient))
@@ -258,6 +263,18 @@
 	jpeg_destroy_compress(&dest);
 	jpeg_destroy_decompress(&src);
 	if(fh) fclose(fh);
+
+/*	if(res)
+	{
+		[[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+		[[NSFileManager defaultManager] movePath:tmppath toPath:path handler:nil];
+	}
+	else
+	{
+		[[NSFileManager defaultManager] removeFileAtPath:tmppath handler:nil];
+	}*/
+
+	overwriting=NO;
 
 	return res;
 }

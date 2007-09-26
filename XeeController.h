@@ -37,7 +37,6 @@
 	int slideshowcount;
 
 	CGImageRef copiedcgimage;
-	XeeImage *saveimage;
 
 	NSMutableArray *tasks;
 
@@ -70,6 +69,7 @@
 -(void)windowDidMiniaturize:(NSNotification *)notification;
 -(NSUndoManager *)windowWillReturnUndoManager:(NSNotification *)notification;
 -(void)setStatusBarHiddenNotification:(NSNotification *)notification;
+-(void)refreshImageNotification:(NSNotification *)notification;
 
 -(void)scrollWheel:(NSEvent *)event;
 
@@ -105,7 +105,7 @@
 -(NSRect)availableScreenSpace;
 
 -(void)errorMessage:(NSString *)title text:(NSString *)text;
--(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target;
+-(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target object:(id)object;
 -(void)detachBackgroundTask:(NSDictionary *)task;
 
 -(NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)flag;

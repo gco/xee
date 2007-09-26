@@ -35,6 +35,7 @@
 	//[subimage setFilename:filename];
 	[subimages addObject:subimage];
 	[subimage setDelegate:self];
+	if(correctorientation) [subimage setCorrectOrientation:correctorientation];
 }
 
 -(void)addSubImages:(NSArray *)array
@@ -260,9 +261,15 @@
 -(XeeTransformation)orientation
 {
 	XeeImage *curr=[self currentSubImage];
-	XeeTransformation orient=[curr orientation];
-	if(curr&&orient) return orient;
+	if(curr) return [curr orientation];
 	else return [super orientation];
+}
+
+-(XeeTransformation)correctOrientation
+{
+	XeeImage *curr=[self currentSubImage];
+	if(curr) return [curr correctOrientation];
+	else return [super correctOrientation];
 }
 
 -(NSArray *)properties
@@ -284,6 +291,14 @@
 	XeeImage *curr=[self currentSubImage];
 	if(curr) return [curr setOrientation:trans];
 	else return [super setOrientation:trans];
+}
+
+-(void)setCorrectOrientation:(XeeTransformation)trans
+{
+	NSEnumerator *enumerator=[subimages objectEnumerator];
+	XeeImage *subimage;
+	while(subimage=[enumerator nextObject]) [subimage setCorrectOrientation:trans];
+	[super setCorrectOrientation:trans];
 }
 
 -(void)setCroppingRect:(NSRect)rect

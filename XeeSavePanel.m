@@ -106,7 +106,7 @@
 		[controller detachBackgroundTaskWithMessage:[NSString stringWithFormat:
 		NSLocalizedString(@"Saving as \"%@\"...",@"Message when saving an image as"),
 		[[self filename] lastPathComponent]]
-		selector:@selector(saveTask) target:self];
+		selector:@selector(saveTask) target:self object:nil];
 	}
 
 	[image setAnimating:wasanimating];

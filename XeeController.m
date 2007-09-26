@@ -108,6 +108,10 @@ static NSMutableArray *controllers=nil;
 	selector:@selector(setStatusBarHiddenNotification:)
 	name:@"XeeSetStatusBarHiddenNotification" object:nil];
 
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	selector:@selector(refreshImageNotification:)
+	name:@"XeeRefreshImageNotification" object:nil];
+
 	NSToolbar *toolbar=[[[NSToolbar alloc] initWithIdentifier:@"BrowserToolbar"] autorelease];
 	[toolbar setDelegate:self];
 	[toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
@@ -194,6 +198,11 @@ static NSMutableArray *controllers=nil;
 {
 	[self setStatusBarHidden:[[notification object] boolValue]];
 	[self setZoom:zoom]; // well, better than not doing it, I guess
+}
+
+-(void)refreshImageNotification:(NSNotification *)notification
+{
+	[imageview invalidate];
 }
 
 
@@ -580,15 +589,20 @@ static BOOL HasAppleMouse()
 	[alert release];
 }
 
--(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target
+-(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target object:(id)object
 {
 	NSDictionary *task=[NSDictionary dictionaryWithObjectsAndKeys:
 		message,@"message",
 		[NSValue valueWithPointer:selector],@"selector",
 		target,@"target",
+		object,@"object",
 	nil];
 	[tasks addObject:task];
+
+	[self retain];
+
 	[NSThread detachNewThreadSelector:@selector(detachBackgroundTask:) toTarget:self withObject:task];
+
 	[self updateStatusBar];
 }
 
@@ -596,10 +610,21 @@ static BOOL HasAppleMouse()
 {
 	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 
-	[[task objectForKey:@"target"] performSelector:[[task objectForKey:@"selector"] pointerValue]];
+	@try
+	{
+		[[task objectForKey:@"target"]
+		performSelector:[[task objectForKey:@"selector"] pointerValue]
+		withObject:[task objectForKey:@"object"]];
+	}
+	@catch(id e)
+	{
+		NSLog(@"Error performing task \"%@\": %@",[task objectForKey:@"message"],e);
+	}
+
 	[tasks performSelectorOnMainThread:@selector(removeObject:) withObject:task waitUntilDone:YES];
 	[self performSelectorOnMainThread:@selector(updateStatusBar) withObject:nil waitUntilDone:NO];
 
+	[self release];
 	[pool release];
 }
 
@@ -762,8 +787,8 @@ static BOOL HasAppleMouse()
 
 	if(action==@selector(toggleStatusBar:)) return fullscreenwindow?NO:YES;
 
-	else if(action==@selector(save:)) return currimage&&![currimage needsLoading]&&[currimage isTransformed]&&
-	([currimage losslessSaveFlags]&(XeeCanSaveLosslesslyFlag|XeeNotActuallyLosslessFlag))==XeeCanSaveLosslesslyFlag;
+	else if(action==@selector(save:)) return [undo canUndo]&&currimage&&![currimage needsLoading]&&
+	([currimage losslessSaveFlags]&(XeeCanOverwriteLosslesslyFlag|XeeNotActuallyLosslessFlag))==XeeCanOverwriteLosslesslyFlag;
 	else if(action==@selector(saveAs:)) return currimage&&![currimage needsLoading];
 	else if(action==@selector(toggleAnimation:)) return currimage&&[currimage animated];
 	else if(action==@selector(frameSkipNext:)||

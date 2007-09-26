@@ -75,6 +75,9 @@
 -(IBAction)installIconSet:(id)sender;
 -(void)windowWillClose:(NSNotification *)notification;
 
+-(IBAction)setAntialiasing:(id)sender;
+-(IBAction)setUpscaling:(id)sender;
+
 -(IBAction)alwaysFullscreenStub:(id)sender;
 -(IBAction)loopImagesStub:(id)sender;
 -(IBAction)randomOrderStub:(id)sender;

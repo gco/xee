@@ -52,10 +52,12 @@
 -(NSColor *)backgroundColor;
 -(NSRect)croppingRect;
 -(XeeTransformation)orientation;
+-(XeeTransformation)correctOrientation;
 
 -(NSArray *)properties;
 
 -(void)setOrientation:(XeeTransformation)trans;
+-(void)setCorrectOrientation:(XeeTransformation)trans;
 -(void)setCroppingRect:(NSRect)rect;
 -(void)resetTransformations;
 

@@ -9,6 +9,7 @@
 #import "XeeXMPParser.h"
 #import "XeeDuckyParser.h"
 #import "CSMemoryHandle.h"
+#import "CSMultiHandle.h"
 
 
 
@@ -399,11 +400,26 @@
 
 
 
+-(id)init
+{
+	if(self=[super init])
+	{
+		jpeg_created=NO;
+		thumbhandle=nil;
+		overwriting=NO;
+	}
+	return self;
+}
 
+-(void)dealloc
+{
+	if(jpeg_created) jpeg_destroy_decompress(&cinfo);
+	[thumbhandle release];
+	[super dealloc];
+}
 
 -(void)load
 {
-//	jpeg_created=NO;
 	cinfo.err=XeeJPEGErrorManager(&jerr);
 
 	jpeg_create_decompress(&cinfo);
@@ -454,9 +470,10 @@
 
 	NSMutableArray *markerprops=[NSMutableArray array];
 	NSMutableArray *comments=[NSMutableArray array];
-	NSArray *exifprops=nil,*xmpprops=nil,*photoshopprops=nil,*duckyprops=nil;
-	uint8 *thumb_ptr=NULL;
-	int thumb_len;
+	NSMutableArray *exifhandles=[NSMutableArray array];
+	NSMutableArray *xmphandles=[NSMutableArray array];
+	NSMutableArray *pshandles=[NSMutableArray array];
+	NSArray *duckyprops=nil;
 
 	for(struct jpeg_marker_struct *marker=cinfo.marker_list;marker;marker=marker->next)
 	{
@@ -466,7 +483,6 @@
 			textValue:[[[NSString alloc] initWithBytes:marker->data length:marker->data_length
 			encoding:NSISOLatin1StringEncoding] autorelease]]];
 		}
-
 		else if(XeeTestJPEGMarker(marker,0,5,"JFIF"))
 		{
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
@@ -485,21 +501,7 @@
 			NSLocalizedString(@"Exif APP1 marker",@"Exif APP1 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
-			XeeEXIFParser *exif=[[XeeEXIFParser alloc] initWithBuffer:marker->data+6 length:marker->data_length-6];
-			if(exif)
-			{
-				[self setCorrectOrientation:[exif integerForTag:XeeOrientationTag set:XeeStandardTagSet]];
-
-				int thumb_offs=[exif integerForTag:XeeThumbnailOffsetTag set:XeeStandardTagSet];
-				if(thumb_offs)
-				{
-					thumb_len=[exif integerForTag:XeeThumbnailLengthTag set:XeeStandardTagSet];
-					thumb_ptr=marker->data+6+thumb_offs;
-				}
-
-				exifprops=[exif propertyArray];
-				[exif release];
-			}
+			[exifhandles addObject:[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+6 length:marker->data_length-6]];
 		}
 		else if(XeeTestJPEGMarker(marker,1,29,"http://ns.adobe.com/xap/1.0/"))
 		{
@@ -507,10 +509,7 @@
 			NSLocalizedString(@"XMP APP1 marker",@"XMP APP1 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
-			XeeXMPParser *xmp=[[XeeXMPParser alloc] initWithHandle:
-			[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+29 length:marker->data_length-29]];
-			xmpprops=[xmp propertyArray];
-			[xmp release];
+			[xmphandles addObject:[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+29 length:marker->data_length-29]];
 		}
 		else if(XeeTestJPEGMarker(marker,2,12,"ICC_PROFILE"))
 		{
@@ -540,10 +539,7 @@
 			NSLocalizedString(@"Photoshop APP13 marker",@"Photoshop APP13 marker property title")
 			value:NSLocalizedString(@"(parsed)",@"Property value for parsed APPx blocks")]];
 
-			Xee8BIMParser *parser=[[Xee8BIMParser alloc] initWithHandle:
-			[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+14 length:marker->data_length-14]];
-			photoshopprops=[parser propertyArrayWithPhotoshopFirst:NO];
-			[parser release];
+			[pshandles addObject:[CSMemoryHandle memoryHandleForReadingBuffer:marker->data+14 length:marker->data_length-14]];
 		}
 		else if(XeeTestJPEGMarker(marker,14,5,"Adobe"))
 		{
@@ -559,13 +555,49 @@
 		}
 	}
 
-	if([comments count]) [properties addObject:[XeePropertyItem itemWithLabel:
-	NSLocalizedString(@"File comments",@"File comments section title")
-	value:comments identifier:@"common.comments"]];
+	if([comments count])
+	{
+		[properties addObject:[XeePropertyItem itemWithLabel:
+		NSLocalizedString(@"File comments",@"File comments section title")
+		value:comments identifier:@"common.comments"]];
+	}
 
-	if(exifprops) [properties addObjectsFromArray:exifprops];
-	if(xmpprops) [properties addObjectsFromArray:xmpprops];
-	if(photoshopprops) [properties addObjectsFromArray:photoshopprops];
+	if([exifhandles count])
+	{
+		CSHandle *exifhandle=[CSMultiHandle multiHandleWithHandleArray:exifhandles];
+		NSData *data=[exifhandle remainingFileContents];
+		XeeEXIFParser *exif=[[XeeEXIFParser alloc] initWithBuffer:[data bytes] length:[data length]];
+		if(exif)
+		{
+			[self setCorrectOrientation:[exif integerForTag:XeeOrientationTag set:XeeStandardTagSet]];
+
+			int offs=[exif integerForTag:XeeThumbnailOffsetTag set:XeeStandardTagSet];
+			if(offs)
+			{
+				int len=[exif integerForTag:XeeThumbnailLengthTag set:XeeStandardTagSet];
+				thumbhandle=[[exifhandle subHandleWithRange:NSMakeRange(offs,len)] retain];
+				[thumbhandle seekToFileOffset:0];
+			}
+
+			[properties addObjectsFromArray:[exif propertyArray]];
+			[exif release];
+		}
+	}
+
+	if([xmphandles count])
+	{
+		XeeXMPParser *xmp=[[XeeXMPParser alloc] initWithHandle:[CSMultiHandle multiHandleWithHandleArray:xmphandles]];
+		[properties addObjectsFromArray:[xmp propertyArray]];
+		[xmp release];
+	}
+
+	if([pshandles count])
+	{
+		Xee8BIMParser *parser=[[Xee8BIMParser alloc] initWithHandle:[CSMultiHandle multiHandleWithHandleArray:pshandles]];
+		[properties addObjectsFromArray:[parser propertyArrayWithPhotoshopFirst:NO]];
+		[parser release];
+	}
+
 	if(duckyprops) [properties addObjectsFromArray:duckyprops];
 
 	NSMutableArray *jpegprops=[NSMutableArray array];
@@ -579,7 +611,7 @@
 
 	XeeImageLoaderHeaderDone();
 
-	if(!thumbonly||!thumb_ptr)
+	if(!thumbonly||!thumbhandle)
 	{
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"jpegYUV"]
 		&&cinfo.jpeg_color_space==JCS_YCbCr&&cinfo.comp_info[0].h_samp_factor==2
@@ -687,9 +719,9 @@
 		}
 	}
 
-	if(thumb_ptr)
+	if(thumbhandle)
 	{
-		XeeJPEGImage *thumbnail=[[XeeJPEGImage alloc] initWithHandle:[CSMemoryHandle memoryHandleForReadingBuffer:thumb_ptr length:thumb_len]];
+		XeeJPEGImage *thumbnail=[[XeeJPEGImage alloc] initWithHandle:thumbhandle];
 		if(thumbnail)
 		{
 			if(correctorientation) [thumbnail setCorrectOrientation:correctorientation];
@@ -697,6 +729,8 @@
 			[self runLoaderOnSubImage:thumbnail];
 			[thumbnail release];
 		}
+		[thumbhandle release];
+		thumbhandle=nil;
 	}
 
 	jpeg_destroy_decompress(&cinfo);

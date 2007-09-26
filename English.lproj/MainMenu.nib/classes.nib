@@ -180,7 +180,9 @@
                 preferences = id; 
                 randomOrderStub = id; 
                 rememberZoomStub = id; 
+                setAntialiasing = id; 
                 setDefaultEditorFromMenu = id; 
+                setUpscaling = id; 
             }; 
             CLASS = XeeDelegate; 
             LANGUAGE = ObjC; 

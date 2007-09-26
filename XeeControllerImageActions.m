@@ -40,7 +40,7 @@ int XeeNumberOfZoomLevels=21;
 //	if([type isEqual:NSTIFFPboardType]) uttype=kUTTypeTIFF;
 //	else uttype=kUTTypePICT;
 //NSLog(@"provide: %@",type);
-uttype=kUTTypeTIFF;
+	uttype=kUTTypeTIFF;
 	NSMutableData *data=[NSMutableData data];
 
 	CGImageDestinationRef dest=CGImageDestinationCreateWithData((CFMutableDataRef)data,uttype,1,NULL);
@@ -69,12 +69,11 @@ uttype=kUTTypeTIFF;
 {
 	if(![self validateAction:_cmd]) { NSBeep(); return; }
 
-	saveimage=[currimage retain];
 	[self detachBackgroundTaskWithMessage:NSLocalizedString(@"Saving...",@"Message when saving an image")
-	selector:@selector(saveTask) target:self];
+	selector:@selector(saveTask:) target:self object:currimage];
 }
 
--(void)saveTask
+-(void)saveTask:(XeeImage *)saveimage
 {
 	NSString *filename=[saveimage filename];
 	if(![saveimage losslessSaveTo:filename flags:XeeRetainUntransformableBlocksFlag])
@@ -88,8 +87,13 @@ uttype=kUTTypeTIFF;
 	}
 	else
 	{
+		[self performSelectorOnMainThread:@selector(finishSave:) withObject:saveimage waitUntilDone:YES];
 	}
-	[saveimage release];
+}
+
+-(void)finishSave:(XeeImage *)saveimage
+{
+	if(currimage==saveimage) [undo removeAllActions];
 }
 
 -(IBAction)saveAs:(id)sender
@@ -185,21 +189,6 @@ uttype=kUTTypeTIFF;
 	[self setStandardImageSize];
 	[self updateStatusBar];
 	[self setResizeBlock:NO];
-}
-
--(IBAction)setAntialiasing:(id)sender
-{
-	[[NSUserDefaults standardUserDefaults] setInteger:[sender tag] forKey:@"antialiasQuality"];
-
-	NSMenu *menu=[sender menu];
-	int num=[menu numberOfItems];
-	for(int i=0;i<num;i++)
-	{
-		NSMenuItem *item=[menu itemAtIndex:i];
-		[item setState:item==sender?NSOnState:NSOffState];
-	}
-
-	[imageview invalidate];
 }
 
 

@@ -360,7 +360,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 
 	NSEnumerator *enumerator=[tiles objectEnumerator];
 	XeeBitmapTile *tile;
-	while(tile=[enumerator nextObject]) [tile drawWithBounds:transbounds minFilter:GL_LINEAR];
+	while(tile=[enumerator nextObject]) [tile drawWithBounds:transbounds minFilter:GL_LINEAR magFilter:[self magFilter]];
 
 	glDisable(textarget);
 
@@ -420,7 +420,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 
 	NSEnumerator *enumerator=[tiles objectEnumerator];
 	XeeBitmapTile *tile;
-	while(tile=[enumerator nextObject]) [tile drawWithBounds:transbounds minFilter:GL_NEAREST];
+	while(tile=[enumerator nextObject]) [tile drawWithBounds:transbounds minFilter:GL_NEAREST magFilter:[self magFilter]];
 
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
@@ -469,7 +469,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 
 	NSEnumerator *enumerator=[tiles objectEnumerator];
 	XeeBitmapTile *tile;
-	while(tile=[enumerator nextObject]) [tile drawMultipleWithBounds:transbounds minFilter:GL_NEAREST num:num];
+	while(tile=[enumerator nextObject]) [tile drawMultipleWithBounds:transbounds minFilter:GL_NEAREST magFilter:[self magFilter] num:num];
 
 	glMatrixMode(GL_TEXTURE);
 
@@ -485,7 +485,11 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 	glActiveTexture(GL_TEXTURE0);
 }
 
-
+-(GLuint)magFilter
+{
+	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"upsampleImage"]) return GL_NEAREST;
+	else return GL_LINEAR;
+}
 
 -(int)bytesPerRow { return bytesperrow; }
 

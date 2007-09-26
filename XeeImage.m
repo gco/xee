@@ -387,7 +387,13 @@
 
 -(BOOL)isTransformed
 {
-	return XeeTransformationIsNonTrivial([self orientation])||[self isCropped];
+	if([self isCropped]) return YES;
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"useOrientation"])
+	{
+		XeeTransformation corr=[self correctOrientation];
+		if(corr) return corr==[self orientation];
+	}
+	return XeeTransformationIsNonTrivial([self orientation]);
 }
 
 -(BOOL)isCropped

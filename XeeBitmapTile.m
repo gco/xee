@@ -128,18 +128,19 @@
 
 -(void)invalidate { uploaded=XeeEmptySpan; }
 
--(void)drawWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter
+-(void)drawWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter magFilter:(GLuint)magfilter 
 {
 	if(!tex||!created) return;
 	if(!NSIntersectsRect(NSMakeRect(x,y,width,height),bounds)) return;
 
 	glBindTexture(textarget,tex);
 	glTexParameteri(textarget,GL_TEXTURE_MIN_FILTER,minfilter);
+	glTexParameteri(textarget,GL_TEXTURE_MAG_FILTER,magfilter);
 
 	glCallList(lists);
 }
 
--(void)drawMultipleWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter num:(int)num
+-(void)drawMultipleWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter magFilter:(GLuint)magfilter num:(int)num
 {
 	if(!tex||!created) return;
 	if(!NSIntersectsRect(NSMakeRect(x,y,width,height),bounds)) return;
@@ -149,6 +150,7 @@
 		glActiveTexture(GL_TEXTURE0+i);
 		glBindTexture(textarget,tex);
 		glTexParameteri(textarget,GL_TEXTURE_MIN_FILTER,minfilter);
+		glTexParameteri(textarget,GL_TEXTURE_MAG_FILTER,magfilter);
 	}
 
 	glCallList(lists+1);

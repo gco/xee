@@ -88,9 +88,10 @@
 				for(;;)
 				{
 					int marker=[fh readUInt16BE];
-					if(marker==0xffd9)
+					if(marker==0xffd9||marker==0xffda)
 					{
-						[fh skipBytes:2];
+						if(marker==0xffd9) [fh skipBytes:2];
+						else [tables writeUInt16BE:marker];
 						[tables seekToFileOffset:0];
 						CSHandle *subhandle=[fh subHandleOfLength:[parser tagBytesLeft]];
 						XeeJPEGImage *image=[[[XeeJPEGImage alloc] initWithHandle:

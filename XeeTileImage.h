@@ -50,6 +50,8 @@ glInternalFormat:(int)intformat glFormat:(int)format glType:(int)type;
 -(void)drawSingleSample:(XeeSamplePoint)sample xScale:(float)xscale yScale:(float)yscale bounds:(NSRect)transbounds;
 -(void)drawSamplesOnTextureUnits:(XeeSamplePoint *)samples num:(int)num xScale:(float)xscale yScale:(float)yscale bounds:(NSRect)transbounds;
 
+-(GLuint)magFilter;
+
 -(int)bytesPerRow;
 -(uint8 *)data;
 

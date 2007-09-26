@@ -272,6 +272,7 @@ exifstralloc(char **str, int len)
 
 	if (*str) {
 		exifwarn("tried to alloc over non-null string");
+		// XeeHack
 		free(*str);
 		//abort();
 	}

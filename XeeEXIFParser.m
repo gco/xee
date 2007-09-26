@@ -4,9 +4,9 @@
 
 @implementation XeeEXIFParser
 
--(id)initWithBuffer:(uint8 *)exifdata length:(int)len
+-(id)initWithBuffer:(const uint8 *)exifdata length:(int)len
 {
-	return [self initWithBuffer:exifdata length:len mutable:NO];
+	return [self initWithBuffer:(uint8 *)exifdata length:len mutable:NO];
 }
 
 -(id)initWithBuffer:(uint8 *)exifdata length:(int)len mutable:(BOOL)mutable

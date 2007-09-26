@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 		@"0",@"slideshowCustomDelay",
 		@"0",@"defaultSortingOrder",
 		@"YES",@"openFilePanelOnLaunch",
+		@"NO",@"upsampleImage",
 		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],@"defaultImageBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"windowBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"fullScreenBackground",

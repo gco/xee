@@ -7,7 +7,8 @@
 -(void)pasteboardChangedOwner:(NSPasteboard *)pboard;
 
 -(IBAction)save:(id)sender;
--(void)saveTask;
+-(void)saveTask:(XeeImage *)saveimage;
+-(void)finishSave:(XeeImage *)saveimage;
 -(IBAction)saveAs:(id)sender;
 
 -(IBAction)frameSkipNext:(id)obj;

@@ -25,7 +25,7 @@
 -(void)uploadWithCompletedSpan:(XeeSpan)global_completed;
 -(void)invalidate;
 
--(void)drawWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter;
--(void)drawMultipleWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter num:(int)num;
+-(void)drawWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter magFilter:(GLuint)magfilter;
+-(void)drawMultipleWithBounds:(NSRect)bounds minFilter:(GLuint)minfilter magFilter:(GLuint)magfilter num:(int)num;
 
 @end

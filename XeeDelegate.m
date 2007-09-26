@@ -659,6 +659,28 @@ BOOL finderlaunch;
 	}
 }
 
+
+
+-(IBAction)setAntialiasing:(id)sender
+{
+	[[NSUserDefaults standardUserDefaults] setInteger:[sender tag] forKey:@"antialiasQuality"];
+
+	NSMenu *menu=[sender menu];
+	int num=[menu numberOfItems];
+	for(int i=0;i<num;i++)
+	{
+		NSMenuItem *item=[menu itemAtIndex:i];
+		[item setState:item==sender?NSOnState:NSOffState];
+	}
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeRefreshImageNotification" object:nil];
+}
+
+-(IBAction)setUpscaling:(id)sender
+{
+	//[[NSUserDefaults standardUserDefaults] setBoolean:[sender state]==NSOnState forKey:@"upsampleImage"];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeRefreshImageNotification" object:nil];
+}
 -(IBAction)alwaysFullscreenStub:(id)sender { }
 
 -(IBAction)loopImagesStub:(id)sender { }

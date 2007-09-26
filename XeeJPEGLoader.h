@@ -25,8 +25,11 @@
 
 	uint8 *thumb_ptr;
 	int thumb_len;
+	CSHandle *thumbhandle;
 
 	XeeTileImage *mainimage;
+
+	BOOL overwriting;
 }
 
 +(NSArray *)fileTypes;

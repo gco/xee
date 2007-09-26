@@ -43,7 +43,7 @@ static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
 	NSData *dataobj;
 }
 
--(id)initWithBuffer:(uint8 *)exifdata length:(int)len;
+-(id)initWithBuffer:(const uint8 *)exifdata length:(int)len;
 -(id)initWithBuffer:(uint8 *)exifdata length:(int)len mutable:(BOOL)mutable;
 -(id)initWithData:(NSData *)data;
 -(void)dealloc;

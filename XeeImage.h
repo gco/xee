@@ -8,10 +8,11 @@
 
 
 #define XeeCanSaveLosslesslyFlag 1
-#define XeeNotActuallyLosslessFlag 2
-#define XeeCroppingIsInexactFlag 4
-#define XeeHasUntransformableBlocksFlag 8
-#define XeeUntransformableBlocksCanBeRetainedFlag 16
+#define XeeCanOverwriteLosslesslyFlag 2
+#define XeeNotActuallyLosslessFlag 4
+#define XeeCroppingIsInexactFlag 8
+#define XeeHasUntransformableBlocksFlag 16
+#define XeeUntransformableBlocksCanBeRetainedFlag 32
 	
 #define XeeTrimCroppingFlag 1
 #define XeeRetainUntransformableBlocksFlag 2
