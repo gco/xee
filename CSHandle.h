@@ -10,6 +10,7 @@
 }
 
 -(id)initWithName:(NSString *)descname;
+-(id)initAsCopyOf:(CSHandle *)other;
 -(void)dealloc;
 
 
@@ -23,7 +24,6 @@
 -(void)pushBackByte:(int)byte;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer;
--(id)copyWithZone:(NSZone *)zone;
 
 
 
@@ -98,5 +98,7 @@
 
 -(NSString *)name;
 -(NSString *)description;
+
+-(id)copyWithZone:(NSZone *)zone;
 
 @end

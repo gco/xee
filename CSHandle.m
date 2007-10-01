@@ -36,6 +36,21 @@ static inline uint64_t CSLEUInt64(uint8_t *b) { return ((uint64_t)b[7]<<56)|((ui
 	return self;
 }
 
+-(id)initAsCopyOf:(CSHandle *)other
+{
+	if(self=[super init])
+	{
+		name=[[[other name] stringByAppendingString:@" (copy)"] retain];
+
+		bitoffs=other->bitoffs;
+		readbyte=other->readbyte;
+		readbitsleft=other->readbitsleft;
+		writebyte=other->writebyte;
+		writebitsleft=other->writebitsleft;
+	}
+	return self;
+}
+
 -(void)dealloc
 {
 	[name release];
@@ -60,7 +75,6 @@ static inline uint64_t CSLEUInt64(uint8_t *b) { return ((uint64_t)b[7]<<56)|((ui
 
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer { [self _raiseNotImplemented:_cmd]; }
 
--(id)copyWithZone:(NSZone *)zone { [self _raiseNotImplemented:_cmd]; return nil; }
 
 
 
@@ -317,6 +331,13 @@ CSWriteValueImpl(uint32_t,writeID,CSSetBEUInt32)
 {
 	return [NSString stringWithFormat:@"%@ for \"%@\", position %qu",
 	[self class],name,[self offsetInFile]];
+}
+
+
+
+-(id)copyWithZone:(NSZone *)zone
+{
+	return [[[self class] allocWithZone:zone] initAsCopyOf:self];
 }
 
 @end

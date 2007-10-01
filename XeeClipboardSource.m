@@ -41,9 +41,10 @@
 		}
 		else handle=[CSMemoryHandle memoryHandleForReadingData:data];
 
-[[handle remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
+//[[handle remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
 
 		image=[[XeeImage imageForHandle:handle] retain];
+
 		if(image) return self;
 		else NSBeep();
 

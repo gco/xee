@@ -36,6 +36,16 @@
 	return self;
 }
 
+-(id)initAsCopyOf:(CSMemoryHandle *)other
+{
+	if(self=[super initAsCopyOf:other])
+	{
+		pos=other->pos;
+		data=[other->data retain];
+	}
+	return self;
+}
+
 -(void)dealloc
 {
 	[data release];
@@ -85,13 +95,6 @@
 	if(pos+num>[mdata length]) [mdata setLength:pos+num];
 	memcpy((uint8_t *)[mdata mutableBytes]+pos,buffer,num);
 	pos+=num;
-}
-
--(id)copyWithZone:(NSZone *)zone;
-{
-	CSMemoryHandle *copy=[[CSMemoryHandle allocWithZone:zone] initWithData:data];
-	[copy seekToFileOffset:pos];
-	return copy;
 }
 
 

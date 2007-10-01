@@ -37,6 +37,21 @@
 	return self;
 }
 
+-(id)initAsCopyOf:(CSMultiHandle *)other
+{
+	if(self=[super initAsCopyOf:other])
+	{
+		NSMutableArray *handlearray=[NSMutableArray arrayWithCapacity:[other->handles count]];
+		NSEnumerator *enumerator=[other->handles objectEnumerator];
+		CSHandle *handle;
+		while(handle=[enumerator nextObject]) [handlearray addObject:[handle copy]];
+
+		handles=[[NSArray arrayWithArray:handlearray] retain];
+		currhandle=other->currhandle;
+	}
+	return self;
+}
+
 -(void)dealloc
 {
 	[handles release];

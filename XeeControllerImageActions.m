@@ -22,7 +22,7 @@ int XeeNumberOfZoomLevels=21;
 
 		if(cgimage)
 		{
-			[[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObjects:NSTIFFPboardType/*,NSPICTPboardType*/,nil] owner:self];
+			[[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObjects:NSTIFFPboardType,NSPICTPboardType,nil] owner:self];
 
 			copiedcgimage=cgimage;
 			[self retain];
@@ -31,28 +31,54 @@ int XeeNumberOfZoomLevels=21;
 	}
 	else NSBeep();
 }
+#import <QuickTime/ImageCompression.h>
+#import <QuickTime/QuickTimeComponents.h>
 
 -(void)pasteboard:(NSPasteboard *)pboard provideDataForType:(NSString *)type
 {
 	if(!copiedcgimage) return;
 
-	CFStringRef uttype;
-//	if([type isEqual:NSTIFFPboardType]) uttype=kUTTypeTIFF;
-//	else uttype=kUTTypePICT;
-//NSLog(@"provide: %@",type);
-	uttype=kUTTypeTIFF;
-	NSMutableData *data=[NSMutableData data];
+	if([type isEqual:NSTIFFPboardType])
+	{
+		NSMutableData *data=[NSMutableData data];
+		CGImageDestinationRef dest=CGImageDestinationCreateWithData((CFMutableDataRef)data,kUTTypeTIFF,1,NULL);
+		if(!dest) { NSBeep(); return; }
 
-	CGImageDestinationRef dest=CGImageDestinationCreateWithData((CFMutableDataRef)data,uttype,1,NULL);
-	if(!dest) { NSBeep(); return; }
+		CGImageDestinationAddImage(dest,copiedcgimage,NULL);
+		if(!CGImageDestinationFinalize(dest)) NSBeep();
+		CFRelease(dest);
 
-	CGImageDestinationAddImage(dest,copiedcgimage,NULL);
-	if(!CGImageDestinationFinalize(dest)) NSBeep();
-	CFRelease(dest);
+		[pboard setData:data forType:type];
+	}
+	else if([type isEqual:NSPICTPboardType])
+	{
+		BOOL res=NO;
 
-//	if(uttype==kUTTypePICT) data=[data subdataWithRange:NSMakeRange(512,[data length]-512)];
+		Handle outhandle=NewHandle(0);
+		if(outhandle)
+		{
+			GraphicsExportComponent exporter;
+			if(OpenADefaultComponent(GraphicsExporterComponentType,kQTFileTypePicture,&exporter)==noErr)
+			{
+				GraphicsExportSetInputCGImage(exporter,copiedcgimage);
+				GraphicsExportSetOutputHandle(exporter,outhandle);
+				//GraphicsExportSetOutputDataReference(exporter,dataRef, dataRefType);
 
-	[pboard setData:data forType:type];
+				unsigned long size;
+				if(GraphicsExportDoExport(exporter,&size)==noErr)
+				{
+					NSData *data=[NSData dataWithBytes:*outhandle length:size];
+NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,1024)]);
+					[pboard setData:data forType:type];
+					res=YES;
+				}
+
+				CloseComponent(exporter);
+			}
+			DisposeHandle(outhandle);
+		}
+		if(!res) NSBeep();
+	}
 }
 
 -(void)pasteboardChangedOwner:(NSPasteboard *)pboard

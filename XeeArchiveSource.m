@@ -27,6 +27,8 @@
 		[NSString stringWithFormat:@"Xee-archive-%04x%04x%04x",random()&0xffff,random()&0xffff,random()&0xffff]]
 		retain];
 
+		[self startListUpdates];
+
 		NSArray *filetypes=[XeeImage allFileTypes];
 		int count=[archive numberOfEntries];
 		for(int i=0;i<count;i++)
@@ -43,12 +45,12 @@
 			{
 				NSString *realpath=[tmpdir stringByAppendingPathComponent:name];
 				[self addEntry:[[[XeeArchiveEntry alloc]
-				initWithArchive:archive entry:i realPath:realpath] autorelease]
-				sort:NO];
+				initWithArchive:archive entry:i realPath:realpath] autorelease]];
 			}
 		}
 
 		[self sortFiles];
+		[self endListUpdates];
 
 		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:archivename]];
 		[icon setSize:NSMakeSize(16,16)];
@@ -157,6 +159,20 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 	return self;
 }
 
+-(id)initAsCopyOf:(XeeArchiveEntry *)other
+{
+	if(self=[super initAsCopyOf:other])
+	{
+		archive=[other->archive retain];
+		n=other->n;
+		ref=[other->ref retain];
+		path=[other->path retain];
+		size=other->size;
+		time=other->time;
+	}
+	return self;
+}
+
 -(void)dealloc
 {
 	[archive release];
@@ -183,6 +199,8 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 
 -(NSString *)descriptiveName { return [archive nameOfEntry:n]; }
 
--(BOOL)isEqual:(XeeArchiveEntry *)other { return [path isEqual:[other path]]; }
+-(BOOL)isEqual:(XeeArchiveEntry *)other { return archive==other->archive&&n==other->n; }
+
+-(unsigned)hash { return (unsigned)archive^n; }
 
 @end

@@ -16,7 +16,6 @@ static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
 {
-return NO;
 	return floor(NSAppKitVersionNumber)>NSAppKitVersionNumber10_3;
 }
 

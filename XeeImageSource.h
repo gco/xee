@@ -7,6 +7,7 @@
 #define XeeDeletionCapable 16
 #define XeeSortingCapable 32
 
+#define XeeDefaultSortOrder 0
 #define XeeNameSortOrder 1
 #define XeeDateSortOrder 2
 #define XeeSizeSortOrder 3

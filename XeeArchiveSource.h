@@ -32,6 +32,7 @@
 }
 
 -(id)initWithArchive:(XADArchive *)parentarchive entry:(int)num realPath:(NSString *)realpath;
+-(id)initAsCopyOf:(XeeArchiveEntry *)other;
 -(void)dealloc;
 
 -(NSString *)path;
@@ -41,5 +42,6 @@
 -(NSString *)descriptiveName;
 
 -(BOOL)isEqual:(XeeArchiveEntry *)other;
+-(unsigned)hash;
 
 @end

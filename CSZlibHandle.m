@@ -52,7 +52,7 @@
 
 -(id)initAsCopyOf:(CSZlibHandle *)other
 {
-	if(self=[super initWithName:[[other name] stringByAppendingString:@" (copy)"]])
+	if(self=[super initAsCopyOf:other])
 	{
 		fh=[other->fh copy];
 		startoffs=other->startoffs;
@@ -149,11 +149,6 @@
 	}
 
 	return num-zs.avail_out;
-}
-
--(id)copyWithZone:(NSZone *)zone
-{
-	return [[CSZlibHandle allocWithZone:zone] initAsCopyOf:self];
 }
 
 

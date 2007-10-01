@@ -7,6 +7,7 @@
 }
 
 -(id)initWithHandle:(CSHandle *)handle from:(off_t)from length:(off_t)length;
+-(id)initAsCopyOf:(CSSubHandle *)other;
 -(void)dealloc;
 
 -(off_t)fileSize;

@@ -17,6 +17,13 @@
 	return self;
 }
 
+-(id)initAsCopyOf:(CSFilterHandle *)other
+{
+	parent=nil; coro=nil; [self release];
+	[self _raiseNotImplemented:_cmd];
+	return nil;
+}
+
 -(void)dealloc
 {
 	[parent release];

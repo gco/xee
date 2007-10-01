@@ -755,20 +755,34 @@ NSMutableArray *imageclasses=nil;
 
 +(NSArray *)allFileTypes
 {
-	if(!imageclasses) return nil;
-
-	NSMutableArray *types=[NSMutableArray array];
-	NSEnumerator *enumerator=[imageclasses objectEnumerator];
-	Class class;
-
-	while(class=[enumerator nextObject])
+	static NSMutableArray *types=nil;
+	if(!types)
 	{
-		NSEnumerator *typeenum=[[class fileTypes] objectEnumerator];
-		NSString *type;
-		while(type=[typeenum nextObject]) if(![types containsObject:type]) [types addObject:type];
-	}
+		types=[[NSMutableArray array] retain];
 
+		NSEnumerator *enumerator=[imageclasses objectEnumerator];
+		Class class;
+		while(class=[enumerator nextObject])
+		{
+			NSEnumerator *typeenum=[[class fileTypes] objectEnumerator];
+			NSString *type;
+			while(type=[typeenum nextObject]) if(![types containsObject:type]) [types addObject:type];
+		}
+	}
 	return types;
+}
+
++(NSDictionary *)fileTypeDictionary
+{
+	static NSMutableDictionary *typehash=nil;
+	if(!typehash)
+	{
+		typehash=[[NSMutableDictionary dictionary] retain];
+		NSEnumerator *enumerator=[[self allFileTypes] objectEnumerator];
+		NSString *type;
+		while(type=[enumerator nextObject]) [typehash setObject:@"" forKey:type];
+	}
+	return typehash;
 }
 
 +(void)registerImageClass:(Class)class

@@ -1,5 +1,5 @@
 #import "XeeJPEGUtilities.h"
-
+#import "jerror.h"
 
 
 static void XeeJPEGErrorExit(j_common_ptr cinfo)

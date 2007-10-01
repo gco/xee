@@ -14,6 +14,7 @@
 }
 
 -(id)initWithHandle:(CSHandle *)handle;
+-(id)initAsCopyOf:(CSFilterHandle *)other;
 -(void)dealloc;
 
 -(off_t)offsetInFile;

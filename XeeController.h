@@ -53,9 +53,6 @@
 	IBOutlet NSPanel *delaypanel;
 }
 
-+(void)initialize;
-+(NSArray *)controllers;
-
 -(id)init;
 -(void)dealloc;
 -(void)awakeFromNib;

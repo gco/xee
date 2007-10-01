@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#import "XeeFSRef.h"
 
 @class XeeController,XeeKeyboardShortcuts,XeePropertiesController,CSAction;
 
@@ -10,6 +11,8 @@
 	NSString *openediconset;
 
 	CSAction *actions[20];
+
+	NSMutableDictionary *controllers;
 
 	IBOutlet NSMenu *openmenu;
 	IBOutlet NSMenu *editmenu;
@@ -83,7 +86,8 @@
 -(IBAction)randomOrderStub:(id)sender;
 -(IBAction)rememberZoomStub:(id)sender;
 
--(XeeController *)controllerForDirectory:(NSString *)directory;
+-(XeeController *)controllerForDirectory:(XeeFSRef *)directory;
+-(void)controllerWillExit:(XeeController *)controller;
 
 -(BOOL)xeeFocus;
 -(XeeController *)focusedController;

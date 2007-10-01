@@ -10,7 +10,7 @@
 	{
 		delegate=nil;
 		icon=nil;
-		sortorder=XeeNameSortOrder;
+		sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortingOrder"];
 		rand_ordering=NULL;
 		rand_size=0;
 	}
@@ -55,7 +55,7 @@
 
 
 
--(int)sortOrder { return sortorder; }
+-(int)sortOrder { return sortorder==XeeDefaultSortOrder?XeeNameSortOrder:sortorder; }
 
 -(void)setSortOrder:(int)order { sortorder=order; }
 

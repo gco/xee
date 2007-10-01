@@ -8,13 +8,17 @@
 
 @implementation XeeDirectorySource
 
--(id)initWithDirectory:(NSString *)directoryname
+-(id)initWithDirectory:(XeeFSRef *)directory
 {
 	if(self=[super init])
 	{
 		imgref=dirref=nil;
 
-		if([self scanDirectory:directoryname])
+		[self startListUpdates];
+		BOOL res=[self scanDirectory:directory];
+		[self endListUpdates];
+
+		if(res)
 		{
 			[self pickImageAtIndex:0];
 			return self;
@@ -24,30 +28,29 @@
 	return nil;
 }
 
--(id)initWithFilename:(NSString *)filename
+-(id)initWithRef:(XeeFSRef *)ref
 {
-	if(self=[super init])
-	{
-		imgref=dirref=nil;
-
-		[self addEntry:[XeeDirectoryEntry entryWithFilename:filename] sort:NO]; // make sure this file is in the list
-		[self pickImageAtIndex:0];
-		if([self scanDirectory:[filename stringByDeletingLastPathComponent]]) return self;
-	}
-	[self release];
-	return nil;
+	return [self initWithRef:ref image:nil];
 }
 
 -(id)initWithImage:(XeeImage *)image
 {
+	return [self initWithRef:[image ref] image:image];
+}
+
+-(id)initWithRef:(XeeFSRef *)ref image:(XeeImage *)image
+{
 	if(self=[super init])
 	{
 		imgref=dirref=nil;
 
-		NSString *filename=[image filename];
-		[self addEntry:[XeeDirectoryEntry entryWithFilename:filename] sort:NO]; // make sure this file is in the list
-		[self setCurrentImage:image index:0];
-		if([self scanDirectory:[filename stringByDeletingLastPathComponent]]) return self;
+		[self startListUpdates];
+		XeeDirectoryEntry *curr=[XeeDirectoryEntry entryWithRef:ref image:image];
+		[self setCurrentEntry:curr];
+		BOOL res=[self scanDirectory:[ref parent]];
+		[self endListUpdates];
+
+		if(res) return self;
 	}
 	[self release];
 	return nil;
@@ -71,27 +74,17 @@
 	XeeMovingCapable|XeeDeletionCapable|XeeSortingCapable;
 }
 
--(void)_runSorter
+
+
+-(BOOL)scanDirectory:(XeeFSRef *)ref
 {
-	if(sortorder==XeeDateSortOrder||sortorder==XeeSizeSortOrder) [entries makeObjectsPerformSelector:@selector(readAttributes)];
-	[super _runSorter];
-}
-
-
-
--(BOOL)scanDirectory:(NSString *)directoryname
-{
-	dirref=[[XeeFSRef refForPath:directoryname] retain];
+	dirref=[ref retain];
 	if(!dirref) return NO;
 
-	sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortingOrder"];
-
-	if(!sortorder)
+	if(sortorder==XeeDefaultSortOrder)
 	{
-		sortorder=XeeNameSortOrder;
-
-		NSDictionary *dsdict=CSParseDSStore([[directoryname stringByDeletingLastPathComponent] stringByAppendingPathComponent:@".DS_Store"]);
-		NSData *lsvo=[[dsdict objectForKey:[directoryname lastPathComponent]] objectForKey:@"lsvo"];
+		NSDictionary *dsdict=CSParseDSStore([[[ref parent] path] stringByAppendingPathComponent:@".DS_Store"]);
+		NSData *lsvo=[[dsdict objectForKey:[ref name]] objectForKey:@"lsvo"];
 		if(lsvo&&[lsvo length]>=11)
 		{
 			switch(XeeBEUInt32((uint8 *)[lsvo bytes]+7))
@@ -102,9 +95,9 @@
 		}
 	}
 
-	[self addEntries:[self readDirectory:dirref] sort:YES clear:NO]; 
+	[self readDirectory:dirref];
 
-	[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:directoryname]];
+	[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:[ref path]]];
 	[icon setSize:NSMakeSize(16,16)];
 
 	[[XeeKQueue defaultKQueue] addObserver:self selector:@selector(directoryChanged:)
@@ -115,51 +108,59 @@
 	return YES;
 }
 
--(NSArray *)readDirectory:(XeeFSRef *)ref
+-(void)readDirectory:(XeeFSRef *)ref
 {
-	NSMutableArray *res=[NSMutableArray array];
-	NSString *directoryname=[ref path];
-	NSFileManager *fm=[NSFileManager defaultManager];
-	NSArray *dircontents=[fm directoryContentsAtPath:directoryname];
-	NSArray *filetypes=[XeeImage allFileTypes];
+	//double starttime=XeeGetTime();
 
-	NSEnumerator *enumerator=[dircontents objectEnumerator];
-	NSString *file;
-	while(file=[enumerator nextObject])
+	NSDictionary *filetypes=[XeeImage fileTypeDictionary];
+	NSMutableDictionary *oldentries=[NSMutableDictionary dictionary];
+
+	NSEnumerator *enumerator=[entries objectEnumerator];
+	XeeFileEntry *entry;
+	while(entry=[enumerator nextObject]) [oldentries setObject:entry forKey:[entry ref]];
+
+	if(![ref startReadingDirectoryWithRecursion:NO]) return;
+
+	[self removeAllEntries];
+
+	XeeFSRef *subref;
+	while(subref=[ref nextDirectoryEntry])
 	{
-		NSString *path=[directoryname stringByAppendingPathComponent:file];
-		NSDictionary *attrs=[fm fileAttributesAtPath:path traverseLink:YES];
-		NSString *type=NSFileTypeForHFSTypeCode([attrs fileHFSTypeCode]);
-		NSString *ext=[[file pathExtension] lowercaseString];
+		NSString *ext=[[[subref name] pathExtension] lowercaseString];
+		NSString *type=[subref HFSTypeCode];
 
-		if([filetypes indexOfObject:ext]!=NSNotFound
-		||[filetypes indexOfObject:type]!=NSNotFound)
-		[res addObject:[XeeDirectoryEntry entryWithFilename:path]];
+		if([filetypes objectForKey:ext]||[filetypes objectForKey:type])
+		{
+			XeeDirectoryEntry *entry=[oldentries objectForKey:subref];
+			if(!entry) entry=[XeeDirectoryEntry entryWithRef:subref];
+			[self addEntry:entry];
+		}
 	}
 
-	return res;
+	//double sorttime=XeeGetTime();
+
+	[self runSorter];
+
+	//double endtime=XeeGetTime();
+	//NSLog(@"readDirectory: %g s read, %g s sort, %g s total",sorttime-starttime,endtime-sorttime,endtime-starttime);
 }
 
--(void)setCurrentImage:(XeeImage *)image index:(int)index
+-(void)setCurrentEntry:(XeeFileEntry *)entry
 {
 	[[XeeKQueue defaultKQueue] removeObserver:self ref:imgref];
 	[imgref release];
 	imgref=nil;
 
-	[super setCurrentImage:image index:index];
+	[super setCurrentEntry:entry];
 
-	if(image)
+	if(entry)
 	{
-		imgref=[[[entries objectAtIndex:currindex] ref] retain];
+		imgref=[[entry ref] retain];
 		written=NO;
 		[[XeeKQueue defaultKQueue] addObserver:self selector:@selector(fileChanged:)
 		ref:imgref flags:NOTE_WRITE|NOTE_DELETE|NOTE_RENAME|NOTE_ATTRIB];
 	}
 }
-
-
-
--(NSString *)directory { return [dirref path]; }
 
 
 
@@ -190,21 +191,29 @@
 		if([ref isValid]&&[[ref parent] isEqual:dirref])
 		{
 			if(sortorder==XeeNameSortOrder) [self sortFiles];
-			[currimage triggerPropertyChangeAction];
+			[[currentry image] triggerPropertyChangeAction];
 		}
-		else [self removeEntryMatchingObject:ref];
+		else
+		{
+			[self startListUpdates];
+			[self removeEntryMatchingObject:ref];
+			[self endListUpdates];
+		}
 	}
 	if(flags&NOTE_DELETE)
 	{
+		[self startListUpdates];
 		[self removeEntryMatchingObject:ref];
+		[self endListUpdates];
 	}
 }
 
 -(void)refreshImage
 {
-	int index=currindex;
-	[self setCurrentImage:nil index:-1];
-	[self pickImageAtIndex:index next:nextindex];
+	// pretty stupid
+	int index=[self indexOfCurrentImage];
+	[self setCurrentEntry:nil];
+	[self pickImageAtIndex:index next:nextentry?[entries indexOfObject:nextentry]:-1];
 	if(sortorder==XeeSizeSortOrder) [self sortFiles];
 }
 
@@ -219,12 +228,19 @@
 	}
 	if(flags&NOTE_RENAME)
 	{
-		if(![ref isValid]) [self removeAllEntries];
-		else [currimage triggerPropertyChangeAction];
+		if(![ref isValid])
+		{
+			[self startListUpdates];
+			[self removeAllEntries];
+			[self endListUpdates];
+		}
+		else [[currentry image] triggerPropertyChangeAction];
 	}
 	if(flags&NOTE_DELETE)
 	{
+		[self startListUpdates];
 		[self removeAllEntries];
+		[self endListUpdates];
 	}
 }
 
@@ -243,7 +259,9 @@
 {
 	if(!needsrefresh) return;
 
-	[self addEntries:[self readDirectory:dirref] sort:YES clear:YES];
+	[self startListUpdates];
+	[self readDirectory:dirref];
+	[self endListUpdates];
 
 	needsrefresh=NO;
 }
@@ -254,22 +272,36 @@
 
 @implementation XeeDirectoryEntry
 
-+(XeeDirectoryEntry *)entryWithRef:(XeeFSRef *)ref
-{
-	return [[[XeeDirectoryEntry alloc] initWithRef:ref] autorelease];
-}
++(XeeDirectoryEntry *)entryWithRef:(XeeFSRef *)ref { return [self entryWithRef:ref image:nil]; }
 
-+(XeeDirectoryEntry *)entryWithFilename:(NSString *)filename
++(XeeDirectoryEntry *)entryWithRef:(XeeFSRef *)ref image:(XeeImage *)image
 {
-	return [[[XeeDirectoryEntry alloc] initWithRef:[XeeFSRef refForPath:filename]] autorelease];
+	return [[[XeeDirectoryEntry alloc] initWithRef:ref image:image] autorelease];
 }
 
 -(id)initWithRef:(XeeFSRef *)fsref
 {
+	return [self initWithRef:fsref image:nil];
+}
+
+-(id)initWithRef:(XeeFSRef *)fsref image:(XeeImage *)img
+{
 	if(self=[super init])
 	{
 		ref=[fsref retain];
-		[self readAttributes];
+		image=[img retain];
+		//[self readAttributes];
+	}
+	return self;
+}
+
+-(id)initAsCopyOf:(XeeDirectoryEntry *)other
+{
+	if(self=[super initAsCopyOf:other])
+	{
+		ref=[other->ref retain];
+		size=other->size;
+		time=other->time;
 	}
 	return self;
 }
@@ -280,12 +312,28 @@
 	[super dealloc];
 }
 
--(void)readAttributes
+-(void)prepareForSortingBy:(int)sortorder
 {
-	struct stat st;
-	lstat([[ref path] fileSystemRepresentation],&st);
-	size=st.st_size;
-	time=st.st_mtimespec.tv_sec;
+	switch(sortorder)
+	{
+		case XeeSizeSortOrder:
+			size=[ref dataSize];
+		break;
+
+		case XeeDateSortOrder:
+			size=(long)[ref modificationTime];
+		break;
+
+		default:
+		{
+			HFSUniStr255 name;
+			FSGetCatalogInfo([ref FSRef],kFSCatInfoNone,NULL,&name,NULL,NULL);
+			pathbuf=malloc(name.length*sizeof(UniChar));
+			memcpy(pathbuf,name.unicode,name.length*sizeof(UniChar));
+			pathlen=name.length;
+		}
+		break;
+	}
 }
 
 -(NSString *)path { return [ref path]; }
@@ -298,11 +346,13 @@
 
 -(NSString *)descriptiveName
 {
-	return [[[ref path] lastPathComponent] stringByMappingColonToSlash];
+	return [[ref name] stringByMappingColonToSlash];
 }
 
 -(BOOL)matchesObject:(id)obj { return [obj isKindOfClass:[XeeFSRef class]]&&[ref isEqual:obj]; }
 
--(BOOL)isEqual:(XeeDirectoryEntry *)other { return [ref isEqual:[other ref]]; }
+-(BOOL)isEqual:(XeeDirectoryEntry *)other { return [ref isEqual:other->ref]; }
+
+-(unsigned)hash { return [ref hash]; }
 
 @end

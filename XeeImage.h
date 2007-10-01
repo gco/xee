@@ -155,6 +155,7 @@
 +(XeeImage *)imageForHandle:(CSHandle *)fh;
 +(XeeImage *)imageForHandle:(CSHandle *)fh ref:(XeeFSRef *)ref attributes:(NSDictionary *)attrs;
 +(NSArray *)allFileTypes;
++(NSDictionary *)fileTypeDictionary;
 +(void)registerImageClass:(Class)class;
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes;

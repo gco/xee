@@ -1,11 +1,9 @@
 #import "XeeFileSource.h"
 #import "XeeImage.h"
 
-
-
-NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
-
-
+#define XeeAdditionChange 0x0001
+#define XeeDeletionChange 0x0002
+#define XeeSortingChange 0x0004
 
 @implementation XeeFileSource
 
@@ -13,8 +11,7 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 {
 	if(self=[super init])
 	{
-		currindex=nextindex=previndex=-1;
-		currimage=nextimage=previmage=nil;
+		currentry=nextentry=preventry=nil;
 		loadingimage=nil;
 
 		entries=[[NSMutableArray array] retain];
@@ -32,9 +29,9 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 	[listlock release];
 	[loadlock release];
 
-	[currimage release];
-	[nextimage release];
-	[previmage release];
+	[currentry release];
+	[nextentry release];
+	[preventry release];
 
 	[super dealloc];
 }
@@ -47,28 +44,17 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 
 
 
--(int)numberOfImages
-{
-	return [entries count];
-}
+-(int)numberOfImages { return [entries count]; }
 
 -(int)indexOfCurrentImage
 {
-	if(currindex<0) return NSNotFound;
-	return currindex;
+	if(!currentry) return NSNotFound;
+	return [entries indexOfObject:currentry];
 }
 
--(NSString *)representedFilename
-{
-	if(currindex<0) return nil;
-	return [[entries objectAtIndex:currindex] path];
-}
+-(NSString *)representedFilename { return [currentry path]; }
 
--(NSString *)descriptiveNameOfCurrentImage
-{
-	if(currindex<0) return nil;
-	return [[entries objectAtIndex:currindex] descriptiveName];
-}
+-(NSString *)descriptiveNameOfCurrentImage { return [currentry descriptiveName]; }
 
 -(int)capabilities { return XeeNavigationCapable; }
 
@@ -86,22 +72,23 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 {
 	[listlock lock];
 
-	XeeImage *newcurrimage=nil,*newnextimage=nil;
-
-	if(index<0 || index>=[entries count]) index=-1;
-	else newcurrimage=[[self imageAtIndex:index] retain];
-
-	if(next<0 || next>=[entries count]) next=-1;
-	else newnextimage=[[self imageAtIndex:next] retain];
+	XeeFileEntry *newcurrentry=nil,*newnextentry=nil;
+	if(index>=0 && index<[entries count]) newcurrentry=[entries objectAtIndex:index];
+	if(next>=0 && next<[entries count]) newnextentry=[entries objectAtIndex:next];
 
 	[loadlock lock];
 
-	if(index!=currindex) [self setPreviousImage:currimage index:currindex];
-	[self setCurrentImage:newcurrimage index:index];
-	[self setNextImage:newnextimage index:next];
+	[newcurrentry retainImage];
+	[newnextentry retainImage];
 
-	[newcurrimage release];
-	[newnextimage release];
+	if(newcurrentry!=currentry) [self setPreviousEntry:currentry];
+	[self setCurrentEntry:newcurrentry];
+	[self setNextEntry:newnextentry];
+
+	[newcurrentry releaseImage];
+	[newnextentry releaseImage];
+
+	XeeImage *currimage=[currentry image]; // grab image while holding loadlock to prevent race condition
 
 	[listlock unlock];
 
@@ -116,188 +103,35 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 
 -(void)pickImageAtIndex:(int)index
 {
-	if(index==currindex&&nextindex>=0) [self pickImageAtIndex:index next:nextindex];
+	// this is pretty dumb; FIX
+	if([entries objectAtIndex:index]==currentry&&nextentry) [self pickImageAtIndex:index next:[entries indexOfObject:nextentry]];
 	else [super pickImageAtIndex:index];
 }
 
 
+//double starttime;
 
--(void)addEntry:(XeeFileEntry *)entry sort:(BOOL)sort
+-(void)startListUpdates
 {
-	[self lockList];
-
-	int index=[entries indexOfObject:entry];
-	if(index!=NSNotFound) { [self unlockListWithUpdates:NO]; return; } // already added
-
-	[entries addObject:entry];
-
-	if(sort) [self _runSorter];
-
-	[self unlockListWithUpdates:sort];
-
-	[self triggerImageListChangeAction];
-	if(currindex<0&&delegate) [self pickImageAtIndex:0 next:-1];
-}
-
--(void)addEntries:(NSArray *)newentries sort:(BOOL)sort clear:(BOOL)clear
-{
-	[self lockList];
-
-	if(clear)
-	{
-		[entries removeAllObjects];
-		[entries addObjectsFromArray:newentries];
-	}
-	else
-	{
-		NSEnumerator *enumerator=[newentries objectEnumerator];
-		XeeFileEntry *entry;
-		while(entry=[enumerator nextObject]) [self addEntry:entry sort:NO];
-	}
-
-	if(sort) [self _runSorter];
-
-	[self unlockListWithUpdates:sort||clear];
-
-	[self triggerImageListChangeAction];
-	if(currindex<0&&delegate) [self pickImageAtIndex:0 next:-1];
-}
-
--(void)removeEntry:(XeeFileEntry *)entry
-{
-	[self lockList];
-
-	int index=[entries indexOfObject:entry];
-	if(index==NSNotFound) { [self unlockListWithUpdates:NO]; return; }
-
-	[entries removeObjectAtIndex:index];
-
-	[self unlockListWithUpdates:YES];
-
-	[self triggerImageListChangeAction];
-}
-
--(void)removeEntryAtIndex:(int)index
-{
-	[self lockList];
-	[entries removeObjectAtIndex:index];
-	[self unlockListWithUpdates:YES];
-
-	[self triggerImageListChangeAction];
-}
-
--(void)removeEntryMatchingObject:(id)obj
-{
-	[self lockList];
-
-	int count=[entries count],index=NSNotFound;
-	for(int i=0;i<count;i++) if([[entries objectAtIndex:i] matchesObject:obj]) { index=i; break; }
-
-	if(index==NSNotFound) { [self unlockListWithUpdates:NO]; return; }
-
-	[entries removeObjectAtIndex:index];
-
-	[self unlockListWithUpdates:YES];
-
-	[self triggerImageListChangeAction];
-}
-
--(void)removeAllEntries
-{
-	[self lockList];
-	[entries removeAllObjects];
-	[self unlockListWithUpdates:YES];
-
-	[self triggerImageListChangeAction];
-	[self triggerImageChangeAction:nil];
-}
-
--(void)sortFiles
-{
-	[self lockList];
-	[self _runSorter];
-	[self unlockListWithUpdates:YES];
-
-	[self triggerImageListChangeAction]; // just to update the position display
-}
-
--(void)_runSorter
-{
-	switch(sortorder)
-	{
-		case XeeDateSortOrder: [entries sortUsingSelector:@selector(compareTimes:)]; break;
-		case XeeSizeSortOrder: [entries sortUsingSelector:@selector(compareSizes:)]; break;
-		default: [entries sortUsingSelector:@selector(comparePaths:)]; break;
-	}
-}
-
-/*#import "FinderCompare.h"
-
-@implementation NSString (FinderCompare)
-
-- (NSComparisonResult)finderCompare:(NSString *)aString
-{
-	SInt32 compareResult;
-	
-	CFIndex lhsLen = [self length];;
-    CFIndex rhsLen = [aString length];
-	
-	UniChar *lhsBuf = malloc(lhsLen * sizeof(UniChar));
-	UniChar *rhsBuf = malloc(rhsLen * sizeof(UniChar));
-	
-	[self getCharacters:lhsBuf];
-	[aString getCharacters:rhsBuf];
-	
-	(void) UCCompareTextDefault(kUCCollateComposeInsensitiveMask | kUCCollateWidthInsensitiveMask | kUCCollateCaseInsensitiveMask | kUCCollateDigitsOverrideMask | kUCCollateDigitsAsNumberMask| kUCCollatePunctuationSignificantMask,lhsBuf,lhsLen,rhsBuf,rhsLen,NULL,&compareResult);
-	
-	free(lhsBuf);
-	free(rhsBuf);
-	
-	return (CFComparisonResult) compareResult;
-}
-
-@end*/
-
-
-
--(void)lockList
-{
+	//starttime=XeeGetTime();
 	[listlock lock];
-
-	preventry=currentry=nextentry=nil;
-	if(previndex>=0) preventry=[[entries objectAtIndex:previndex] retain];
-	if(currindex>=0) currentry=[[entries objectAtIndex:currindex] retain];
-	if(nextindex>=0) nextentry=[[entries objectAtIndex:nextindex] retain];
+	changes=0;
+	oldindex=[entries indexOfObjectIdenticalTo:currentry];
 }
 
--(void)unlockListWithUpdates:(BOOL)updated
+-(void)endListUpdates
 {
-	if(updated)
+	if(changes&XeeDeletionChange)
 	{
-		int oldindex=currindex;
-		previndex=[entries indexOfObject:preventry];
-		currindex=[entries indexOfObject:currentry];
-		nextindex=[entries indexOfObject:nextentry];
-
 		[loadlock lock];
-
-		if(previndex==NSNotFound)
+		if(preventry&&![entries containsObject:preventry]) [self setPreviousEntry:nil];
+		if(nextentry&&![entries containsObject:nextentry]) [self setNextEntry:nil];
+		if(currentry&&![entries containsObject:currentry])
 		{
-			if(loadingimage==previmage) [loadingimage stopLoading];
-			[self setPreviousImage:nil index:-1];
-		}
-		if(nextindex==NSNotFound)
-		{
-			if(loadingimage==nextimage) [loadingimage stopLoading];
-			[self setNextImage:nil index:-1];
-		}
-		if(currindex==NSNotFound)
-		{
-			if(loadingimage==currimage) [loadingimage stopLoading];
-			[self setCurrentImage:nil index:-1];
+			[self setCurrentEntry:nil];
 
 			int count=[entries count];
-/*			if(count&&currfile)
+	/*		if(count&&currfile)
 			{
 				int index;
 				for(index=0;index<count;index++)
@@ -311,55 +145,98 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 			if(oldindex>=count) [self pickImageAtIndex:count-1];
 			else [self pickImageAtIndex:oldindex];
 		}
-
-		// should handle loading image
 		[loadlock unlock];
 	}
 
-	[preventry release];
-	[currentry release];
-	[nextentry release];
-
 	[listlock unlock];
+
+	if(changes&(XeeDeletionChange|XeeAdditionChange|XeeSortingChange))
+	[self triggerImageListChangeAction];
+	//double endtime=XeeGetTime();
+	//NSLog(@"endListUpdates: total time %g s",endtime-starttime);
+
+//	if(!currentry&&delegate) [self pickImageAtIndex:0 next:-1];
 }
 
-
-
--(XeeImage *)imageAtIndex:(int)index
+-(void)addEntry:(XeeFileEntry *)entry
 {
-	if(index<0) return nil;
-	else if(index==currindex) return currimage;
-	else if(index==nextindex) return nextimage;
-	else if(index==previndex) return previmage;
-	else
+	[entries addObject:entry];
+	changes|=XeeAdditionChange;
+}
+
+-(void)removeEntry:(XeeFileEntry *)entry
+{
+	[entries removeObject:entry];
+	changes|=XeeDeletionChange;
+}
+
+-(void)removeEntryMatchingObject:(id)obj
+{
+	NSEnumerator *enumerator=[entries objectEnumerator];
+	XeeFileEntry *entry;
+	while(entry=[enumerator nextObject]) if([entry matchesObject:obj]) break;
+	if(!entry) return;
+
+	[self removeEntry:entry];
+}
+
+-(void)removeAllEntries
+{
+	[entries removeAllObjects];
+	changes|=XeeDeletionChange;
+}
+
+-(void)runSorter
+{
+	NSEnumerator *enumerator=[entries objectEnumerator];
+	XeeFileEntry *entry;
+	while(entry=[enumerator nextObject]) [entry prepareForSortingBy:sortorder];
+
+	switch(sortorder)
 	{
-		XeeFileEntry *entry=[entries objectAtIndex:index];
-		return [XeeImage imageForRef:[entry ref]];
+		case XeeDateSortOrder: [entries sortUsingSelector:@selector(compareTimes:)]; break;
+		case XeeSizeSortOrder: [entries sortUsingSelector:@selector(compareSizes:)]; break;
+		default: [entries sortUsingSelector:@selector(comparePaths:)]; break;
 	}
+
+	[entries makeObjectsPerformSelector:@selector(finishSorting)];
+
+	changes|=XeeSortingChange;
 }
 
--(void)setCurrentImage:(XeeImage *)image index:(int)index
+
+
+-(void)sortFiles
 {
-	currindex=index;
-	if(image==currimage) return;
-	[currimage release];
-	currimage=[image retain];
+	[self startListUpdates];
+	[self runSorter];
+	[self endListUpdates];
 }
 
--(void)setPreviousImage:(XeeImage *)image index:(int)index
+
+
+-(void)setCurrentEntry:(XeeFileEntry *)entry
 {
-	previndex=index;
-	if(image==previmage) return;
-	[previmage release];
-	previmage=[image retain];
+	[currentry releaseImage];
+	[currentry autorelease];
+	currentry=[entry retain];
+	[currentry retainImage];
 }
 
--(void)setNextImage:(XeeImage *)image index:(int)index
+-(void)setPreviousEntry:(XeeFileEntry *)entry
 {
-	nextindex=index;
-	if(image==nextimage) return;
-	[nextimage release];
-	nextimage=[image retain];
+	[preventry releaseImage];
+	[preventry autorelease];
+	preventry=[entry retain];
+	[preventry retainImage];
+}
+
+-(void)setNextEntry:(XeeFileEntry *)entry
+{
+	[nextentry releaseImage];
+	[nextentry autorelease];
+	nextentry=[entry retain];
+	[nextentry retainImage];
 }
 
 
@@ -368,6 +245,7 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 {
 	if(!loader_running)
 	{
+		[self retain];
 		[NSThread detachNewThreadSelector:@selector(loader) toTarget:self withObject:nil];
 		loader_running=YES;
 	}
@@ -376,8 +254,6 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 -(void)loader
 {
 	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-
-	[self retain];
 
 	[NSThread setThreadPriority:0.1];
 
@@ -389,9 +265,14 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 
 		NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 
+		XeeImage *currimage=[currentry image];
 		if(currimage&&[currimage needsLoading]) loadingimage=currimage;
-		else if(nextimage&&[nextimage needsLoading]) loadingimage=nextimage;
-		else break;
+		else
+		{
+			XeeImage *nextimage=[nextentry image];
+			if(nextimage&&[nextimage needsLoading]) loadingimage=nextimage;
+			else break;
+		}
 
 		[loadingimage retain];
 		[loadlock unlock];
@@ -418,13 +299,33 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 	[pool release];
 }
 
-
-
 @end
 
 
 
 @implementation XeeFileEntry
+
+-(id)init
+{
+	if(self=[super init])
+	{
+		image=nil;
+		imageretain=0;
+		pathbuf=NULL;
+	}
+	return self;
+}
+
+-(id)initAsCopyOf:(XeeFileEntry *)other { return [self init]; }
+
+-(void)dealloc
+{
+	[image release];
+	free(pathbuf);
+	[super dealloc];
+}
+
+
 
 -(NSString *)path { return nil; }
 
@@ -438,9 +339,63 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 
 -(BOOL)matchesObject:(id)obj { return NO; }
 
+
+
+-(void)retainImage
+{
+	imageretain++;
+}
+
+-(void)releaseImage
+{
+	imageretain--;
+	if(imageretain==0)
+	{
+		[image stopLoading];
+		[image release];
+		image=nil;
+	}
+	else if(imageretain<0) [NSException raise:@"XeeFileEntryException" format:@"Too many releaseImage calls for file %@",[self path]];
+}
+
+-(XeeImage *)image
+{
+	if(!imageretain) [NSException raise:@"XeeFileEntryException" format:@"Attempted to access image without using retainImage for file %@",[self path]];
+	if(!image) image=[[XeeImage imageForRef:[self ref]] retain];
+	return image;
+}
+
+
+
+-(void)prepareForSortingBy:(int)sortorder
+{
+	switch(sortorder)
+	{
+		case XeeDateSortOrder: break;
+		case XeeSizeSortOrder: break;
+		default:
+		{
+			NSString *path=[self path];
+			pathlen=[path length];
+			pathbuf=malloc(pathlen*sizeof(UniChar));
+			[path getCharacters:pathbuf];
+		}
+	}
+}
+
+-(void)finishSorting
+{
+	free(pathbuf);
+	pathbuf=NULL;
+}
+
 -(NSComparisonResult)comparePaths:(XeeFileEntry *)other
 {
-	return [[self path] compare:[other path] options:NSCaseInsensitiveSearch|NSNumericSearch];
+	SInt32 res;
+	UCCompareTextDefault(kUCCollateComposeInsensitiveMask|kUCCollateWidthInsensitiveMask|
+	kUCCollateCaseInsensitiveMask|kUCCollateDigitsOverrideMask|kUCCollateDigitsAsNumberMask|
+	kUCCollatePunctuationSignificantMask,pathbuf,pathlen,other->pathbuf,other->pathlen,NULL,&res);
+	return res;
 }
 
 -(NSComparisonResult)compareSizes:(XeeFileEntry *)other
@@ -462,5 +417,11 @@ NSComparisonResult XeeFileSorter(id file1,id file2,XeeFileSource *source);
 	else if(time1>time2) return NSOrderedAscending;
 	else return NSOrderedDescending;
 }
+
+-(BOOL)isEqual:(id)other { return NO; }
+
+-(unsigned)hash { return 0; }
+
+-(id)copyWithZone:(NSZone *)zone { return [[[self class] allocWithZone:zone] initAsCopyOf:self]; }
 
 @end

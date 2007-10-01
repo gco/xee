@@ -46,6 +46,8 @@ BOOL finderlaunch;
 		prefswindow=nil;
 		iconwindow=nil;
 		iconfield=nil;
+
+		controllers=[[NSMutableDictionary dictionary] retain];
 	}
 	return self;
 }
@@ -318,24 +320,36 @@ BOOL finderlaunch;
 	}
 	else
 	{
-		BOOL dir;
-		if(![[NSFileManager defaultManager] fileExistsAtPath:filename isDirectory:&dir]) return NO;
+		XeeFSRef *ref=[XeeFSRef refForPath:filename],*dirref;
 
-		XeeController *controller=[self controllerForDirectory:[filename stringByDeletingLastPathComponent]];
-
-		XeeImageSource *source;
-		if(dir) source=[[[XeeDirectorySource alloc] initWithDirectory:filename] autorelease];
+		XeeImageSource *source=nil;
+		if([ref isDirectory])
+		{
+			source=[[[XeeDirectorySource alloc] initWithDirectory:ref] autorelease];
+			dirref=ref;
+		}
 		else
 		{
-			XeeImage *image=[XeeImage imageForFilename:filename];
-			if(image) source=[[[XeeDirectorySource alloc] initWithImage:image] autorelease];
+			XeeImage *image=[XeeImage imageForRef:ref];
+			if(image)
+			{
+				source=[[[XeeDirectorySource alloc] initWithImage:image] autorelease];
+				dirref=[ref parent];
+			}
 			else
 			{
 				source=[[[XeeArchiveSource alloc] initWithArchive:filename] autorelease];
-				if(!source) source=[[[XeeDirectorySource alloc] initWithFilename:filename] autorelease];
+				dirref=nil;
+			}
+
+			if(!source)
+			{
+				source=[[[XeeDirectorySource alloc] initWithRef:ref] autorelease];
+				dirref=[ref parent];
 			}
 		}
 
+		XeeController *controller=[self controllerForDirectory:dirref];
 		[controller setImageSource:source];
 		[controller autoFullScreen];
 
@@ -691,7 +705,7 @@ BOOL finderlaunch;
 
 
 
--(XeeController *)controllerForDirectory:(NSString *)directory
+-(XeeController *)controllerForDirectory:(XeeFSRef *)directory
 {
 	XeeController *focus=[self focusedController];
 	if(focus&&[focus isFullscreen]) return focus;
@@ -702,28 +716,15 @@ BOOL finderlaunch;
 	{
 		case 0: // single window
 		{
-			NSArray *controllers=[XeeController controllers];
-			if([controllers count]>0) controller=[controllers objectAtIndex:0];
+			NSArray *keys=[controllers allKeys];
+			if([keys count]>0) controller=[controllers objectForKey:[keys objectAtIndex:0]];
 		}
 		break;
 
 		case 1:
 		{
 			if(!directory) break;
-
-			NSEnumerator *enumerator=[[XeeController controllers] objectEnumerator];
-			XeeController *currcontroller;
-
-			while(currcontroller=[enumerator nextObject])
-			{
-				XeeImageSource *source=[currcontroller imageSource];
-				if([source isKindOfClass:[XeeDirectorySource class]])
-				if([[(XeeDirectorySource *)source directory] isEqual:directory])
-				{
-					controller=currcontroller;
-					break;
-				}
-			}
+			controller=[controllers objectForKey:directory];
 		}
 		break;
 	}
@@ -735,11 +736,19 @@ BOOL finderlaunch;
 		windowcontroller=nil;
 		[browsernib instantiateNibWithOwner:self topLevelObjects:nil];
 		controller=windowcontroller;
+
+		if(directory) [controllers setObject:controller forKey:directory];
 	}
 
 	[[controller window] makeKeyAndOrderFront:self];
 
 	return controller;
+}
+
+-(void)controllerWillExit:(XeeController *)controller
+{
+	NSArray *keys=[controllers allKeysForObject:controller];
+	if(keys) [controllers removeObjectsForKeys:keys];
 }
 
 

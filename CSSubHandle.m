@@ -17,6 +17,17 @@
 	return nil;
 }
 
+-(id)initAsCopyOf:(CSSubHandle *)other
+{
+	if(self=[super initAsCopyOf:other])
+	{
+		parent=[other->parent copy];
+		start=other->start;
+		end=other->end;
+	}
+	return self;
+}
+
 -(void)dealloc
 {
 	[parent release];

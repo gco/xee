@@ -25,7 +25,6 @@
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
--(id)copyWithZone:(NSZone *)zone;
 
 -(void)_raiseZlib;
 

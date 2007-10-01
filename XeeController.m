@@ -24,15 +24,6 @@ static NSMutableArray *controllers=nil;
 
 @implementation XeeController
 
-+(void)initialize
-{
-	if(!controllers) controllers=[[NSMutableArray array] retain];
-}
-
-+(NSArray *)controllers { return controllers; }
-
-
-
 -(id)init
 {
 	if(self=[super init])
@@ -131,7 +122,7 @@ static NSMutableArray *controllers=nil;
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:nil];
 
-	[controllers removeObject:self];
+	[maindelegate controllerWillExit:self];
 
 	[source stop];
 

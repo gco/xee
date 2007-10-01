@@ -8,17 +8,17 @@
 	BOOL needsrefresh,written;
 }
 
--(id)initWithDirectory:(NSString *)directoryname;
--(id)initWithFilename:(NSString *)filename;
+-(id)initWithDirectory:(XeeFSRef *)directory;
+-(id)initWithRef:(XeeFSRef *)ref;
 -(id)initWithImage:(XeeImage *)image;
+-(id)initWithRef:(XeeFSRef *)ref image:(XeeImage *)image;
+-(void)dealloc;
 
 -(int)capabilities;
 
--(void)_runSorter;
-
--(BOOL)scanDirectory:(NSString *)directoryname;
--(NSArray *)readDirectory:(XeeFSRef *)dirref;
--(NSString *)directory;
+-(BOOL)scanDirectory:(XeeFSRef *)ref;
+-(void)readDirectory:(XeeFSRef *)ref;
+-(void)setCurrentEntry:(XeeFileEntry *)entry;
 
 -(void)fileChanged:(XeeKEvent *)event;
 -(void)directoryChanged:(XeeKEvent *)event;
@@ -37,12 +37,14 @@
 }
 
 +(XeeDirectoryEntry *)entryWithRef:(XeeFSRef *)ref;
-+(XeeDirectoryEntry *)entryWithFilename:(NSString *)filename;
++(XeeDirectoryEntry *)entryWithRef:(XeeFSRef *)ref image:(XeeImage *)image;
 
 -(id)initWithRef:(XeeFSRef *)fsref;
+-(id)initWithRef:(XeeFSRef *)fsref image:(XeeImage *)image;
+-(id)initAsCopyOf:(XeeDirectoryEntry *)other;
 -(void)dealloc;
 
--(void)readAttributes;
+-(void)prepareForSortingBy:(int)sortorder;
 
 -(NSString *)path;
 -(XeeFSRef *)ref;
@@ -51,6 +53,8 @@
 -(NSString *)descriptiveName;
 
 -(BOOL)matchesObject:(id)obj;
+
 -(BOOL)isEqual:(XeeDirectoryEntry *)other;
+-(unsigned)hash;
 
 @end

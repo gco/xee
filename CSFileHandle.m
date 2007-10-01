@@ -57,9 +57,9 @@
 
 -(id)initAsCopyOf:(CSFileHandle *)other
 {
-	if(self=[super initWithName:[[other name] stringByAppendingString:@" (copy)"]])
+	if(self=[super initAsCopyOf:other])
 	{
-		fh=[other filePointer];
+		fh=other->fh;
  		close=NO;
 		multi=YES;
 		parent=[other retain];
@@ -136,17 +136,6 @@
 	if(multi) pos=FTELL(fh);
 }
 
--(id)copyWithZone:(NSZone *)zone;
-{
-	if(!multi)
-	{
-		multi=YES;
-		pos=FTELL(fh);
-	}
-
-	return [[CSFileHandle allocWithZone:zone] initAsCopyOf:self];
-}
-
 
 
 
@@ -155,6 +144,15 @@
 	if(feof(fh)) [self _raiseEOF];
 	else [NSException raise:@"CSFileErrorException"
 	format:@"Error while attempting to read file \"%@\": %s.",name,strerror(ferror(fh))];
+}
+
+-(void)_setMultiMode
+{
+	if(!multi)
+	{
+		multi=YES;
+		pos=FTELL(fh);
+	}
 }
 
 -(FILE *)filePointer { return fh; }

@@ -10,6 +10,7 @@
 +(CSHandle *)multiHandleWithHandles:(CSHandle *)firsthandle,...;
 
 -(id)initWithHandles:(NSArray *)handlearray;
+-(id)initAsCopyOf:(CSMultiHandle *)other;
 -(void)dealloc;
 
 -(off_t)fileSize;

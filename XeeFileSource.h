@@ -9,9 +9,8 @@
 	NSRecursiveLock *listlock,*loadlock;
 	NSArray *types;
 
-	int currindex,nextindex,previndex;
-	XeeImage *currimage,*nextimage,*previmage;
-	XeeFileEntry *preventry,*currentry,*nextentry;
+	XeeFileEntry *currentry,*nextentry,*preventry;
+	int changes,oldindex;
 
 	BOOL loader_running,exiting;
 	XeeImage *loadingimage;
@@ -33,22 +32,21 @@
 -(void)pickImageAtIndex:(int)index next:(int)next;
 -(void)pickImageAtIndex:(int)index;
 
--(void)addEntry:(XeeFileEntry *)entry sort:(BOOL)sort;
--(void)addEntries:(NSArray *)newentries sort:(BOOL)sort clear:(BOOL)clear;
+-(void)startListUpdates;
+-(void)endListUpdates;
+
+-(void)addEntry:(XeeFileEntry *)entry;
 -(void)removeEntry:(XeeFileEntry *)entry;
--(void)removeEntryAtIndex:(int)index;
 -(void)removeEntryMatchingObject:(id)obj;
 -(void)removeAllEntries;
+
+-(void)runSorter;
 -(void)sortFiles;
--(void)_runSorter;
 
--(void)lockList;
--(void)unlockListWithUpdates:(BOOL)updated;
+-(void)setCurrentEntry:(XeeFileEntry *)entry;
+-(void)setPreviousEntry:(XeeFileEntry *)entry;
+-(void)setNextEntry:(XeeFileEntry *)entry;
 
--(XeeImage *)imageAtIndex:(int)index;
--(void)setCurrentImage:(XeeImage *)image index:(int)index;
--(void)setPreviousImage:(XeeImage *)image index:(int)index;
--(void)setNextImage:(XeeImage *)image index:(int)index;
 -(void)launchLoader;
 -(void)loader;
 
@@ -56,20 +54,38 @@
 
 
 
-@interface XeeFileEntry:NSObject
+@interface XeeFileEntry:NSObject <NSCopying>
 {
+	XeeImage *image;
+	int imageretain;
+	UniChar *pathbuf;
+	int pathlen;
 }
+
+-(id)init;
+-(id)initAsCopyOf:(XeeFileEntry *)other;
+-(void)dealloc;
 
 -(NSString *)path;
 -(XeeFSRef *)ref;
 -(off_t)size;
 -(long)time;
 -(NSString *)descriptiveName;
-
 -(BOOL)matchesObject:(id)obj;
 
+-(void)retainImage;
+-(void)releaseImage;
+-(XeeImage *)image;
+
+-(void)prepareForSortingBy:(int)sortorder;
+-(void)finishSorting;
 -(NSComparisonResult)comparePaths:(XeeFileEntry *)other;
 -(NSComparisonResult)compareSizes:(XeeFileEntry *)other;
 -(NSComparisonResult)compareTimes:(XeeFileEntry *)other;
+
+-(BOOL)isEqual:(id)other;
+-(unsigned)hash;
+
+-(id)copyWithZone:(NSZone *)zone;
 
 @end
