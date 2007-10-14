@@ -23,11 +23,22 @@
 	}
 	else
 	{
-		if([controller fullScreenWindow]) [panel runModal];
-		else [panel beginSheetForWindow:[controller window]];
+		NSString *path=[image filename];
+		NSString *directory=[path stringByDeletingLastPathComponent];
+		NSString *filename=[panel updateExtension:[path lastPathComponent]];
+
+		if([controller fullScreenWindow])
+		{
+			[panel savePanelDidEnd:panel returnCode:[panel runModalForDirectory:directory file:filename] contextInfo:NULL];
+		}
+		else
+		{
+			[panel beginSheetForDirectory:directory file:filename modalForWindow:[controller window]
+			modalDelegate:panel didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
+			contextInfo:nil];
+		}
 	}
 }
-
 
 -(id)initWithImage:(XeeImage *)img controller:(XeeController *)cont
 {
@@ -83,20 +94,16 @@
 	[super dealloc];
 }
 
--(void)beginSheetForWindow:(NSWindow *)window
+-(BOOL)makeFirstResponder:(NSResponder *)responder
 {
-	NSString *path=[image filename];
-	NSString *directory=[path stringByDeletingLastPathComponent];
-	NSString *filename=[self updateExtension:[path lastPathComponent]];
+	if(!textview && [responder class]==[NSTextView class])
+	{
+		textview=(NSTextView *)responder;
+		[self performSelector:@selector(selectNamePart) withObject:nil afterDelay:0
+		inModes:[NSArray arrayWithObjects:NSDefaultRunLoopMode,NSModalPanelRunLoopMode,nil]];
+	}
 
-	[self beginSheetForDirectory:directory file:filename modalForWindow:window
-	modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
-	contextInfo:nil];
-
-	id first=[self firstResponder];
-	if([first class]==[NSTextView class]) textview=first;
-
-	[self selectNamePart];
+	return [super makeFirstResponder:responder];
 }
 
 -(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)res contextInfo:(void *)info

@@ -314,7 +314,7 @@ static BOOL HasAppleMouse()
 
 -(void)xeeView:(XeeView *)view imagePropertiesDidChange:(XeeImage *)image
 {
-	if([[NSApplication sharedApplication] keyWindow]==window)
+	if([[NSApplication sharedApplication] mainWindow]==window)
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:currimage];
 
 	NSString *filename=[source representedFilename];
@@ -382,7 +382,7 @@ static BOOL HasAppleMouse()
 		[imageview setImage:nil];
 	}
 
-	NSWindow *keywin=[[NSApplication sharedApplication] keyWindow];
+	NSWindow *keywin=[[NSApplication sharedApplication] mainWindow];
 	if(keywin==window||keywin==fullscreenwindow)
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:currimage];
 

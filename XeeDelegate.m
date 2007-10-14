@@ -18,6 +18,7 @@
 #import "XeePNGLoader.h"
 #import "XeeGIFLoader.h"
 #import "XeePhotoshopLoader.h"
+#import "XeePhotoshopPICTLoader.h"
 #import "XeeILBMLoader.h"
 #import "XeePCXLoader.h"
 #import "XeeMayaLoader.h"
@@ -28,6 +29,7 @@
 
 #import "XeeImageIOSaver.h"
 #import "XeeLosslessSaver.h"
+#import "XeeExperimentalImage1Saver.h"
 
 
 
@@ -69,6 +71,7 @@ BOOL finderlaunch;
 	[XeeImage registerImageClass:[XeePNGImage class]];
 	[XeeImage registerImageClass:[XeeGIFImage class]];
 	[XeeImage registerImageClass:[XeePhotoshopImage class]];
+	[XeeImage registerImageClass:[XeePhotoshopPICTImage class]];
 	[XeeImage registerImageClass:[XeeILBMImage class]];
 	[XeeImage registerImageClass:[XeePCXImage class]];
 	[XeeImage registerImageClass:[XeeMayaImage class]];
@@ -90,6 +93,7 @@ BOOL finderlaunch;
 	[XeeImageSaver registerSaverClass:[XeeBMPSaver class]];
 	[XeeImageSaver registerSaverClass:[XeeTGASaver class]];
 	[XeeImageSaver registerSaverClass:[XeeSGISaver class]];
+	[XeeImageSaver registerSaverClass:[XeeExperimentalImage1Saver class]];
 
 	[[antialiasmenu itemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"antialiasQuality"]] setState:NSOnState];
 

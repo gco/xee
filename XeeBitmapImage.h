@@ -57,7 +57,7 @@
 
 #define XeeGetRFromNRGB8 XeeGetRFromARGB8
 #define XeeGetGFromNRGB8 XeeGetGFromARGB8
-#define XeeGetbFromNRGB8 XeeGetBFromARGB8
+#define XeeGetBFromNRGB8 XeeGetBFromARGB8
 
 
 

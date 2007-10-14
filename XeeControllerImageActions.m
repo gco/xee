@@ -67,8 +67,8 @@ int XeeNumberOfZoomLevels=21;
 				unsigned long size;
 				if(GraphicsExportDoExport(exporter,&size)==noErr)
 				{
-					NSData *data=[NSData dataWithBytes:*outhandle length:size];
-NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,1024)]);
+					NSData *data=[NSData dataWithBytes:*outhandle+512 length:size-512];
+NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,2*1024)]);
 					[pboard setData:data forType:type];
 					res=YES;
 				}

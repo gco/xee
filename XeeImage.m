@@ -729,7 +729,7 @@ NSMutableArray *imageclasses=nil;
 
 	NSString *filename=[ref path];
 
-	NSData *block=[fh readDataOfLengthAtMost:512];
+	NSData *block=[fh readDataOfLengthAtMost:4096];
 	if(!block) return nil;
 
 	[fh seekToFileOffset:0];

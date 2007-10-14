@@ -42,6 +42,17 @@ static CSCoroutine *CSSetCurrentCoroutine(CSCoroutine *new)
 	return curr;
 }
 
+static void CSSetEntryPoint(jmp_buf env,void (*entry)(),void *stack,int stacksize)
+{
+	#if defined(__i386__)
+	env[9]=(((int)stack+stacksize)&~15)-4; // -4 to pretend that a return address has just been pushed onto the stack
+	env[12]=(int)entry;
+	#else
+	env[0]=((int)stack+stacksize-64)&~3;
+	env[21]=(int)entry;
+	#endif
+}
+
 @implementation CSCoroutine
 
 +(void)initialize
@@ -113,13 +124,7 @@ static void CSTigerCoroutineStart()
 	argsize=method_getSizeOfArguments(method);
 
 	_setjmp(env);
-	#if defined(__i386__)
-	env[9]=(((int)stack+stacksize)&~15)-4; // -4 to pretend that a return address has just been pushed onto the stack
-	env[12]=(int)CSTigerCoroutineStart;
-	#else
-	env[0]=((int)stack+stacksize-64)&~3;
-	env[21]=(int)CSTigerCoroutineStart;
-	#endif
+	CSSetEntryPoint(env,CSTigerCoroutineStart,stack,stacksize);
 
 	[self switchTo];
 	return nil;
@@ -146,13 +151,7 @@ static void CSLeopardCoroutineStart()
 	[inv setTarget:target];
 
 	_setjmp(env);
-	#if defined(__i386__)
-	env[9]=(((int)stack+stacksize)&~15)-4; // -4 to pretend that a return address has just been pushed onto the stack
-	env[12]=(int)CSLeopardCoroutineStart;
-	#else
-	env[0]=((int)stack+stacksize-64)&~3;
-	env[21]=(int)CSLeopardCoroutineStart;
-	#endif
+	CSSetEntryPoint(env,CSLeopardCoroutineStart,stack,stacksize);
 
 	[self switchTo];
 }

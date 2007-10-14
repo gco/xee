@@ -12,6 +12,8 @@
 		1B0707850C9F3BC500FA8EBD /* XeeSWFLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */; };
 		1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B07078A0C9F3DA700FA8EBD /* SWFParser.m */; };
 		1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */; };
+		1B071A440CB159D600FA8EBD /* XeeExperimentalImage1Saver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B071A430CB159D600FA8EBD /* XeeExperimentalImage1Saver.m */; };
+		1B0F15370CB17CBF000CED68 /* XeePhotoshopPICTLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0F15360CB17CBF000CED68 /* XeePhotoshopPICTLoader.m */; };
 		1B0FF4CF0C96F78C000CED68 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */; };
 		1B16F6070C0BB10F002B0008 /* XeeStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B16F6060C0BB10F002B0008 /* XeeStringAdditions.m */; };
 		1B1B96580B06AD5B00EC8324 /* XeeBitmapTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1B96570B06AD5B00EC8324 /* XeeBitmapTile.m */; };
@@ -296,6 +298,10 @@
 		1B07078B0C9F3DA700FA8EBD /* SWFParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFParser.h; sourceTree = "<group>"; };
 		1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFGeometry.h; sourceTree = "<group>"; };
 		1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SWFGeometry.m; sourceTree = "<group>"; };
+		1B071A420CB159D600FA8EBD /* XeeExperimentalImage1Saver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeExperimentalImage1Saver.h; sourceTree = "<group>"; };
+		1B071A430CB159D600FA8EBD /* XeeExperimentalImage1Saver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeExperimentalImage1Saver.m; sourceTree = "<group>"; };
+		1B0F15350CB17CBF000CED68 /* XeePhotoshopPICTLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePhotoshopPICTLoader.h; sourceTree = "<group>"; };
+		1B0F15360CB17CBF000CED68 /* XeePhotoshopPICTLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeePhotoshopPICTLoader.m; sourceTree = "<group>"; };
 		1B0FF4CD0C96F78B000CED68 /* CSHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHexDump.h; sourceTree = "<group>"; };
 		1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
 		1B16F6050C0BB10F002B0008 /* XeeStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeStringAdditions.h; sourceTree = "<group>"; };
@@ -741,6 +747,8 @@
 				1B1D524F0B02A419009AA7EB /* XeeLosslessSaver.m */,
 				1BFB0CFE0B1200AB0088CDB4 /* XeeJPEGLosslessSaving.h */,
 				1BFB0CFF0B1200AB0088CDB4 /* XeeJPEGLosslessSaving.m */,
+				1B071A420CB159D600FA8EBD /* XeeExperimentalImage1Saver.h */,
+				1B071A430CB159D600FA8EBD /* XeeExperimentalImage1Saver.m */,
 			);
 			name = "Image Saving";
 			sourceTree = "<group>";
@@ -929,6 +937,8 @@
 				1BE5DEB40A7E9B6900967AD2 /* XeePhotoshopLoader.m */,
 				1B2B5B3D0C7510B20057B42F /* XeePhotoshopLayerParser.h */,
 				1B2B5B3E0C7510B30057B42F /* XeePhotoshopLayerParser.m */,
+				1B0F15350CB17CBF000CED68 /* XeePhotoshopPICTLoader.h */,
+				1B0F15360CB17CBF000CED68 /* XeePhotoshopPICTLoader.m */,
 				1BE4C37D08E4C5A300859EE2 /* XeeILBMLoader.h */,
 				1BE4C37E08E4C5A300859EE2 /* XeeILBMLoader.m */,
 				1BE4C37A08E4C58300859EE2 /* XeePCXLoader.h */,
@@ -1595,6 +1605,8 @@
 				1B0707850C9F3BC500FA8EBD /* XeeSWFLoader.m in Sources */,
 				1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */,
 				1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */,
+				1B071A440CB159D600FA8EBD /* XeeExperimentalImage1Saver.m in Sources */,
+				1B0F15370CB17CBF000CED68 /* XeePhotoshopPICTLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

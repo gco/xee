@@ -40,8 +40,8 @@
 			nil];
 		}
 		else handle=[CSMemoryHandle memoryHandleForReadingData:data];
-
-//[[handle remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
+NSLog(@"what");
+[[[[handle copy] autorelease] remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
 
 		image=[[XeeImage imageForHandle:handle] retain];
 

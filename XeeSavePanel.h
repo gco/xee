@@ -20,8 +20,6 @@
 -(id)initWithImage:(XeeImage *)img controller:(XeeController *)cont;
 -(void)dealloc;
 
--(void)beginSheetForWindow:(NSWindow *)window;
-
 -(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)res contextInfo:(void *)info;
 -(void)xeeSLUpdated:(XeeSimpleLayout *)alsoview;
 
