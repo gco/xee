@@ -58,7 +58,13 @@
 			height=[iff readUInt32];
 			[iff skipBytes:4];
 			flags=[iff readUInt32];
-			[iff skipBytes:2];
+			switch([iff readUInt16])
+			{
+				case 0: bytedepth=1; break;
+				case 1: bytedepth=2; break;
+				case 3: bytedepth=4; break;
+				default: return NULL;
+			}
 			tiles=[iff readUInt16];
 			compression=[iff readUInt32];
 		break;
@@ -88,23 +94,22 @@
 	{
 		case MAYA_FORMAT_NOTHING:
 			type=0;
-			pixelsize=0;
-//			[self setDepthGrey:8 alpha:NO floating:NO];
+			numchannels=0;
 		break;
 		case MAYA_FORMAT_RGB:
-			type=XeeBitmapTypeRGB8;
-			pixelsize=3;
-			[self setDepthRGB:8 alpha:NO floating:NO];
+			type=XeeBitmapType(XeeRGBBitmap,8*bytedepth,XeeAlphaNone,bytedepth==4?XeeBitmapFloatingPointFlag:0);
+			numchannels=3;
+			[self setDepthRGB:8*bytedepth alpha:NO floating:bytedepth==4];
 		break;
 		case MAYA_FORMAT_ALPHA:
-			type=XeeBitmapTypeLuma8;
-			pixelsize=1;
-			[self setDepthGrey:8 alpha:NO floating:NO];
+			type=XeeBitmapType(XeeGreyBitmap,8*bytedepth,XeeAlphaNone,bytedepth==4?XeeBitmapFloatingPointFlag:0);
+			numchannels=1;
+			[self setDepthGrey:8*bytedepth alpha:NO floating:bytedepth==4];
 		break;
 		case MAYA_FORMAT_RGBA:
-			type=XeeBitmapTypeRGBA8;
-			pixelsize=4;
-			[self setDepthRGB:8 alpha:YES floating:NO];
+			type=XeeBitmapType(XeeRGBBitmap,8*bytedepth,XeeAlphaLast,bytedepth==4?XeeBitmapFloatingPointFlag:0);
+			numchannels=4;
+			[self setDepthRGB:8*bytedepth alpha:YES floating:bytedepth==4];
 		break;
 	}
 
@@ -143,7 +148,9 @@
 				tile_w=x2-x1+1;
 				tile_h=y2-y1+1;
 
-				if([subiff bytesLeft]>=tile_w*tile_h*pixelsize)
+//NSLog(@"%d %d %@",[subiff bytesLeft],tile_w*tile_h*numchannels,[self filename]);
+
+				if([subiff bytesLeft]>=tile_w*tile_h*numchannels*bytedepth)
 				{
 					[self readUncompressedAtX:x1 y:y1 width:tile_w height:tile_h];
 				}
@@ -173,7 +180,7 @@
 	{
 		[mainimage setCompleted];
 		[zbufimage setCompleted];
-		@throw;
+		@throw e;
 	}
 
 	return @selector(loadDataChunk);
@@ -181,14 +188,14 @@
 
 -(void)readUncompressedAtX:(int)x y:(int)y width:(int)w height:(int)h
 {
-	uint8 *data=[mainimage data];
+/*	uint8 *data=[mainimage data];
 	int bprow=[mainimage bytesPerRow];
 	for(int i=0;i<h;i++)
 	{
-		uint8 *ptr=data+(height-y-i-1)*bprow+x*pixelsize;
-		[subiff readBytes:w*pixelsize toBuffer:ptr];
+		uint8 *ptr=data+(height-y-i-1)*bprow+x*numchannels;
+		[subiff readBytes:w*numchannels toBuffer:ptr];
 
-		if(pixelsize==3)
+		if(numchannels==3)
 		{
 			for(int j=0;j<w;j++)
 			{
@@ -201,7 +208,7 @@
 				ptr+=3;
 			}
 		}
-		else if(pixelsize==4)
+		else if(numchannels==4)
 		{
 			for(int j=0;j<w;j++)
 			{
@@ -216,6 +223,29 @@
 				ptr+=4;
 			}
 		}
+	}*/
+
+	uint8 *data=[mainimage data];
+	int bprow=[mainimage bytesPerRow];
+
+	int bytesperpixel=numchannels*bytedepth;
+
+	for(int dy=0;dy<h;dy++)
+	{
+		uint8 *ptr=data+(height-y-dy-1)*bprow+x*bytesperpixel;
+		for(int dx=0;dx<w;dx++)
+		{
+			for(int i=0;i<numchannels;i++)
+			for(int j=0;j<bytedepth;j++)
+			{
+				#ifdef __BIG_ENDIAN__
+				ptr[(numchannels-i-1)*bytedepth+j]=[subiff readUInt8];
+				#else
+				ptr[(numchannels-i-1)*bytedepth+bytedepth-j-1]=[subiff readUInt8];
+				#endif
+			}
+			ptr+=bytesperpixel;
+		}
 	}
 }
 
@@ -224,10 +254,18 @@
 	uint8 *data=[mainimage data];
 	int bprow=[mainimage bytesPerRow];
 
-	for(int i=0;i<pixelsize;i++)
+	int bytesperpixel=numchannels*bytedepth;
+
+	for(int j=0;j<bytedepth;j++)
+	for(int i=0;i<numchannels;i++)
 	{
-		[self readRLECompressedTo:data+(height-y-1)*bprow+x*pixelsize+(pixelsize-i-1)
-		num:w*h stride:pixelsize width:w bytesPerRow:bprow];
+		#ifdef __BIG_ENDIAN__
+		[self readRLECompressedTo:data+(height-y-1)*bprow+x*bytesperpixel+(numchannels-i-1)*bytedepth+j
+		num:w*h stride:bytesperpixel width:w bytesPerRow:bprow];
+		#else
+		[self readRLECompressedTo:data+(height-y-1)*bprow+x*bytesperpixel+(numchannels-i-1)*bytedepth+bytedepth-j-1
+		num:w*h stride:bytesperpixel width:w bytesPerRow:bprow];
+		#endif
 	}
 }
 

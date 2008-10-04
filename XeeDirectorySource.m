@@ -43,14 +43,18 @@
 	if(self=[super init])
 	{
 		imgref=dirref=nil;
+		XeeDirectoryEntry *curr=[XeeDirectoryEntry entryWithRef:ref image:image];
 
 		[self startListUpdates];
-		XeeDirectoryEntry *curr=[XeeDirectoryEntry entryWithRef:ref image:image];
-		[self setCurrentEntry:curr];
 		BOOL res=[self scanDirectory:[ref parent]];
+		[self addEntryUnlessExists:curr];
+		[self setCurrentEntry:curr];
 		[self endListUpdates];
 
-		if(res) return self;
+		if(res)
+		{
+			return self;
+		}
 	}
 	[self release];
 	return nil;
@@ -321,7 +325,7 @@
 		break;
 
 		case XeeDateSortOrder:
-			size=(long)[ref modificationTime];
+			time=(long)[ref modificationTime];
 		break;
 
 		default:

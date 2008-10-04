@@ -71,7 +71,6 @@ static inline int XeeSpanPastEnd(XeeSpan span) { return span.start+span.length; 
 static inline int XeeSpanLength(XeeSpan span) { return span.length; }
 static inline BOOL XeeSpanEmpty(XeeSpan span) { return span.length==0; }
 static inline BOOL XeePointInSpan(int point,XeeSpan span) { return point>=XeeSpanStart(span)&&point<XeeSpanPastEnd(span); }
-static inline BOOL XeePointInSpan(int point,XeeSpan span) { return point>=XeeSpanStart(span)&&point<XeeSpanPastEnd(span); }
 static inline BOOL XeeSpanStartsInSpan(XeeSpan span,XeeSpan inspan) { return XeePointInSpan(XeeSpanStart(span),inspan); }
 static inline BOOL XeeSpanEndsInSpan(XeeSpan span,XeeSpan inspan) { return XeePointInSpan(XeeSpanEnd(span),inspan); }
 static inline BOOL XeeSpansIdentical(XeeSpan span1,XeeSpan span2) { return span1.start==span2.start&&span1.length==span2.length; }

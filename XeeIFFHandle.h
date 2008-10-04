@@ -27,7 +27,6 @@
 -(void)seekToChunkOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(void)seekToFileOffset:(off_t)offs;
--(void)skipBytes:(off_t)bytes;
 
 -(int16)readInt16;
 -(int32)readInt32;

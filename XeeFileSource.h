@@ -36,6 +36,7 @@
 -(void)endListUpdates;
 
 -(void)addEntry:(XeeFileEntry *)entry;
+-(void)addEntryUnlessExists:(XeeFileEntry *)entry;
 -(void)removeEntry:(XeeFileEntry *)entry;
 -(void)removeEntryMatchingObject:(id)obj;
 -(void)removeAllEntries;

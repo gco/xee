@@ -70,7 +70,7 @@
 		@catch(id e)
 		{
 			[CSCoroutine setCurrentCoroutine:currcoro];
-			NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
+			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self filename],[self class],e);
 			finished=YES;
 		}
 
@@ -110,7 +110,7 @@
 		}
 		@catch(id e)
 		{
-			NSLog(@"Exception during initial loading of \"%@\": %@",[self filename],e);
+			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self filename],[self class],e);
 			nextselector=NULL;
 		}
 

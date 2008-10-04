@@ -996,6 +996,7 @@ static BOOL HasAppleMouse()
 		SetSystemUIMode(kUIModeAllHidden,kUIOptionAutoShowMenuBar);
 
 		[self setStandardImageSize];
+[imageview update];
 		[fullscreenwindow makeKeyAndOrderFront:nil];
 	}
 	else

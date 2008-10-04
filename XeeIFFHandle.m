@@ -96,15 +96,12 @@
 	[super seekToFileOffset:newpos];
 }
 
--(void)seekToEndOfFile { [self _raiseNotSupported]; }
+-(void)seekToEndOfFile { [self _raiseNotSupported:_cmd]; }
 
--(void)seekToFileOffset:(off_t)offs { [self _raiseNotSupported]; }
-
--(void)skipBytes:(off_t)bytes
+-(void)seekToFileOffset:(off_t)offs
 {
-	uint32 newpos=[self offsetInFile]+bytes;
-	if(newpos<curr_start||newpos>=curr_start+curr_size) [self _raiseChunk];
-	[super skipBytes:bytes];
+	if(offs<curr_start||offs>=curr_start+curr_size) [self _raiseChunk];
+	[super seekToFileOffset:offs];
 }
 
 
@@ -180,7 +177,7 @@ XeeIFFReadValueImpl(uint32,readID)
 
 
 
--(void)pushBackByte:(int)byte { [self _raiseNotSupported]; }
+-(void)pushBackByte:(int)byte { [self _raiseNotSupported:_cmd]; }
 
 
 
@@ -199,9 +196,9 @@ XeeIFFReadValueImpl(uint32,readID)
 	return [super copyDataOfLength:[self bytesLeft]];
 }
 
--(NSData *)fileContents { [self _raiseNotSupported]; return nil; }
+-(NSData *)fileContents { [self _raiseNotSupported:_cmd]; return nil; }
 
--(NSData *)remainingFileContents { [self _raiseNotSupported]; return nil; }
+-(NSData *)remainingFileContents { [self _raiseNotSupported:_cmd]; return nil; }
 
 -(void)readBytes:(int)num toBuffer:(void *)buffer
 {
@@ -226,9 +223,9 @@ XeeIFFReadValueImpl(uint32,readID)
 	else [NSException raise:@"XeeReadOutsideChunkException" format:@"Attempted to read outside the current IFF chunk."];
 }
 
--(void)_raiseNotSupported
+-(void)_raiseNotSupported:(SEL)selector
 {
-	[NSException raise:@"XeeNotSupportedInIFFException" format:@"Action not supported for IFF handles."];
+	[NSException raise:@"XeeNotSupportedInIFFException" format:@"Selector %@ not supported for IFF handles.",NSStringFromSelector(selector)];
 }
 
 

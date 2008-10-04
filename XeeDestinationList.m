@@ -372,8 +372,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	if(index<0) return;
 
 	NSString *filename=[[destinations objectAtIndex:index] objectForKey:@"path"];
-	NSApplication *app=[NSApplication sharedApplication];
-	[[app delegate] application:app openFile:filename];
+	[[NSApp delegate] application:NSApp openFile:filename];
 }
 
 -(IBAction)openInFinder:(id)sender

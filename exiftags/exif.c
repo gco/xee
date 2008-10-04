@@ -271,8 +271,11 @@ postprop(struct exifprop *prop, struct exiftags *t)
 			if (!(tmpprop = findprop(h, tags, EXIF_T_FPRESUNITS)))
 				break;
 		}
+		// XeeFix
+		if(t->md.btiff+prop->value+8<=t->md.etiff&&prop->value>=0)
 		val = exif4byte(t->md.btiff + prop->value, &t->md) /
 		    exif4byte(t->md.btiff + prop->value + 4, &t->md);
+		else val=0;
 		snprintf(prop->str, 31, "%d dp%s", val, tmpprop->str);
 		prop->str[31] = '\0';
 		break;

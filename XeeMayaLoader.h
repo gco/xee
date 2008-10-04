@@ -6,8 +6,8 @@
 {
 	XeeIFFHandle *iff,*subiff;
 	XeeBitmapImage *mainimage,*zbufimage;
-	int flags,tiles,compression;
-	int pixelsize;
+	int flags,bytedepth,tiles,compression;
+	int numchannels;
 	int rgbatiles,zbuftiles;
 }
 

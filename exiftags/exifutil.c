@@ -411,7 +411,10 @@ readifds(u_int32_t offset, struct exiftag *tagset, struct tiffmeta *md)
 	/* Fetch any remaining ones. */
 
 	while (offset) {
-		offset = readifd(offset, &(curifd->next), tagset, md);
+		// XeeFix
+		u_int32_t nextoffset = readifd(offset, &(curifd->next), tagset, md);
+		if (nextoffset == offset) break;
+		offset = nextoffset;
 		curifd = curifd->next;
 	}
 	return (firstifd);

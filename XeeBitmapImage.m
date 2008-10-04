@@ -174,8 +174,8 @@ bppixel,bpcomponent,bprow,mode,alpha,flags); */
 	}
 
 	int bppixel=bpcomponent*(components+(alpha==XeeAlphaNone?0:1));
-//	int bprow=((bppixel/8)*framewidth+3)&~3; // align to 4 bytes
-	int bprow=((bppixel/8)*pixelwidth+15)&~15; // align to 16 bytes
+	int bprow=((bppixel/8)*pixelwidth+3)&~3; // align to 4 bytes
+//	int bprow=((bppixel/8)*pixelwidth+15)&~15; // align to 16 bytes
 
 	void *newdata=calloc(bprow*pixelheight,1);
 	if(newdata)

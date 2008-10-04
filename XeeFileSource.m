@@ -104,7 +104,7 @@
 -(void)pickImageAtIndex:(int)index
 {
 	// this is pretty dumb; FIX
-	if([entries objectAtIndex:index]==currentry&&nextentry) [self pickImageAtIndex:index next:[entries indexOfObject:nextentry]];
+	if(index<[entries count]&&[entries objectAtIndex:index]==currentry&&nextentry) [self pickImageAtIndex:index next:[entries indexOfObject:nextentry]];
 	else [super pickImageAtIndex:index];
 }
 
@@ -160,6 +160,13 @@
 
 -(void)addEntry:(XeeFileEntry *)entry
 {
+	[entries addObject:entry];
+	changes|=XeeAdditionChange;
+}
+
+-(void)addEntryUnlessExists:(XeeFileEntry *)entry
+{
+	if([entries containsObject:entry]) return;
 	[entries addObject:entry];
 	changes|=XeeAdditionChange;
 }

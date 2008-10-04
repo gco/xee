@@ -52,7 +52,9 @@
 
 -(BOOL)isDirectory
 {
-	return NO;
+	FSCatalogInfo catinfo;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoNodeFlags,&catinfo,NULL,NULL,NULL)!=noErr) return NO;
+	return catinfo.nodeFlags&kFSNodeIsDirectoryMask?YES:NO;
 }
 
 -(BOOL)isRemote
