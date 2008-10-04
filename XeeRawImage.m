@@ -196,7 +196,6 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 	for(int row=0;row<height;row++)
 	{
-NSLog(@"loading %d %d",row,bytesperinputrow);
 		uint8 *datarow;
 		if(buffer) datarow=buffer;
 		else datarow=XeeImageDataRow(self,row);

@@ -223,11 +223,6 @@ XeeIFFReadValueImpl(uint32,readID)
 	else [NSException raise:@"XeeReadOutsideChunkException" format:@"Attempted to read outside the current IFF chunk."];
 }
 
--(void)_raiseNotSupported:(SEL)selector
-{
-	[NSException raise:@"XeeNotSupportedInIFFException" format:@"Selector %@ not supported for IFF handles.",NSStringFromSelector(selector)];
-}
-
 
 
 -(NSString *)description

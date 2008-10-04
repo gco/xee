@@ -64,6 +64,7 @@
 		multi=YES;
 		parent=[other retain];
 		pos=[other offsetInFile];
+		[other _setMultiMode];
 	}
 	return self;
 }
