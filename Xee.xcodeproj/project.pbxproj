@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1B00E3590A796D980094B997 /* XeeTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B00E3580A796D980094B997 /* XeeTileImage.m */; };
 		1B00E36A0A7999070094B997 /* XeeYUVImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B00E3690A7999070094B997 /* XeeYUVImage.m */; };
-		1B0707850C9F3BC500FA8EBD /* XeeSWFLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */; };
 		1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B07078A0C9F3DA700FA8EBD /* SWFParser.m */; };
 		1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */; };
 		1B071A440CB159D600FA8EBD /* XeeExperimentalImage1Saver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B071A430CB159D600FA8EBD /* XeeExperimentalImage1Saver.m */; };
@@ -126,6 +125,9 @@
 		1B996C8E0929302C0026832A /* xbm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C7C0929302C0026832A /* xbm.icns */; };
 		1B996CBB09293F780026832A /* filesize.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B996CB909293F780026832A /* filesize.png */; };
 		1B996CBC09293F790026832A /* frames.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B996CBA09293F780026832A /* frames.png */; };
+		1BA51C770E980F7000554F95 /* XeePDFSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB9863E0B19FBC0000B4425 /* XeePDFSource.m */; };
+		1BA51CF80E99212E00554F95 /* PDFEncryptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA51CF70E99212E00554F95 /* PDFEncryptionUtils.m */; };
+		1BA51CFB0E9921C200554F95 /* PDFStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA51CFA0E9921C200554F95 /* PDFStream.m */; };
 		1BB078450B532AD2009AA417 /* tool_crop.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BB078440B532AD1009AA417 /* tool_crop.png */; };
 		1BB983620B187BAA000B4425 /* XeeControllerImageActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB983610B187BAA000B4425 /* XeeControllerImageActions.m */; };
 		1BB983670B187BB8000B4425 /* XeeControllerNavigationActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB983660B187BB8000B4425 /* XeeControllerNavigationActions.m */; };
@@ -136,6 +138,11 @@
 		1BB986660B19FD0D000B4425 /* CSRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB986650B19FD0D000B4425 /* CSRegex.m */; };
 		1BB98D6B0B1CBCCB000B4425 /* XeeKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB98D6A0B1CBCCB000B4425 /* XeeKQueue.m */; };
 		1BB98F170B1E1E5A000B4425 /* XeeFSRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB98F160B1E1E5A000B4425 /* XeeFSRef.m */; };
+		1BCA06980E9C3CDD0016D207 /* XeeListSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA06970E9C3CDD0016D207 /* XeeListSource.m */; };
+		1BCA069D0E9C3E110016D207 /* PDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA069C0E9C3E110016D207 /* PDFParser.m */; };
+		1BCA08A80E9D5D060016D207 /* NSDictionaryNumberExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */; };
+		1BCA08E50E9D75BF0016D207 /* XeeSWFSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707840C9F3BC500FA8EBD /* XeeSWFSource.m */; };
+		1BCA0AA70E9EBBC50016D207 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BCA0AA60E9EBBC50016D207 /* libcrypto.dylib */; };
 		1BCC00740941DF690075669D /* tool_ccw.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00650941DF680075669D /* tool_ccw.png */; };
 		1BCC00750941DF690075669D /* tool_prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00660941DF690075669D /* tool_prev.png */; };
 		1BCC00760941DF690075669D /* tool_zoomfit.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00670941DF690075669D /* tool_zoomfit.png */; };
@@ -292,8 +299,8 @@
 		1B00E3690A7999070094B997 /* XeeYUVImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeYUVImage.m; sourceTree = "<group>"; };
 		1B00E4590A7AEAE70094B997 /* XeeImageIOLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeImageIOLoader.h; sourceTree = "<group>"; };
 		1B00E45A0A7AEAE70094B997 /* XeeImageIOLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeImageIOLoader.m; sourceTree = "<group>"; };
-		1B0707830C9F3BC500FA8EBD /* XeeSWFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeSWFLoader.h; sourceTree = "<group>"; };
-		1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeSWFLoader.m; sourceTree = "<group>"; };
+		1B0707830C9F3BC500FA8EBD /* XeeSWFSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeSWFSource.h; sourceTree = "<group>"; };
+		1B0707840C9F3BC500FA8EBD /* XeeSWFSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeSWFSource.m; sourceTree = "<group>"; };
 		1B07078A0C9F3DA700FA8EBD /* SWFParser.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SWFParser.m; sourceTree = "<group>"; };
 		1B07078B0C9F3DA700FA8EBD /* SWFParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFParser.h; sourceTree = "<group>"; };
 		1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFGeometry.h; sourceTree = "<group>"; };
@@ -433,6 +440,10 @@
 		1B996C7C0929302C0026832A /* xbm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = xbm.icns; path = icons/xbm.icns; sourceTree = "<group>"; };
 		1B996CB909293F780026832A /* filesize.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = filesize.png; path = images/filesize.png; sourceTree = "<group>"; };
 		1B996CBA09293F780026832A /* frames.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = frames.png; path = images/frames.png; sourceTree = "<group>"; };
+		1BA51CF60E99212E00554F95 /* PDFEncryptionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFEncryptionUtils.h; sourceTree = "<group>"; };
+		1BA51CF70E99212E00554F95 /* PDFEncryptionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFEncryptionUtils.m; sourceTree = "<group>"; };
+		1BA51CF90E9921C200554F95 /* PDFStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFStream.h; sourceTree = "<group>"; };
+		1BA51CFA0E9921C200554F95 /* PDFStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFStream.m; sourceTree = "<group>"; };
 		1BB078440B532AD1009AA417 /* tool_crop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_crop.png; path = images/tool_crop.png; sourceTree = "<group>"; };
 		1BB983600B187BAA000B4425 /* XeeControllerImageActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeControllerImageActions.h; sourceTree = "<group>"; };
 		1BB983610B187BAA000B4425 /* XeeControllerImageActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeControllerImageActions.m; sourceTree = "<group>"; };
@@ -448,14 +459,21 @@
 		1BB984060B18C479000B4425 /* CSFileTypeList.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSFileTypeList.m; sourceTree = "<group>"; };
 		1BB984250B18CCA6000B4425 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CollisionPanel.nib; sourceTree = "<group>"; };
 		1BB984270B18CCFF000B4425 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/RenamePanel.nib; sourceTree = "<group>"; };
-		1BB9863D0B19FBC0000B4425 /* XeePDFBitmapLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePDFBitmapLoader.h; sourceTree = "<group>"; };
-		1BB9863E0B19FBC0000B4425 /* XeePDFBitmapLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeePDFBitmapLoader.m; sourceTree = "<group>"; };
+		1BB9863D0B19FBC0000B4425 /* XeePDFSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePDFSource.h; sourceTree = "<group>"; };
+		1BB9863E0B19FBC0000B4425 /* XeePDFSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeePDFSource.m; sourceTree = "<group>"; };
 		1BB986640B19FD0D000B4425 /* CSRegex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSRegex.h; sourceTree = "<group>"; };
 		1BB986650B19FD0D000B4425 /* CSRegex.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSRegex.m; sourceTree = "<group>"; };
 		1BB98D690B1CBCCB000B4425 /* XeeKQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeKQueue.h; sourceTree = "<group>"; };
 		1BB98D6A0B1CBCCB000B4425 /* XeeKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeKQueue.m; sourceTree = "<group>"; };
 		1BB98F150B1E1E5A000B4425 /* XeeFSRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeFSRef.h; sourceTree = "<group>"; };
 		1BB98F160B1E1E5A000B4425 /* XeeFSRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeFSRef.m; sourceTree = "<group>"; };
+		1BCA06960E9C3CDD0016D207 /* XeeListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeListSource.h; sourceTree = "<group>"; };
+		1BCA06970E9C3CDD0016D207 /* XeeListSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeListSource.m; sourceTree = "<group>"; };
+		1BCA069B0E9C3E110016D207 /* PDFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFParser.h; sourceTree = "<group>"; };
+		1BCA069C0E9C3E110016D207 /* PDFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFParser.m; sourceTree = "<group>"; };
+		1BCA08A60E9D5D060016D207 /* NSDictionaryNumberExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionaryNumberExtension.h; sourceTree = "<group>"; };
+		1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionaryNumberExtension.m; sourceTree = "<group>"; };
+		1BCA0AA60E9EBBC50016D207 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		1BCC00650941DF680075669D /* tool_ccw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_ccw.png; path = images/tool_ccw.png; sourceTree = "<group>"; };
 		1BCC00660941DF690075669D /* tool_prev.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_prev.png; path = images/tool_prev.png; sourceTree = "<group>"; };
 		1BCC00670941DF690075669D /* tool_zoomfit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_zoomfit.png; path = images/tool_zoomfit.png; sourceTree = "<group>"; };
@@ -696,6 +714,7 @@
 				1BE4C13208E2303200859EE2 /* libz.dylib in Frameworks */,
 				1B3D30D909351D7A00345FD0 /* Carbon.framework in Frameworks */,
 				1BFF73290B6AF5C500E0900B /* IOKit.framework in Frameworks */,
+				1BCA0AA70E9EBBC50016D207 /* libcrypto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,6 +812,32 @@
 				1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */,
 			);
 			name = CSHandle;
+			sourceTree = "<group>";
+		};
+		1BCA06990E9C3DE60016D207 /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				1BCA069B0E9C3E110016D207 /* PDFParser.h */,
+				1BCA069C0E9C3E110016D207 /* PDFParser.m */,
+				1BA51CF90E9921C200554F95 /* PDFStream.h */,
+				1BA51CFA0E9921C200554F95 /* PDFStream.m */,
+				1BA51CF60E99212E00554F95 /* PDFEncryptionUtils.h */,
+				1BA51CF70E99212E00554F95 /* PDFEncryptionUtils.m */,
+				1BCA08A60E9D5D060016D207 /* NSDictionaryNumberExtension.h */,
+				1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */,
+			);
+			name = PDF;
+			sourceTree = "<group>";
+		};
+		1BCA069A0E9C3DED0016D207 /* SWF */ = {
+			isa = PBXGroup;
+			children = (
+				1B07078B0C9F3DA700FA8EBD /* SWFParser.h */,
+				1B07078A0C9F3DA700FA8EBD /* SWFParser.m */,
+				1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */,
+				1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */,
+			);
+			name = SWF;
 			sourceTree = "<group>";
 		};
 		1BDBF95F08EC71A600C83392 /* Icons */ = {
@@ -945,12 +990,8 @@
 				1BE4C37B08E4C58300859EE2 /* XeePCXLoader.m */,
 				1B1D4F6E0B000077009AA7EB /* XeeMayaLoader.h */,
 				1B1D4F6F0B000077009AA7EB /* XeeMayaLoader.m */,
-				1BB9863D0B19FBC0000B4425 /* XeePDFBitmapLoader.h */,
-				1BB9863E0B19FBC0000B4425 /* XeePDFBitmapLoader.m */,
 				1BF9A7990B5C3EA000A79EA7 /* XeeDreamcastLoader.h */,
 				1BF9A79A0B5C3EA000A79EA7 /* XeeDreamcastLoader.m */,
-				1B0707830C9F3BC500FA8EBD /* XeeSWFLoader.h */,
-				1B0707840C9F3BC500FA8EBD /* XeeSWFLoader.m */,
 			);
 			name = "Image Loading";
 			sourceTree = "<group>";
@@ -959,6 +1000,8 @@
 			isa = PBXGroup;
 			children = (
 				1B909CC70C9A172E009E5ACE /* CSHandle */,
+				1BCA06990E9C3DE60016D207 /* PDF */,
+				1BCA069A0E9C3DED0016D207 /* SWF */,
 				1BE4C47D08E5CA4200859EE2 /* XeeIFFHandle.h */,
 				1BE4C47E08E5CA4200859EE2 /* XeeIFFHandle.m */,
 				1B3D33600937B89100345FD0 /* CSKeyboardShortcuts.h */,
@@ -973,10 +1016,6 @@
 				1B5553E90B28DCF700DC7FF3 /* CSDesktopServices.m */,
 				1B0FF4CD0C96F78B000CED68 /* CSHexDump.h */,
 				1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */,
-				1B07078B0C9F3DA700FA8EBD /* SWFParser.h */,
-				1B07078A0C9F3DA700FA8EBD /* SWFParser.m */,
-				1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */,
-				1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */,
 				1BE4B80B08D7655400859EE2 /* KFTypeSelectTableView.h */,
 				1BE4B80C08D7655400859EE2 /* KFTypeSelectTableView.m */,
 				1BFB11DE0B179CF90088CDB4 /* XADArchive.h */,
@@ -1153,12 +1192,18 @@
 			children = (
 				1BFB0E090B126FD10088CDB4 /* XeeImageSource.h */,
 				1BFB0E0A0B126FD10088CDB4 /* XeeImageSource.m */,
+				1BCA06960E9C3CDD0016D207 /* XeeListSource.h */,
+				1BCA06970E9C3CDD0016D207 /* XeeListSource.m */,
 				1BFB0E470B139D260088CDB4 /* XeeFileSource.h */,
 				1BFB0E480B139D260088CDB4 /* XeeFileSource.m */,
 				1BFB0E4A0B139D370088CDB4 /* XeeDirectorySource.h */,
 				1BFB0E4B0B139D370088CDB4 /* XeeDirectorySource.m */,
 				1BFB0E4D0B139D420088CDB4 /* XeeArchiveSource.h */,
 				1BFB0E4E0B139D420088CDB4 /* XeeArchiveSource.m */,
+				1BB9863D0B19FBC0000B4425 /* XeePDFSource.h */,
+				1BB9863E0B19FBC0000B4425 /* XeePDFSource.m */,
+				1B0707830C9F3BC500FA8EBD /* XeeSWFSource.h */,
+				1B0707840C9F3BC500FA8EBD /* XeeSWFSource.m */,
 				1BFB0E500B139D4C0088CDB4 /* XeeClipboardSource.h */,
 				1BFB0E510B139D4C0088CDB4 /* XeeClipboardSource.m */,
 			);
@@ -1240,6 +1285,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1BCA0AA60E9EBBC50016D207 /* libcrypto.dylib */,
 				1BE4C13108E2303200859EE2 /* libz.dylib */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 				1B3D30D809351D7A00345FD0 /* Carbon.framework */,
@@ -1604,11 +1650,17 @@
 				1B9099D10C91BE1A009E5ACE /* XeeInterleavingHandle.m in Sources */,
 				1B0FF4CF0C96F78C000CED68 /* CSHexDump.m in Sources */,
 				1B909CCA0C9A175B009E5ACE /* CSMultiHandle.m in Sources */,
-				1B0707850C9F3BC500FA8EBD /* XeeSWFLoader.m in Sources */,
 				1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */,
 				1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */,
 				1B071A440CB159D600FA8EBD /* XeeExperimentalImage1Saver.m in Sources */,
 				1B0F15370CB17CBF000CED68 /* XeePhotoshopPICTLoader.m in Sources */,
+				1BA51C770E980F7000554F95 /* XeePDFSource.m in Sources */,
+				1BA51CF80E99212E00554F95 /* PDFEncryptionUtils.m in Sources */,
+				1BA51CFB0E9921C200554F95 /* PDFStream.m in Sources */,
+				1BCA06980E9C3CDD0016D207 /* XeeListSource.m in Sources */,
+				1BCA069D0E9C3E110016D207 /* PDFParser.m in Sources */,
+				1BCA08A80E9D5D060016D207 /* NSDictionaryNumberExtension.m in Sources */,
+				1BCA08E50E9D75BF0016D207 /* XeeSWFSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

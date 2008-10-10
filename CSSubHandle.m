@@ -10,6 +10,8 @@
 		start=from;
 		end=from+length;
 
+		[parent seekToFileOffset:start];
+
 		if(parent) return self;
 
 		[self release];

@@ -166,7 +166,18 @@ CSReadValueImpl(uint32_t,readID,CSBEUInt32)
 
 -(NSData *)remainingFileContents
 {
-	return [self readDataOfLength:[self fileSize]-[self offsetInFile]];
+	uint8_t buffer[16384];
+	NSMutableData *data=[NSMutableData data];
+	int actual;
+
+	do
+	{
+		actual=[self readAtMost:sizeof(buffer) toBuffer:buffer];
+		[data appendBytes:buffer length:actual];
+	}
+	while(actual==sizeof(buffer));
+
+	return [NSData dataWithData:data];
 }
 
 -(NSData *)readDataOfLength:(int)length
@@ -199,6 +210,17 @@ CSReadValueImpl(uint32_t,readID,CSBEUInt32)
 -(void)readBytes:(int)num toBuffer:(void *)buffer
 {
 	if([self readAtMost:num toBuffer:buffer]!=num) [self _raiseEOF];
+}
+
+-(void)readAndDiscardBytes:(off_t)num
+{
+	uint8_t buf[16384];
+	while(num)
+	{
+		off_t numbytes=num>sizeof(buf)?sizeof(buf):num;
+		if([self readAtMost:numbytes toBuffer:buf]!=numbytes) [self _raiseEOF];
+		num-=numbytes;
+	}
 }
 
 

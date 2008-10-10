@@ -10,6 +10,8 @@
 
 #import "XeeDirectorySource.h"
 #import "XeeArchiveSource.h"
+#import "XeePDFSource.h"
+#import "XeeSWFSource.h"
 #import "XeeClipboardSource.h"
 
 #import "XeeImageIOLoader.h"
@@ -22,9 +24,6 @@
 #import "XeeILBMLoader.h"
 #import "XeePCXLoader.h"
 #import "XeeMayaLoader.h"
-#import "XeePDFBitmapLoader.h"
-#import "XeeSWFLoader.h"
-//#import "XeeFlashBitmapLoader.h"
 //#import "XeeDreamcastLoader.h"
 
 #import "XeeImageIOSaver.h"
@@ -75,8 +74,6 @@ BOOL finderlaunch;
 	[XeeImage registerImageClass:[XeeILBMImage class]];
 	[XeeImage registerImageClass:[XeePCXImage class]];
 	[XeeImage registerImageClass:[XeeMayaImage class]];
-	[XeeImage registerImageClass:[XeeSWFImage class]];
-//	[XeeImage registerImageClass:[XeePDFBitmapImage class]];
 //	[XeeImage registerImageClass:[XeeDreamcastImage class]];
 	[XeeImage registerImageClass:[XeeImageIOImage class]];
 	[XeeImage registerImageClass:[XeeQuicktimeImage class]];
@@ -334,13 +331,29 @@ BOOL finderlaunch;
 		}
 		else
 		{
-			XeeImage *image=[XeeImage imageForRef:ref];
-			if(image)
+			if(!source)
 			{
-				source=[[[XeeDirectorySource alloc] initWithImage:image] autorelease];
-				dirref=[ref parent];
+				source=[[[XeePDFSource alloc] initWithFile:filename] autorelease];
+				dirref=nil;
 			}
-			else
+
+			if(!source)
+			{
+				source=[[[XeeSWFSource alloc] initWithFile:filename] autorelease];
+				dirref=nil;
+			}
+
+			if(!source)
+			{
+				XeeImage *image=[XeeImage imageForRef:ref];
+				if(image)
+				{
+					source=[[[XeeDirectorySource alloc] initWithImage:image] autorelease];
+					dirref=[ref parent];
+				}
+			}
+
+			if(!source)
 			{
 				source=[[[XeeArchiveSource alloc] initWithArchive:filename] autorelease];
 				dirref=nil;

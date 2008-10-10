@@ -24,7 +24,8 @@
 #define SWFPlaceObject3Tag 70
 #define SWFDefineFont3Tag 75
 
-
+extern NSString *SWFWrongMagicException;
+extern NSString *SWFNoMoreTagsException;
 
 @interface SWFParser:NSObject
 {
@@ -39,6 +40,7 @@
 	int currframe;
 }
 
++(SWFParser *)parserWithHandle:(CSHandle *)handle;
 +(SWFParser *)parserForPath:(NSString *)path;
 
 -(id)initWithHandle:(CSHandle *)handle;

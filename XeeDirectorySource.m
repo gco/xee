@@ -288,12 +288,12 @@
 	return [self initWithRef:fsref image:nil];
 }
 
--(id)initWithRef:(XeeFSRef *)fsref image:(XeeImage *)img
+-(id)initWithRef:(XeeFSRef *)fsref image:(XeeImage *)image
 {
 	if(self=[super init])
 	{
 		ref=[fsref retain];
-		image=[img retain];
+		savedimage=[image retain];
 		//[self readAttributes];
 	}
 	return self;

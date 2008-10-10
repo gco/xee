@@ -626,7 +626,8 @@
 
 -(void)setDepthGrey:(int)bits alpha:(BOOL)alpha floating:(BOOL)floating
 {
-	if(floating&&alpha) [self setDepth:
+	if(bits==1&&!alpha) [self setDepthBitmap];
+	else if(floating&&alpha) [self setDepth:
 		[NSString stringWithFormat:NSLocalizedString(@"%d bits FP grey+alpha",@"Description for floating-point grey+alpha images"),bits]
 		iconName:@"depth_greyalpha"];
 	else if(floating) [self setDepth:

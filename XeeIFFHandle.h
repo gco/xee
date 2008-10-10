@@ -69,7 +69,6 @@
 -(XeeIFFHandle *)IFFHandleForChunk;
 
 -(void)_raiseChunk;
--(void)_raiseNotSupported;
 
 -(NSString *)description;
 

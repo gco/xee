@@ -39,15 +39,16 @@
 		zs.avail_in=0;
 		zs.next_in=Z_NULL;
 
-		if(inflateInit(&zs)==Z_OK)
+		int err=inflateInit(&zs);
+		if(err!=Z_OK)
 		{
-			inited=YES;
-			return self;
+			[self release];
+			[NSException raise:@"CSZlibException" format:@"Error initializing zlib for \"%@\": %d.",name,err];
 		}
 
-		[self release];
+		inited=YES;
 	}
-	return nil;
+	return self;
 }
 
 -(id)initAsCopyOf:(CSZlibHandle *)other

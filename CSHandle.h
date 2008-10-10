@@ -61,6 +61,7 @@
 -(NSData *)copyDataOfLength:(int)length;
 -(NSData *)copyDataOfLengthAtMost:(int)length;
 -(void)readBytes:(int)num toBuffer:(void *)buffer;
+-(void)readAndDiscardBytes:(off_t)num;
 
 -(CSHandle *)subHandleOfLength:(off_t)length;
 -(CSHandle *)subHandleWithRange:(NSRange)range;

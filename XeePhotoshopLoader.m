@@ -390,11 +390,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle rows:(int)numrows bytesPerRow:(int)bpr channel:(int)channel of:(int)numchannels previousSize:(off_t)prevsize
 {
-	if(self=[super initWithName:[handle name]])
+	if(self=[super initWithHandle:handle])
 	{
-		parent=[handle retain];
-		readatmost_ptr=(int (*)(id,SEL,int,void *))[parent methodForSelector:@selector(readAtMost:toBuffer:)];
-
 		rows=numrows;
 		bytesperrow=bpr;
 
@@ -416,62 +413,38 @@
 -(void)dealloc
 {
 	free(offsets);
-	[parent release];
 	[super dealloc];
 }
 
-
--(off_t)offsetInFile { return pos; }
-
--(int)readAtMost:(int)num toBuffer:(void *)buffer
+-(uint8)produceByte
 {
-	uint8 *ptr=buffer;
-	int left=num;
-
-	while(left)
+	if(pos%bytesperrow==0)
 	{
-		if(pos%bytesperrow==0)
-		{
-			[parent seekToFileOffset:offsets[pos/bytesperrow]];
-			spanleft=0;
-		}
+		[self seekParentToFileOffset:offsets[pos/bytesperrow]];
+		spanleft=0;
+	}
 
-		if(!spanleft)
-		{
-			uint8 b;
-			//do {
-				if(readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,&b)!=1) goto end;
-			//} while(b==0xff);
+	if(!spanleft)
+	{
+		uint8 b=CSFilterNextByte();
 
-			if(b&0x80)
-			{
-				spanleft=(b^0xff)+2;
-				if(readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,&spanbyte)!=1) goto end;
-				literal=NO;
-			}
-			else
-			{
-				spanleft=b+1;
-				literal=YES;
-			}
-		}
-
-		if(literal)
+		if(b&0x80)
 		{
-			if(readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,ptr++)!=1) goto end;
+			spanleft=(b^0xff)+2;
+			spanbyte=CSFilterNextByte();
+			literal=NO;
 		}
 		else
 		{
-			*ptr++=spanbyte;
+			spanleft=b+1;
+			literal=YES;
 		}
-
-		spanleft--;
-		left--;
-		pos++;
 	}
 
-	end:
-	return num-left;
+	spanleft--;
+
+	if(literal) return CSFilterNextByte();
+	else return spanbyte;
 }
 
 -(off_t)totalSize { return totalsize; }
@@ -484,45 +457,34 @@
 
 -(id)initWithHandle:(CSHandle *)handle depth:(int)bitdepth columns:(int)columns
 {
-	if(self=[super initWithName:[handle name]])
+	if(self=[super initWithHandle:handle])
 	{
-		parent=[handle retain];
-//		readatmost_ptr=(int (*)(id,SEL,int,void *))[parent methodForSelector:@selector(readAtMost:toBuffer:)];
-
 		depth=bitdepth;
 		cols=columns;
-		curr=0;
 	}
 	return self;
 }
 
--(void)dealloc
+-(uint8)produceByte
 {
-	[parent release];
-	[super dealloc];
-}
-
--(off_t)offsetInFile { return [parent offsetInFile]; }
-
--(int)readAtMost:(int)num toBuffer:(void *)buffer
-{
-	off_t start=[parent offsetInFile];
-	int actual=[parent readAtMost:num toBuffer:buffer];
-
 	if(depth==16)
 	{
-		uint8 *ptr=(uint8 *)buffer;
-		int first=(start/2)%cols;
-
-		for(int i=0;i<actual/2;i++)
+		if((pos&1)==0)
 		{
-			if((first+i)%cols==0) curr=XeeBEUInt16(ptr);
-			else XeeSetBEUInt16(ptr,curr+=XeeBEUInt16(ptr));
-			ptr+=2;
+			uint16 val=(CSFilterNextByte()<<8)|CSFilterNextByte();
+
+			if((pos/2)%cols==0) curr=val;
+			else curr+=val;
+
+			return curr>>8;
+		}
+		else
+		{
+			return curr&0xff;
 		}
 	}
 
-	return actual;
+	return 0;
 }
 
 @end

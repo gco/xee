@@ -2,6 +2,54 @@
 #import "CSCoroutine.h"
 #import "XeeTypes.h"
 
+
+
+@interface CSFilterHandle:CSHandle
+{
+	@public
+	CSHandle *parent;
+	uint8 (*producebyte_ptr)(id,SEL);
+	off_t startoffs,pos;
+	BOOL eof;
+
+	@public
+	uint8 *inbuffer;
+	int bufsize,bufbytes,currbyte;
+}
+
+-(id)initWithHandle:(CSHandle *)handle;
+-(id)initWithHandle:(CSHandle *)handle bufferSize:(int)buffersize;
+-(id)initAsCopyOf:(CSFilterHandle *)other;
+-(void)dealloc;
+
+-(off_t)offsetInFile;
+-(void)seekToFileOffset:(off_t)offs;
+-(int)readAtMost:(int)num toBuffer:(void *)buffer;
+
+-(void)seekParentToFileOffset:(off_t)offset;
+
+-(void)resetFilter;
+-(uint8)produceByte;
+
+@end
+
+#define CSFilterNextByte() (_CSFilterNextByte(self))
+#define CSFilterEOF() ([NSException raise:@"CSFilterEOFReachedException" format:@""])
+
+static inline uint8 _CSFilterNextByte(CSFilterHandle *self)
+{
+	if(self->currbyte>=self->bufbytes)
+	{
+		self->bufbytes=[self->parent readAtMost:self->bufsize toBuffer:self->inbuffer];
+		if(!self->bufbytes) CSFilterEOF();
+		self->currbyte=0;
+	}
+	return self->inbuffer[self->currbyte++];
+}
+
+
+
+/*
 @interface CSFilterHandle:CSHandle
 {
 	CSHandle *parent;
@@ -43,3 +91,4 @@ static void inline __CSFilterPut(uint8 b,off_t *pos,int *left,uint8 **ptr,CSCoro
 	if(*left==0) [coro returnFrom];
 }
 
+*/
