@@ -1,118 +1,23 @@
 #import "PDFEncryptionUtils.h"
-#import "PDFParser.h"
-#import "NSDictionaryNumberExtension.h"
 
-NSString *PDFUnsupportedEncryptionException=@"PDFUnsupportedEncryptionException";
 NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
-static const char PDFPasswordPadding[32]=
+
+
+@implementation PDFMD5Engine
+
++(PDFMD5Engine *)engine { return [[[self class] new] autorelease]; }
+
++(NSData *)digestForData:(NSData *)data { return [self digestForBytes:[data bytes] length:[data length]]; }
+
++(NSData *)digestForBytes:(const void *)bytes length:(int)length
 {
-	0x28,0xBF,0x4E,0x5E,0x4E,0x75,0x8A,0x41,0x64,0x00,0x4E,0x56,0xFF,0xFA,0x01,0x08, 
-	0x2E,0x2E,0x00,0xB6,0xD0,0x68,0x3E,0x80,0x2F,0x0C,0xA9,0xFE,0x64,0x53,0x69,0x7A
-};
-
-
-@implementation PDFEncryptionHandler
-
--(id)initWithParser:(PDFParser *)parser
-{
-	if(self=[super init])
-	{
-		encrypt=[[[parser trailerDictionary] objectForKey:@"Encrypt"] retain];
-		permanentid=[[parser permanentID] retain];
-
-		NSString *filter=[encrypt objectForKey:@"Filter"];
-		int v=[encrypt intValueForKey:@"V" default:0];
-
-		if(![filter isEqual:@"Standard"]||v!=1)
-		{
-			[self release];
-			[NSException raise:PDFUnsupportedEncryptionException format:@"PDF encryption filter \"%@\" version %d is not supported.",filter,v];
-		}
-
-		[self calculateKey:@""];
-
-		PDFRC4Engine *rc4=[PDFRC4Engine engineWithKey:[self userKey]];
-		NSData *test=[rc4 encryptedData:[[encrypt objectForKey:@"U"] rawData]];
-		needspassword=[test length]!=32||memcmp(PDFPasswordPadding,[test bytes],32);
-	}
-	return self;
+	PDFMD5Engine *md5=[[self class] new];
+	[md5 updateWithBytes:bytes length:length];
+	NSData *res=[md5 digest];
+	[md5 release];
+	return res;
 }
-
--(void)dealloc
-{
-	[encrypt release];
-	[permanentid release];
-	[super dealloc];
-}
-
--(BOOL)needsPassword { return needspassword; }
-
-
-
--(NSData *)decryptedData:(NSData *)data reference:(PDFObjectReference *)ref
-{
-	PDFRC4Engine *rc4=[PDFRC4Engine engineWithKey:[self keyForReference:ref]];
-	return [rc4 encryptedData:data];
-}
-
--(CSHandle *)decryptedHandle:(CSHandle *)handle reference:(PDFObjectReference *)ref
-{
-	return [[[PDFRC4Handle alloc] initWithHandle:handle key:[self keyForReference:ref]] autorelease];
-}
-
-
-
--(NSData *)keyForReference:(PDFObjectReference *)ref
-{
-	int num=[ref number];
-	int gen=[ref generation];
-	unsigned char refbytes[5]={num&0xff,(num>>8)&0xff,(num>>16)&0xff,gen&0xff,(gen>>8)&0xff};
-
-	PDFMD5Digest *md5=[PDFMD5Digest MD5Digest];
-	[md5 updateWithBytes:key length:5];
-	[md5 updateWithBytes:refbytes length:5];
-
-	return [[md5 digest] subdataWithRange:NSMakeRange(0,10)];
-}
-
--(NSData *)userKey { return [NSData dataWithBytes:key length:5]; }
-
--(void)calculateKey:(NSString *)password
-{
-	PDFMD5Digest *md5=[PDFMD5Digest MD5Digest];
-
-	NSData *passdata=[password dataUsingEncoding:NSISOLatin1StringEncoding];
-	int passlength=[passdata length];
-	const unsigned char *passbytes=[passdata bytes];
-	if(passlength<32)
-	{
-		[md5 updateWithBytes:passbytes length:passlength];
-		[md5 updateWithBytes:PDFPasswordPadding length:32-passlength];
-	}
-	else [md5 updateWithBytes:passbytes length:32];
-
-	[md5 updateWithData:[[encrypt objectForKey:@"O"] rawData]];
-
-	unsigned int p=[encrypt unsignedIntValueForKey:@"P" default:0];
-	unsigned char pbytes[4]={p&0xff,(p>>8)&0xff,(p>>16)&0xff,p>>24};
-	[md5 updateWithBytes:pbytes length:4];
-
-	[md5 updateWithData:permanentid];
-
-	NSData *digest=[md5 digest];
-	const unsigned char *digestbytes=[digest bytes];
-
-	for(int i=0;i<5;i++) key[i]=digestbytes[i];
-}
-
-@end
-
-
-
-@implementation PDFMD5Digest
-
-+(PDFMD5Digest *)MD5Digest { return [[[self class] new] autorelease]; }
 
 -(id)init
 {
@@ -269,3 +174,58 @@ static const char PDFPasswordPadding[32]=
 }
 
 @end
+
+
+
+
+
+@implementation PDFAESHandle
+
+-(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
+{
+	if(self=[super initWithName:[handle name]])
+	{
+		parent=[handle retain];
+		key=[keydata retain];
+		pos=0;
+		startoffs=[parent offsetInFile];
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[parent release];
+	[key release];
+	[super dealloc];
+}
+
+-(off_t)offsetInFile { return pos; }
+
+-(BOOL)atEndOfFile { return [parent atEndOfFile]; }
+
+-(void)seekToFileOffset:(off_t)offs
+{
+/*	if(offs==pos) return;
+
+	if(offs<pos)
+	{
+		[rc4 release];
+		rc4=[[PDFRC4Engine engineWithKey:key] retain];
+		[rc4 skipBytes:offs];
+	}
+	else [rc4 skipBytes:offs-pos];*/
+
+	[parent seekToFileOffset:startoffs+offs];
+	pos=offs;
+}
+
+-(int)readAtMost:(int)num toBuffer:(void *)buffer
+{
+	int actual=[parent readAtMost:num toBuffer:buffer];
+//	[rc4 encryptBytes:buffer length:actual];
+	return actual;
+}
+
+@end
+

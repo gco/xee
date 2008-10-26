@@ -24,22 +24,30 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 
 -(BOOL)isImage;
 -(BOOL)isJPEG;
--(BOOL)isTIFF;
+-(BOOL)isJPEG2000;
+-(BOOL)isMask;
+-(BOOL)isBitmap;
+-(BOOL)isIndexed;
+-(BOOL)isGrey;
+-(BOOL)isRGB;
+-(BOOL)isCMYK;
+-(BOOL)isLab;
 -(NSString *)finalFilter;
 -(int)bitsPerComponent;
-
--(CSHandle *)handle;
--(CSHandle *)JPEGHandle;
--(CSHandle *)TIFFHandle;
--(CSHandle *)handleExcludingLast:(BOOL)excludelast;
--(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent;
--(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent;
 
 -(NSString *)colourSpaceOrAlternate;
 -(NSString *)subColourSpaceOrAlternate;
 -(NSString *)_parseColourSpace:(id)colourspace;
 -(int)numberOfColours;
 -(NSData *)paletteData;
+-(NSArray *)decodeArray;
+
+-(CSHandle *)rawHandle;
+-(CSHandle *)handle;
+-(CSHandle *)JPEGHandle;
+-(CSHandle *)handleExcludingLast:(BOOL)excludelast;
+-(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent;
+-(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent;
 
 -(NSString *)description;
 

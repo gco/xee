@@ -15,6 +15,8 @@
 		width=w;
 		height=h;
 		bytesperfilerow=bpr;
+		zero=255;
+		one=0;
 		buffer=NULL;
 	}
 	return self;
@@ -24,6 +26,12 @@
 {
 	free(buffer);
 	[super dealloc];
+}
+
+-(void)setZeroPoint:(float)low onePoint:(float)high
+{
+	zero=low*255;
+	one=high*255;
 }
 
 -(void)load
@@ -43,8 +51,8 @@
 		uint8 *rowptr=XeeImageDataRow(self,row);
 		for(int x=0;x<width;x++)
 		{
-			if(buffer[x>>3]&(0x80>>(x&7))) *rowptr++=0x00;
-			else *rowptr++=0xff;
+			if(buffer[x>>3]&(0x80>>(x&7))) *rowptr++=one;
+			else *rowptr++=zero;
 		}
 
 		[self setCompletedRowCount:row+1];

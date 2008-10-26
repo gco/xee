@@ -2,6 +2,7 @@
 #import "PDFParser.h"
 #import "XeeRawImage.h"
 #import "XeeIndexedRawImage.h"
+#import "XeeBitmapRawImage.h"
 #import "XeeJPEGLoader.h"
 #import "XeeImageIOLoader.h"
 
@@ -33,7 +34,7 @@ static int XeePDFSortPages(id first,id second,void *context)
 		{
 			parser=[[PDFParser parserForPath:filename] retain];
 
-			if([parser needsPassword]) @throw @"PDF file needs password";
+			//if([parser needsPassword]) @throw @"PDF file needs password";
 
 			// Find image objects in object list
 			NSMutableArray *images=[NSMutableArray array];
@@ -156,57 +157,74 @@ static int XeePDFSortPages(id first,id second,void *context)
 {
 	NSDictionary *dict=[object dictionary];
 	XeeImage *newimage=nil;
-	NSString *colourspace=[object colourSpaceOrAlternate];
+	NSArray *decode=[object decodeArray];
 	int bpc=[object bitsPerComponent];
 
-	if([object isJPEG]&&bpc==8)
+	if([object isJPEG])
 	{
 		CSHandle *subhandle=[object JPEGHandle];
 		if(subhandle) newimage=[[[XeeJPEGImage alloc] initWithHandle:subhandle] autorelease];
 	}
-	else if([object isTIFF])
+	else if([object isJPEG2000])
 	{
-		CSHandle *subhandle=[object TIFFHandle];
+		CSHandle *subhandle=[object JPEGHandle];
 		if(subhandle) newimage=[[[XeeImageIOImage alloc] initWithHandle:subhandle] autorelease];
 	}
-	else if([colourspace isEqual:@"DeviceGray"]||[colourspace isEqual:@"CalGray"])
+	else if([object isBitmap]||[object isMask])
 	{
 		CSHandle *subhandle=[object handle];
-		if(subhandle)
-		if(bpc==8) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[[dict objectForKey:@"Width"] intValue] height:[[dict objectForKey:@"Height"] intValue]
+
+		newimage=[[[XeeBitmapRawImage alloc] initWithHandle:subhandle
+		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]]
+		autorelease];
+
+		if(decode) [(XeeBitmapRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue]];
+		else [(XeeBitmapRawImage *)newimage setZeroPoint:0 onePoint:1];
+
+		[newimage setDepthBitmap];
+	}
+	else if((bpc==8||bpc==16)&&[object isGrey])
+	{
+		CSHandle *subhandle=[object handle];
+
+		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
+		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeGreyRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
+
 		[newimage setDepthGrey:bpc];
 		//[newimage setFormat:@"Raw greyscale // TODO - add format names
 	}
-	else if([colourspace isEqual:@"DeviceRGB"]||[colourspace isEqual:@"CalRGB"])
+	else if((bpc==8||bpc==16)&&[object isRGB])
 	{
 		CSHandle *subhandle=[object handle];
-		if(subhandle)
-		if(bpc==8) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[[dict objectForKey:@"Width"] intValue] height:[[dict objectForKey:@"Height"] intValue]
+
+		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
+		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeRGBRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
+
 		[newimage setDepthRGB:bpc];
 	}
-	else if([colourspace isEqual:@"DeviceCMYK"]||[colourspace isEqual:@"CalCMYK"])
+	else if((bpc==8||bpc==16)&&[object isCMYK])
 	{
 		CSHandle *subhandle=[object handle];
-		if(subhandle)
-		if(bpc==8) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[[dict objectForKey:@"Width"] intValue] height:[[dict objectForKey:@"Height"] intValue]
+
+		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
+		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeCMYKRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
+
 		[newimage setDepthCMYK:bpc alpha:NO];
 	}
-	else if([colourspace isEqual:@"DeviceLab"]||[colourspace isEqual:@"Callab"])
+	else if((bpc==8||bpc==16)&&[object isLab])
 	{
 		CSHandle *subhandle=[object handle];
-		if(subhandle)
-		if(bpc==8) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[[dict objectForKey:@"Width"] intValue] height:[[dict objectForKey:@"Height"] intValue]
+
+		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
+		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeLabRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
+
 		[newimage setDepthLab:bpc alpha:NO];
 	}
-	else if([colourspace isEqual:@"Indexed"])
+	else if([object isIndexed])
 	{
 		NSString *subcolourspace=[object subColourSpaceOrAlternate];
 		if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])

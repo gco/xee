@@ -392,7 +392,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 			}
 			break;
 
-			case XeeRawLabConversion8: // not sure what RGB space this ends up, needs fixing when colourspace support is added
+			case XeeRawLabConversion8: // not sure what RGB space this ends up in, needs fixing when colourspace support is added
 			{
 				uint8 *ptr=XeeImageDataRow(self,row);
 				for(int i=0;i<width;i++)

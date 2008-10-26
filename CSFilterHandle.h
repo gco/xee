@@ -14,7 +14,7 @@
 
 	@public
 	uint8 *inbuffer;
-	int bufsize,bufbytes,currbyte;
+	int bufsize,bufbytes,currbyte,currbit;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;
@@ -23,6 +23,7 @@
 -(void)dealloc;
 
 -(off_t)offsetInFile;
+-(BOOL)atEndOfFile;
 -(void)seekToFileOffset:(off_t)offs;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 
@@ -33,10 +34,9 @@
 
 @end
 
-#define CSFilterNextByte() (_CSFilterNextByte(self))
-#define CSFilterEOF() ([NSException raise:@"CSFilterEOFReachedException" format:@""])
+static inline void CSFilterEOF() { [NSException raise:@"CSFilterEOFReachedException" format:@""]; }
 
-static inline uint8 _CSFilterNextByte(CSFilterHandle *self)
+static inline int CSFilterNextByte(CSFilterHandle *self)
 {
 	if(self->currbyte>=self->bufbytes)
 	{
@@ -45,6 +45,24 @@ static inline uint8 _CSFilterNextByte(CSFilterHandle *self)
 		self->currbyte=0;
 	}
 	return self->inbuffer[self->currbyte++];
+}
+
+static inline int CSFilterNextBit(CSFilterHandle *self)
+{
+	if(self->currbyte>=self->bufbytes)
+	{
+		self->bufbytes=[self->parent readAtMost:self->bufsize toBuffer:self->inbuffer];
+		if(!self->bufbytes) CSFilterEOF();
+		self->currbyte=0;
+	}
+	int bit=(self->inbuffer[self->currbyte]>>self->currbit)&1;
+	self->currbit--;
+	if(self->currbit<0)
+	{
+		self->currbit=7;
+		self->currbyte++;
+	}
+	return bit;
 }
 
 

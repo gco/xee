@@ -8,6 +8,7 @@
 -(float)floatValueForKey:(NSString *)key default:(float)def;
 -(double)doubleValueForKey:(NSString *)key default:(double)def;
 
+-(NSString *)stringForKey:(NSString *)key default:(NSString *)def;
 -(NSArray *)arrayForKey:(NSString *)key;
 
 @end

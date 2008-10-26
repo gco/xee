@@ -38,6 +38,13 @@
 	return [obj doubleValue];
 }
 
+-(NSString *)stringForKey:(NSString *)key default:(NSString *)def
+{
+	id obj=[self objectForKey:key];
+	if(!obj||![obj isKindOfClass:[NSString class]]) return def;
+	return obj;
+}
+
 -(NSArray *)arrayForKey:(NSString *)key
 {
 	id obj=[self objectForKey:key];

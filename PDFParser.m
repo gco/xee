@@ -171,19 +171,20 @@ static BOOL IsWhiteSpace(uint8_t c);
 			char entry[21];
 			[fh readBytes:20 toBuffer:entry];
 
-			if(entry[17]=='n'&&n!=0) // 0 is always free, some writers forget to mark it (hello, Apple)
-			{
-				off_t objoffs=atoll(entry);
-				int objgen=atol(entry+11);
-	
-				off_t curroffs=[fh offsetInFile];
-				[fh seekToFileOffset:objoffs];
-				id obj=[self parsePDFObject];
-				[fh seekToFileOffset:curroffs];
+			if(entry[17]!='n') continue;
 
-				PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
-				if(obj&&![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
-			}
+			off_t objoffs=atoll(entry);
+			int objgen=atol(entry+11);
+
+			if(!objoffs) continue; // kludge to handle broken Apple PDF files
+
+			off_t curroffs=[fh offsetInFile];
+			[fh seekToFileOffset:objoffs];
+			id obj=[self parsePDFObject];
+			[fh seekToFileOffset:curroffs];
+
+			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
+			if(obj&&![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 		}
 	}
 	return nil;
@@ -619,10 +620,12 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(NSData *)rawData { return data; }
 
+-(PDFObjectReference *)reference { return ref; }
+
 -(NSData *)data
 {
 	PDFEncryptionHandler *encryption=[parser encryptionHandler];
-	if(encryption) return [encryption decryptedData:data reference:ref];
+	if(encryption) return [encryption decryptString:self];
 	else return data;
 }
 

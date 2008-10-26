@@ -2,46 +2,20 @@
 #import <openssl/md5.h>
 #import "CSHandle.h"
 
-extern NSString *PDFUnsupportedEncryptionException;
 extern NSString *PDFMD5FinishedException;
 
-@class PDFParser,PDFObjectReference;
-
-@interface PDFEncryptionHandler:NSObject
-{
-	NSDictionary *encrypt;
-	NSData *permanentid;
-
-	unsigned char key[5];
-
-	BOOL needspassword;
-}
-
--(id)initWithParser:(PDFParser *)parser;
--(void)dealloc;
-
--(BOOL)needsPassword;
-
--(NSData *)decryptedData:(NSData *)data reference:(PDFObjectReference *)ref;
--(CSHandle *)decryptedHandle:(CSHandle *)handle reference:(PDFObjectReference *)ref;
-
--(NSData *)keyForReference:(PDFObjectReference *)ref;
--(NSData *)userKey;
--(void)calculateKey:(NSString *)password;
-
-@end
 
 
-
-
-@interface PDFMD5Digest:NSObject
+@interface PDFMD5Engine:NSObject
 {
 	MD5_CTX md5;
 	unsigned char digest_bytes[16];
 	BOOL done;
 }
 
-+(PDFMD5Digest *)MD5Digest;
++(PDFMD5Engine *)engine;
++(NSData *)digestForData:(NSData *)data;
++(NSData *)digestForBytes:(const void *)bytes length:(int)length;
 
 -(id)init;
 
@@ -80,6 +54,25 @@ extern NSString *PDFMD5FinishedException;
 {
 	CSHandle *parent;
 	PDFRC4Engine *rc4;
+	NSData *key;
+	off_t pos,startoffs;
+}
+
+-(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata;
+-(void)dealloc;
+
+-(off_t)offsetInFile;
+-(BOOL)atEndOfFile;
+-(void)seekToFileOffset:(off_t)offs;
+-(int)readAtMost:(int)num toBuffer:(void *)buffer;
+
+@end
+
+
+
+@interface PDFAESHandle:CSHandle
+{
+	CSHandle *parent;
 	NSData *key;
 	off_t pos,startoffs;
 }

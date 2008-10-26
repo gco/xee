@@ -71,6 +71,7 @@
 		1B3EB0CD08FD76FE00CB908E /* depth_bitmap.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0BD08FD76FE00CB908E /* depth_bitmap.png */; };
 		1B3EB0CE08FD76FE00CB908E /* zoom.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0BE08FD76FE00CB908E /* zoom.png */; };
 		1B3EB0F808FDA57800CB908E /* depth_amiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0F708FDA57800CB908E /* depth_amiga.png */; };
+		1B4072A80EB40787008D5F17 /* CCITTHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA0D2B0EABF4B20016D207 /* CCITTHandle.m */; };
 		1B5552040B278EEB00DC7FF3 /* XeeGraphicsStuff.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5552030B278EEB00DC7FF3 /* XeeGraphicsStuff.m */; };
 		1B5553EA0B28DCF800DC7FF3 /* CSDesktopServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5553E90B28DCF700DC7FF3 /* CSDesktopServices.m */; };
 		1B5D4894086B7D57004480AB /* XeeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5D4892086B7D57004480AB /* XeeView.m */; };
@@ -143,6 +144,7 @@
 		1BCA08A80E9D5D060016D207 /* NSDictionaryNumberExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */; };
 		1BCA08E50E9D75BF0016D207 /* XeeSWFSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0707840C9F3BC500FA8EBD /* XeeSWFSource.m */; };
 		1BCA0AA70E9EBBC50016D207 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BCA0AA60E9EBBC50016D207 /* libcrypto.dylib */; };
+		1BCA0C080EA008980016D207 /* PDFEncryptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA0C070EA008980016D207 /* PDFEncryptionHandler.m */; };
 		1BCC00740941DF690075669D /* tool_ccw.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00650941DF680075669D /* tool_ccw.png */; };
 		1BCC00750941DF690075669D /* tool_prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00660941DF690075669D /* tool_prev.png */; };
 		1BCC00760941DF690075669D /* tool_zoomfit.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00670941DF690075669D /* tool_zoomfit.png */; };
@@ -474,6 +476,10 @@
 		1BCA08A60E9D5D060016D207 /* NSDictionaryNumberExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionaryNumberExtension.h; sourceTree = "<group>"; };
 		1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionaryNumberExtension.m; sourceTree = "<group>"; };
 		1BCA0AA60E9EBBC50016D207 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
+		1BCA0C060EA008980016D207 /* PDFEncryptionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFEncryptionHandler.h; sourceTree = "<group>"; };
+		1BCA0C070EA008980016D207 /* PDFEncryptionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFEncryptionHandler.m; sourceTree = "<group>"; };
+		1BCA0D2A0EABF4B20016D207 /* CCITTHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCITTHandle.h; sourceTree = "<group>"; };
+		1BCA0D2B0EABF4B20016D207 /* CCITTHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCITTHandle.m; sourceTree = "<group>"; };
 		1BCC00650941DF680075669D /* tool_ccw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_ccw.png; path = images/tool_ccw.png; sourceTree = "<group>"; };
 		1BCC00660941DF690075669D /* tool_prev.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_prev.png; path = images/tool_prev.png; sourceTree = "<group>"; };
 		1BCC00670941DF690075669D /* tool_zoomfit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_zoomfit.png; path = images/tool_zoomfit.png; sourceTree = "<group>"; };
@@ -821,10 +827,14 @@
 				1BCA069C0E9C3E110016D207 /* PDFParser.m */,
 				1BA51CF90E9921C200554F95 /* PDFStream.h */,
 				1BA51CFA0E9921C200554F95 /* PDFStream.m */,
+				1BCA0C060EA008980016D207 /* PDFEncryptionHandler.h */,
+				1BCA0C070EA008980016D207 /* PDFEncryptionHandler.m */,
 				1BA51CF60E99212E00554F95 /* PDFEncryptionUtils.h */,
 				1BA51CF70E99212E00554F95 /* PDFEncryptionUtils.m */,
 				1BCA08A60E9D5D060016D207 /* NSDictionaryNumberExtension.h */,
 				1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */,
+				1BCA0D2A0EABF4B20016D207 /* CCITTHandle.h */,
+				1BCA0D2B0EABF4B20016D207 /* CCITTHandle.m */,
 			);
 			name = PDF;
 			sourceTree = "<group>";
@@ -1661,6 +1671,8 @@
 				1BCA069D0E9C3E110016D207 /* PDFParser.m in Sources */,
 				1BCA08A80E9D5D060016D207 /* NSDictionaryNumberExtension.m in Sources */,
 				1BCA08E50E9D75BF0016D207 /* XeeSWFSource.m in Sources */,
+				1BCA0C080EA008980016D207 /* PDFEncryptionHandler.m in Sources */,
+				1B4072A80EB40787008D5F17 /* CCITTHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

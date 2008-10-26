@@ -1,6 +1,9 @@
 #import "PDFStream.h"
 #import "PDFParser.h"
-#import "PDFEncryptionUtils.h"
+#import "PDFEncryptionHandler.h"
+
+#import "CCITTHandle.h"
+//#import "LZWHandle.h"
 
 #import "CSZlibHandle.h"
 #import "CSMemoryHandle.h"
@@ -50,12 +53,52 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 -(BOOL)isJPEG
 {
-	return [[self finalFilter] isEqual:@"DCTDecode"];
+	return [[self finalFilter] isEqual:@"DCTDecode"]&&[self bitsPerComponent]==8;
 }
 
--(BOOL)isTIFF
+-(BOOL)isJPEG2000
 {
-	return [[self finalFilter] isEqual:@"CCITTFaxDecode"];
+	return [[self finalFilter] isEqual:@"JPXDecode"];
+}
+
+-(BOOL)isMask
+{
+	return [dict boolValueForKey:@"ImageMask" default:NO]&&[self bitsPerComponent]==1;
+}
+
+-(BOOL)isBitmap
+{
+	return [self isGrey]&&[self bitsPerComponent]==1;
+}
+
+-(BOOL)isIndexed
+{
+	NSString *colourspace=[self colourSpaceOrAlternate];
+	return [colourspace isEqual:@"Indexed"];
+}
+
+-(BOOL)isGrey
+{
+	NSString *colourspace=[self colourSpaceOrAlternate];
+	return [colourspace isEqual:@"DeviceGray"]||[colourspace isEqual:@"CalGray"];
+}
+
+-(BOOL)isRGB
+{
+	NSString *colourspace=[self colourSpaceOrAlternate];
+	return [colourspace isEqual:@"DeviceRGB"]||[colourspace isEqual:@"CalRGB"];
+}
+
+-(BOOL)isCMYK
+{
+	NSString *colourspace=[self colourSpaceOrAlternate];
+	return [colourspace isEqual:@"DeviceCMYK"]||[colourspace isEqual:@"CalCMYK"];
+}
+
+-(BOOL)isLab
+{
+	NSString *colourspace=[self colourSpaceOrAlternate];
+	return [colourspace isEqual:@"DeviceLab"]||[colourspace isEqual:@"CalLab"];
 }
 
 -(NSString *)finalFilter
@@ -70,189 +113,22 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 -(int)bitsPerComponent
 {
 	NSNumber *val=[dict objectForKey:@"BitsPerComponent"];
-	if([val isKindOfClass:[NSNumber class]]) return [val intValue];
-	else return 0;
+	if(val&&[val isKindOfClass:[NSNumber class]]) return [val intValue];
+	return 0;
 }
-
-
-
-
--(CSHandle *)handle
-{
-	return [self handleExcludingLast:NO];
-}
-
--(CSHandle *)JPEGHandle
-{
-	return [self handleExcludingLast:YES];
-}
-
--(CSHandle *)TIFFHandle
-{
-	NSDictionary *decodeparms;
-	id parmsval=[dict objectForKey:@"DecodeParms"];
-	if(!parmsval) decodeparms=[NSDictionary dictionary];
-	else if([parmsval isKindOfClass:[NSArray class]]) decodeparms=[parmsval lastObject];
-	else decodeparms=parmsval;
-
-//NSLog(@"%@",decodeparms);
-	if([[self finalFilter] isEqual:@"CCITTFaxDecode"])
-	{
-		int k=[decodeparms intValueForKey:@"K" default:0];
-
-		NSData *imagedata=[[self handleExcludingLast:YES] remainingFileContents];
-		CSMemoryHandle *header=[CSMemoryHandle memoryHandleForWriting];
-
-		[header writeInt32BE:0x4d4d002a]; // magic
-		[header writeInt32BE:0x00000008]; // IFD offset
-		[header writeInt16BE:12]; // number of directory entries
-		[header writeInt32BE:0x00fe0004]; // newsubfiletype
-		[header writeInt32BE:1];
-		[header writeInt32BE:0];
-		[header writeInt32BE:0x01000004]; // imagewidth
-		[header writeInt32BE:1];
-		[header writeInt32BE:[decodeparms intValueForKey:@"Columns" default:1728]];
-		[header writeInt32BE:0x01010004]; // imagelength
-		[header writeInt32BE:1];
-		[header writeInt32BE:[dict intValueForKey:@"Height" default:0]];
-		[header writeInt32BE:0x01030003]; // compression
-		[header writeInt32BE:1];
-		[header writeInt32BE:k<0?0x00040000:0x00030000];
-		[header writeInt32BE:0x01060003]; // photometricinterpretation
-		[header writeInt32BE:1];
-		[header writeInt32BE:[decodeparms intValueForKey:@"Blackls1" default:NO]?0x00000000:0x00010000];
-		// ^ Wrong way around?
-		[header writeInt32BE:0x01110004]; // stripoffsets
-		[header writeInt32BE:1];
-		[header writeInt32BE:162];
-		[header writeInt32BE:0x01160004]; // rowsperstrip
-		[header writeInt32BE:1];
-		[header writeInt32BE:[dict intValueForKey:@"Height" default:0]];
-		[header writeInt32BE:0x01170004]; // stripbytecounts
-		[header writeInt32BE:1];
-		[header writeInt32BE:[imagedata length]];
-		[header writeInt32BE:0x011a0005]; // xresolution
-		[header writeInt32BE:1];
-		[header writeInt32BE:154];
-		[header writeInt32BE:0x011b0005]; // yresolution
-		[header writeInt32BE:1];
-		[header writeInt32BE:154];
-		[header writeInt32BE:0x01280003]; // resolutionunit
-		[header writeInt32BE:1];
-		[header writeInt32BE:0x00010000];
-
-		if(k<0)
-		{
-			[header writeInt32BE:0x01250004]; // t6options
-			[header writeInt32BE:1];
-			[header writeInt32BE:0];
-		}
-		else
-		{
-			[header writeInt32BE:0x01240004]; // t4options
-			[header writeInt32BE:1];
-			[header writeInt32BE:(k==0?0:1)|([dict boolValueForKey:@"EncodedByteAlign" default:NO]?4:0)];
-		}
-
-		[header writeInt32BE:0x0000012c]; // resolution
-		[header writeInt32BE:0x00000001]; // "
-
-		[header seekToFileOffset:0];
-
-[[[CSMultiHandle multiHandleWithHandles:header,[CSMemoryHandle memoryHandleForReadingData:imagedata],nil]
-remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.tif" atomically:NO];
-
-		return [CSMultiHandle multiHandleWithHandles:header,[CSMemoryHandle memoryHandleForReadingData:imagedata],nil];
-	}
-	else return nil;
-}
-
--(CSHandle *)handleExcludingLast:(BOOL)excludelast
-{
-	CSHandle *handle=[fh subHandleWithRange:NSMakeRange(offs,[dict intValueForKey:@"Length" default:0])];
-
-	PDFEncryptionHandler *encryption=[parser encryptionHandler];
-	if(encryption) handle=[encryption decryptedHandle:handle reference:ref];
-
-	NSArray *filter=[dict arrayForKey:@"Filter"];
-	NSArray *decodeparms=[dict arrayForKey:@"DecodeParms"];
-
-	if(filter)
-	{
-		int count=[filter count];
-		if(excludelast) count--;
-
-		for(int i=0;i<count;i++)
-		{
-			handle=[self handleForFilterName:[filter objectAtIndex:i]
-			decodeParms:[decodeparms objectAtIndex:i] parentHandle:handle];
-			if(!handle) return nil;
-		}
-	}
-
-	return handle;
-}
-
--(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
-{
-	if([filtername isEqual:@"FlateDecode"])
-	{
-		return [self predictorHandleForDecodeParms:decodeparms
-		parentHandle:[CSZlibHandle zlibHandleWithHandle:parent]];
-	}
-	else if([filtername isEqual:@"CCITTFaxDecode"])
-	{
-		NSLog(@"%@",decodeparms);
-		return nil;
-	}
-//	else if([filtername isEqual:@"LZWDecode"])
-//	{
-//		return [self predictorHandleForDecodeParms:decodeparms
-//		parentHandle:[[[PDFLZWHandle alloc] initWithHandle:parent decodeParms:decodeparms] autorelease]];
-//	}
-	else if([filtername isEqual:@"ASCII85Decode"])
-	{
-		return [[[PDFASCII85Handle alloc] initWithHandle:parent] autorelease];
-	}
-	return nil;
-}
-
--(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
-{
-	if(!decodeparms) return parent;
-
-	NSNumber *predictor=[decodeparms objectForKey:@"Predictor"];
-	if(!predictor) return parent;
-
-	int pred=[predictor intValue];
-	if(pred==1) return parent;
-
-	NSNumber *columns=[decodeparms objectForKey:@"Columns"];
-	NSNumber *colors=[decodeparms objectForKey:@"Colors"];
-	NSNumber *bitspercomponent=[decodeparms objectForKey:@"BitsPerComponent"];
-
-	int cols=columns?[columns intValue]:1;
-	int comps=colors?[colors intValue]:1;
-	int bpc=bitspercomponent?[bitspercomponent intValue]:8;
-
-	if(pred==2) return [[[PDFTIFFPredictorHandle alloc] initWithHandle:parent columns:cols components:comps bitsPerComponent:bpc] autorelease];
-	else if(pred>=10&&pred<=15) return [[[PDFPNGPredictorHandle alloc] initWithHandle:parent columns:cols components:comps bitsPerComponent:bpc] autorelease];
-	else [NSException raise:@"PDFStreamPredictorException" format:@"PDF Predictor %d not supported",pred];
-	return nil;
-}
-
-
 
 -(NSString *)colourSpaceOrAlternate
 {
 	id colourspace=[dict objectForKey:@"ColorSpace"];
-	return [self _parseColourSpace:colourspace];
+	if(!colourspace) return nil;
 
+	return [self _parseColourSpace:colourspace];
 }
 
 -(NSString *)subColourSpaceOrAlternate
 {
 	id colourspace=[dict objectForKey:@"ColorSpace"];
+	if(!colourspace) return nil;
 
 	if(![colourspace isKindOfClass:[NSArray class]]) return nil;
 	if([colourspace count]!=4) return nil;
@@ -284,6 +160,7 @@ remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.tif" atomically:NO]
 -(int)numberOfColours
 {
 	id colourspace=[dict objectForKey:@"ColorSpace"];
+	if(!colourspace) return 0;
 
 	if(![colourspace isKindOfClass:[NSArray class]]) return nil;
 	if([colourspace count]!=4) return nil;
@@ -295,6 +172,7 @@ remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.tif" atomically:NO]
 -(NSData *)paletteData
 {
 	id colourspace=[dict objectForKey:@"ColorSpace"];
+	if(!colourspace) return nil;
 
 	if(![colourspace isKindOfClass:[NSArray class]]) return nil;
 	if([colourspace count]!=4) return nil;
@@ -305,6 +183,131 @@ remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.tif" atomically:NO]
 	else if([palette isKindOfClass:[PDFString class]]) return [palette data];
 	else return nil;
 }
+
+-(NSArray *)decodeArray
+{
+	id decode=[dict objectForKey:@"Decode"];
+	if(!decode) return nil;
+
+	if(![decode isKindOfClass:[NSArray class]]) return nil;
+
+	int n;
+	if([self isGrey]||[self isMask]) n=1;
+	else if([self isRGB]||[self isLab]) n=3;
+	else if([self isCMYK]) n=4;
+	else return nil;
+	if([decode count]!=n*2) return nil;
+
+	return decode;
+}
+
+
+
+
+-(CSHandle *)rawHandle
+{
+	return [fh subHandleWithRange:NSMakeRange(offs,[dict intValueForKey:@"Length" default:0])];
+}
+
+-(CSHandle *)handle
+{
+	return [self handleExcludingLast:NO];
+}
+
+-(CSHandle *)JPEGHandle
+{
+NSLog(@"%@",dict);
+	return [self handleExcludingLast:YES];
+}
+
+-(CSHandle *)handleExcludingLast:(BOOL)excludelast
+{
+	CSHandle *handle;
+	PDFEncryptionHandler *encryption=[parser encryptionHandler];
+
+	if(encryption) handle=[encryption decryptStream:self];
+	else handle=[self rawHandle];
+
+	NSArray *filter=[dict arrayForKey:@"Filter"];
+	NSArray *decodeparms=[dict arrayForKey:@"DecodeParms"];
+
+	if(filter)
+	{
+		int count=[filter count];
+		if(excludelast) count--;
+
+		for(int i=0;i<count;i++)
+		{
+			handle=[self handleForFilterName:[filter objectAtIndex:i]
+			decodeParms:[decodeparms objectAtIndex:i] parentHandle:handle];
+			if(!handle) return nil;
+		}
+	}
+
+	return handle;
+}
+
+-(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
+{
+	if([filtername isEqual:@"FlateDecode"])
+	{
+		return [self predictorHandleForDecodeParms:decodeparms
+		parentHandle:[CSZlibHandle zlibHandleWithHandle:parent]];
+	}
+	else if([filtername isEqual:@"CCITTFaxDecode"])
+	{
+		int k=[decodeparms intValueForKey:@"K" default:0];
+		int cols=[decodeparms intValueForKey:@"Columns" default:1728];
+		int white=[decodeparms intValueForKey:@"BlackIs1" default:NO]?0:1;
+
+		if(k==0) return nil;
+		else if(k>0) return nil;
+//		if(k==0) return [[[CCITTFaxT41DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
+//		else if(k>0) return [[[CCITTFaxT42DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
+		else return [[[CCITTFaxT6Handle alloc] initWithHandle:parent columns:cols white:white] autorelease];
+	}
+//	else if([filtername isEqual:@"LZWDecode"])
+//	{
+//		int =[decodeparms intValueForKey:@"" default:];
+//		return [self predictorHandleForDecodeParms:decodeparms
+//		parentHandle:[[[LZWHandle alloc] initWithHandle:parent ...] autorelease]];
+//	}
+	else if([filtername isEqual:@"ASCII85Decode"])
+	{
+		return [[[PDFASCII85Handle alloc] initWithHandle:parent] autorelease];
+	}
+	else if([filtername isEqual:@"Crypt"]) return parent; // handled elsewhere
+
+	return nil;
+}
+
+-(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
+{
+	if(!decodeparms) return parent;
+
+	NSNumber *predictor=[decodeparms objectForKey:@"Predictor"];
+	if(!predictor) return parent;
+
+	int pred=[predictor intValue];
+	if(pred==1) return parent;
+
+	NSNumber *columns=[decodeparms objectForKey:@"Columns"];
+	NSNumber *colors=[decodeparms objectForKey:@"Colors"];
+	NSNumber *bitspercomponent=[decodeparms objectForKey:@"BitsPerComponent"];
+
+	int cols=columns?[columns intValue]:1;
+	int comps=colors?[colors intValue]:1;
+	int bpc=bitspercomponent?[bitspercomponent intValue]:8;
+
+	if(pred==2) return [[[PDFTIFFPredictorHandle alloc] initWithHandle:parent columns:cols components:comps bitsPerComponent:bpc] autorelease];
+	else if(pred>=10&&pred<=15) return [[[PDFPNGPredictorHandle alloc] initWithHandle:parent columns:cols components:comps bitsPerComponent:bpc] autorelease];
+	else [NSException raise:@"PDFStreamPredictorException" format:@"PDF Predictor %d not supported",pred];
+	return nil;
+}
+
+
+
+
 
 -(NSString *)description { return [NSString stringWithFormat:@"<Stream with dictionary: %@>",dict]; }
 
@@ -323,7 +326,7 @@ remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.tif" atomically:NO]
 static uint8_t ASCII85NextByte(PDFASCII85Handle *self)
 {
 	uint8_t b;
-	do { b=CSFilterNextByte(); }
+	do { b=CSFilterNextByte(self); }
 	while(!((b>=33&&b<=117)||b=='z'||b=='~'));
 	return b;
 }
@@ -396,8 +399,8 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 	if(bpc==8)
 	{
 		int comp=pos%comps;
-		if((pos/comps)%cols==0) prev[comp]=CSFilterNextByte();
-		else prev[comp]+=CSFilterNextByte();
+		if((pos/comps)%cols==0) prev[comp]=CSFilterNextByte(self);
+		else prev[comp]+=CSFilterNextByte(self);
 		return prev[comp];
 	}
 	return 0;
@@ -447,11 +450,11 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 
 		if(col==0)
 		{
-			type=CSFilterNextByte();
+			type=CSFilterNextByte(self);
 			for(int i=0;i<comps;i++) prevbuf[(i+cols*comps+comps+bufoffs)%buflen]=0;
 		}
 
-		int x=CSFilterNextByte();
+		int x=CSFilterNextByte(self);
 		int a=prevbuf[(cols*comps+comps+bufoffs)%buflen];
 		int b=prevbuf[(comps+bufoffs)%buflen];
 		int c=prevbuf[bufoffs];
@@ -484,3 +487,5 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 }
 
 @end
+
+

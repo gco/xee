@@ -426,12 +426,12 @@
 
 	if(!spanleft)
 	{
-		uint8 b=CSFilterNextByte();
+		uint8 b=CSFilterNextByte(self);
 
 		if(b&0x80)
 		{
 			spanleft=(b^0xff)+2;
-			spanbyte=CSFilterNextByte();
+			spanbyte=CSFilterNextByte(self);
 			literal=NO;
 		}
 		else
@@ -443,7 +443,7 @@
 
 	spanleft--;
 
-	if(literal) return CSFilterNextByte();
+	if(literal) return CSFilterNextByte(self);
 	else return spanbyte;
 }
 
@@ -471,7 +471,7 @@
 	{
 		if((pos&1)==0)
 		{
-			uint16 val=(CSFilterNextByte()<<8)|CSFilterNextByte();
+			uint16 val=(CSFilterNextByte(self)<<8)|CSFilterNextByte(self);
 
 			if((pos/2)%cols==0) curr=val;
 			else curr+=val;

@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 
 #import "PDFStream.h"
-#import "PDFEncryptionUtils.h"
+#import "PDFEncryptionHandler.h"
 
 extern NSString *PDFWrongMagicException;
 extern NSString *PDFInvalidFormatException;
@@ -75,6 +75,7 @@ extern NSString *PDFParserException;
 -(void)dealloc;
 
 -(NSData *)data;
+-(PDFObjectReference *)reference;
 -(NSData *)rawData;
 -(NSString *)string;
 

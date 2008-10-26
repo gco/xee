@@ -23,6 +23,7 @@
 		bufsize=buffersize;
 		bufbytes=0;
 		currbyte=0;
+		currbit=7;
 
 		[self resetFilter];
 	}
@@ -44,17 +45,18 @@
 
 -(off_t)offsetInFile { return pos; }
 
+-(BOOL)atEndOfFile { return eof||[parent atEndOfFile]; }
+
 -(void)seekToFileOffset:(off_t)offs
 {
 	if(offs==pos) return;
 
 	if(offs<pos)
 	{
-		[parent seekToFileOffset:startoffs];
+		[self seekParentToFileOffset:startoffs];
 		[self resetFilter];
 		pos=0;
 		eof=NO;
-		currbyte=bufbytes=0;
 	}
 
 	if(offs==0) return;
@@ -91,6 +93,7 @@
 {
 	[parent seekToFileOffset:offset];
 	currbyte=bufbytes=0;
+	currbit=7;
 }
 
 -(void)resetFilter {}
