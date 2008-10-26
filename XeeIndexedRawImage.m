@@ -6,17 +6,30 @@
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
 palette:(XeePalette *)palette
 {
-	return [self initWithHandle:fh width:framewidth height:frameheight palette:palette bytesPerRow:0];
+	return [self initWithHandle:fh width:framewidth height:frameheight depth:8 palette:palette bytesPerRow:0];
 }
 
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
 palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow
+{
+	return [self initWithHandle:fh width:framewidth height:frameheight depth:8 palette:palette bytesPerRow:bytesperinputrow];
+}
+
+-(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
+depth:(int)framedepth palette:(XeePalette *)palette
+{
+	return [self initWithHandle:fh width:framewidth height:frameheight depth:framedepth palette:palette bytesPerRow:0];
+}
+
+-(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
+depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow
 {
 	if(self=[super initWithHandle:fh])
 	{
 		pal=[palette retain];
 		width=framewidth;
 		height=frameheight;
+		bitdepth=framedepth;
 		inbpr=bytesperinputrow;
 	}
 	return self;
@@ -36,17 +49,18 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow
 
 	if(![self allocWithType:[pal isTransparent]?XeeBitmapTypeARGB8:XeeBitmapTypeRGB8 width:width height:height]) XeeImageLoaderDone(NO);
 
-	buffer=malloc(width);
+	int buffersize=(width*bitdepth+7)/8;
+	buffer=malloc(buffersize);
 	if(!buffer) XeeImageLoaderDone(NO);
 
 	for(int row=0;row<height;row++)
 	{
-		[handle readBytes:width toBuffer:buffer];
-		if(inbpr&&inbpr!=width) [handle skipBytes:inbpr-width];
+		[handle readBytes:buffersize toBuffer:buffer];
+		if(inbpr&&inbpr!=buffersize) [handle skipBytes:inbpr-buffersize];
 
 		uint8 *rowptr=XeeImageDataRow(self,row);
-		if(transparent) [pal convertIndexes:buffer count:width toARGB8:rowptr];
-		else [pal convertIndexes:buffer count:width toRGB8:rowptr];
+		if(transparent) [pal convertIndexes:buffer count:width depth:bitdepth toARGB8:rowptr];
+		else [pal convertIndexes:buffer count:width depth:bitdepth toRGB8:rowptr];
 
 		[self setCompletedRowCount:row+1];
 		XeeImageLoaderYield();
@@ -102,21 +116,74 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow
 	[self setColourAtIndex:index red:0 green:0 blue:0 alpha:0];
 }
 
--(void)convertIndexes:(uint8 *)indexes count:(int)count toRGB8:(uint8 *)dest
+-(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toRGB8:(uint8 *)dest
 {
-	while(count--)
+	switch(depth)
 	{
-		uint32 col=pal[*indexes++];
-		*dest++=XeeGetRFromARGB8(col);
-		*dest++=XeeGetGFromARGB8(col);
-		*dest++=XeeGetBFromARGB8(col);
+		case 1:
+			for(int i=0;i<count;i++)
+			{
+ 				uint32 col=pal[(indexes[i>>3]>>((i&7)^7))&0x01];
+				*dest++=XeeGetRFromARGB8(col);
+				*dest++=XeeGetGFromARGB8(col);
+				*dest++=XeeGetBFromARGB8(col);
+			}
+		break;
+
+		case 2:
+			for(int i=0;i<count;i++)
+			{
+ 				uint32 col=pal[(indexes[i>>2]>>(((i&3)^3)<<1))&0x03];
+				*dest++=XeeGetRFromARGB8(col);
+				*dest++=XeeGetGFromARGB8(col);
+				*dest++=XeeGetBFromARGB8(col);
+			}
+		break;
+
+		case 4:
+			for(int i=0;i<count;i++)
+			{
+ 				uint32 col=pal[(indexes[i>>1]>>(((i&1)^1)<<2))&0x0f];
+				*dest++=XeeGetRFromARGB8(col);
+				*dest++=XeeGetGFromARGB8(col);
+				*dest++=XeeGetBFromARGB8(col);
+			}
+		break;
+
+		case 8:
+			for(int i=0;i<count;i++)
+			{
+ 				uint32 col=pal[indexes[i]];
+				*dest++=XeeGetRFromARGB8(col);
+				*dest++=XeeGetGFromARGB8(col);
+				*dest++=XeeGetBFromARGB8(col);
+			}
+		break;
 	}
 }
 
--(void)convertIndexes:(uint8 *)indexes count:(int)count toARGB8:(uint8 *)dest
+-(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toARGB8:(uint8 *)dest
 {
 	uint32 *destptr=(uint32 *)dest;
-	while(count--) *destptr++=pal[*indexes++];
+
+	switch(depth)
+	{
+		case 1:
+			for(int i=0;i<count;i++) destptr[i]=pal[(indexes[i>>3]>>((i&7)^7))&0x01];
+		break;
+
+		case 2:
+			for(int i=0;i<count;i++) destptr[i]=pal[(indexes[i>>2]>>(((i&3)^3)<<1))&0x03];
+		break;
+
+		case 4:
+			for(int i=0;i<count;i++) destptr[i]=pal[(indexes[i>>1]>>(((i&1)^1)<<2))&0x0f];
+		break;
+
+		case 8:
+			for(int i=0;i<count;i++) destptr[i]=pal[indexes[i]];
+		break;
+	}
 }
 
 @end

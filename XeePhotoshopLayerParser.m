@@ -444,6 +444,11 @@
 			flags:XeeBigEndianRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)]
 			autorelease];
 
+			[(XeeRawImage *)image setZeroPoint:1 onePoint:0 forChannel:0];
+			[(XeeRawImage *)image setZeroPoint:1 onePoint:0 forChannel:1];
+			[(XeeRawImage *)image setZeroPoint:1 onePoint:0 forChannel:2];
+			[(XeeRawImage *)image setZeroPoint:1 onePoint:0 forChannel:3];
+
 			[image setDepthCMYK:depth alpha:hasalpha];
  		break;
 

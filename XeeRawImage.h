@@ -19,7 +19,8 @@
 {
 	int bitdepth,inbpr,channels,uncomposition,transformation,type;
 	uint8 *buffer;
-	BOOL flipendian,needsbuffer;
+	BOOL flipendian,needsbuffer,adjustranges;
+	float range[5][2];
 }
 
 -(id)initWithHandle:(CSHandle *)inhandle width:(int)framewidth height:(int)frameheight
@@ -27,6 +28,8 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags;
 -(id)initWithHandle:(CSHandle *)inhandle width:(int)framewidth height:(int)frameheight
 depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)byterperinputrow;
 -(void)dealloc;
+
+-(void)setZeroPoint:(float)low onePoint:(float)high forChannel:(int)channel;
 
 -(void)load;
 

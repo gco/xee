@@ -61,6 +61,10 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 		flipendian=(flags&XeeBigEndianRawFlag)?YES:NO;
 		#endif
 
+		adjustranges=NO;
+		range[0][0]=range[1][0]=range[2][0]=range[3][0]=range[4][0]=0;
+		range[0][1]=range[1][1]=range[2][1]=range[3][1]=range[4][1]=1;
+
 		if(precomp)
 		{
 			if(bitdepth==8)
@@ -179,6 +183,14 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 	[super dealloc];
 }
 
+-(void)setZeroPoint:(float)low onePoint:(float)high forChannel:(int)channel
+{
+	if(channel>=channels||channel<0) return;
+	adjustranges=YES;
+	range[channel][0]=low;
+	range[channel][1]=high;
+}
+
 -(void)load
 {
 	if(!handle) XeeImageLoaderDone(NO);
@@ -290,6 +302,25 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 			break;
 		}
 
+		if(adjustranges)
+		{
+			switch(bitdepth)
+			{
+				case 8:
+					for(int i=0;i<width*channels;i++)
+					datarow[i]=datarow[i]*range[i%channels][1]+(255-datarow[i])*range[i%channels][0];
+				break;
+
+				case 16:
+				{
+					uint16 *datarow16=(uint16 *)datarow;
+					for(int i=0;i<width*channels;i++)
+					datarow16[i]=datarow16[i]*range[i%channels][1]+(65535-datarow16[i])*range[i%channels][0];
+				}
+				break;
+			}
+		}
+
 		switch(transformation)
 		{
 			case XeeRawFlipGreyAlpha8:
@@ -348,7 +379,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 				uint8 *cmyk=buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint8 c=*cmyk++,m=*cmyk++,y=*cmyk++,k=*cmyk++;
+					uint8 c=255-*cmyk++,m=255-*cmyk++,y=255-*cmyk++,k=255-*cmyk++;
 					*rgb++=(k*c)/255; *rgb++=(k*m)/255; *rgb++=(k*y)/255;
 				}
 			}
@@ -360,7 +391,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 				uint8 *cmyk=buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint8 c=*cmyk++,m=*cmyk++,y=*cmyk++,k=*cmyk++,a=*cmyk++;
+					uint8 c=255-*cmyk++,m=255-*cmyk++,y=255-*cmyk++,k=255-*cmyk++,a=*cmyk++;
 					*rgb++=a;
 					*rgb++=(k*c)/255; *rgb++=(k*m)/255; *rgb++=(k*y)/255;
 				}
@@ -373,7 +404,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 				uint16 *cmyk=(uint16 *)buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint16 c=*cmyk++,m=*cmyk++,y=*cmyk++,k=*cmyk++;
+					uint16 c=65535-*cmyk++,m=65535-*cmyk++,y=65535-*cmyk++,k=65535-*cmyk++;
 					*rgb++=(uint32)(k*c)/65535; *rgb++=(uint32)(k*m)/65535; *rgb++=(uint32)(k*y)/65535;
 				}
 			}
@@ -385,7 +416,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 				uint16 *cmyk=(uint16 *)buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint16 c=*cmyk++,m=*cmyk++,y=*cmyk++,k=*cmyk++,a=*cmyk++;
+					uint16 c=65535-*cmyk++,m=65535-*cmyk++,y=65535-*cmyk++,k=65535-*cmyk++,a=*cmyk++;
 					*rgb++=(uint32)(k*c)/65535; *rgb++=(uint32)(k*m)/65535; *rgb++=(uint32)(k*y)/65535;
 					*rgb++=a;
 				}

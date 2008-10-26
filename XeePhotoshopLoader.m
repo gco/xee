@@ -283,6 +283,11 @@
 				width:width height:height depth:bitdepth colourSpace:XeeCMYKRawColourSpace
 				flags:XeeBigEndianRawFlag|XeeAlphaPrecomposedRawFlag|(hasalpha?XeeAlphaLastRawFlag:0)]
 				autorelease];
+
+				[(XeeRawImage *)mainimage setZeroPoint:1 onePoint:0 forChannel:0];
+				[(XeeRawImage *)mainimage setZeroPoint:1 onePoint:0 forChannel:1];
+				[(XeeRawImage *)mainimage setZeroPoint:1 onePoint:0 forChannel:2];
+				[(XeeRawImage *)mainimage setZeroPoint:1 onePoint:0 forChannel:3];
 			break;
 
 			case XeePhotoshopLabMode:

@@ -150,7 +150,18 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 		{
 			PDFStream *def=[colourspace objectAtIndex:1];
 			if(![def isKindOfClass:[PDFStream class]]) return nil;
-			return [[def dictionary] objectForKey:@"Alternate"];
+
+			NSString *alternate=[[def dictionary] objectForKey:@"Alternate"];
+			if(alternate) return alternate;
+
+			int n=[[def dictionary] intValueForKey:@"N" default:0];
+			switch(n)
+			{
+				case 1: return @"DeviceGray";
+				case 3: return @"DeviceRGB";
+				case 4: return @"DeviceCMYK";
+				default: return nil;
+			}
 		}
 		else return name;
 	}
@@ -216,7 +227,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 -(CSHandle *)JPEGHandle
 {
-NSLog(@"%@",dict);
+//NSLog(@"%@",dict);
 	return [self handleExcludingLast:YES];
 }
 

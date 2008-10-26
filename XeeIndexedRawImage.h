@@ -6,13 +6,17 @@
 {
 	XeePalette *pal;
 	uint8 *buffer;
-	int inbpr;
+	int bitdepth,inbpr;
 }
 
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
 palette:(XeePalette *)palette;
 -(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
 palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow;
+-(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
+depth:(int)framedepth palette:(XeePalette *)palette;
+-(id)initWithHandle:(CSHandle *)fh width:(int)framewidth height:(int)frameheight
+depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow;
 -(void)dealloc;
 
 -(void)load;
@@ -37,7 +41,7 @@ palette:(XeePalette *)palette bytesPerRow:(int)bytesperinputrow;
 -(void)setColourAtIndex:(int)index red:(uint8)red green:(uint8)green blue:(uint8)blue alpha:(uint8)alpha;
 -(void)setTransparent:(int)index;
 
--(void)convertIndexes:(uint8 *)indexes count:(int)count toRGB8:(uint8 *)dest;
--(void)convertIndexes:(uint8 *)indexes count:(int)count toARGB8:(uint8 *)dest;
+-(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toRGB8:(uint8 *)dest;
+-(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toARGB8:(uint8 *)dest;
 
 @end

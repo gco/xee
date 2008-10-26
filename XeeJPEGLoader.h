@@ -22,6 +22,7 @@
 	JSAMPARRAY image[3];
 
 	uint8 *cmyk_buffer;
+	BOOL invert_cmyk;
 
 	uint8 *thumb_ptr;
 	int thumb_len;

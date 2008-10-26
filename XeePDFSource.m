@@ -191,6 +191,8 @@ static int XeePDFSortPages(id first,id second,void *context)
 		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeGreyRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
 
+		if(decode) [(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
+
 		[newimage setDepthGrey:bpc];
 		//[newimage setFormat:@"Raw greyscale // TODO - add format names
 	}
@@ -202,6 +204,13 @@ static int XeePDFSortPages(id first,id second,void *context)
 		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeRGBRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
 
+		if(decode)
+		{
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:2] floatValue] onePoint:[[decode objectAtIndex:3] floatValue] forChannel:1];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:4] floatValue] onePoint:[[decode objectAtIndex:5] floatValue] forChannel:2];
+		}
+
 		[newimage setDepthRGB:bpc];
 	}
 	else if((bpc==8||bpc==16)&&[object isCMYK])
@@ -212,6 +221,14 @@ static int XeePDFSortPages(id first,id second,void *context)
 		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeCMYKRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
 
+		if(decode)
+		{
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:2] floatValue] onePoint:[[decode objectAtIndex:3] floatValue] forChannel:1];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:4] floatValue] onePoint:[[decode objectAtIndex:5] floatValue] forChannel:2];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:6] floatValue] onePoint:[[decode objectAtIndex:7] floatValue] forChannel:3];
+		}
+
 		[newimage setDepthCMYK:bpc alpha:NO];
 	}
 	else if((bpc==8||bpc==16)&&[object isLab])
@@ -221,6 +238,13 @@ static int XeePDFSortPages(id first,id second,void *context)
 		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
 		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
 		depth:bpc colourSpace:XeeLabRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
+
+		if(decode)
+		{
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:2] floatValue] onePoint:[[decode objectAtIndex:3] floatValue] forChannel:1];
+			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:4] floatValue] onePoint:[[decode objectAtIndex:5] floatValue] forChannel:2];
+		}
 
 		[newimage setDepthLab:bpc alpha:NO];
 	}
@@ -246,7 +270,8 @@ static int XeePDFSortPages(id first,id second,void *context)
 				int subheight=[[dict objectForKey:@"Height"] intValue];
 				CSHandle *subhandle=[object handle];
 
-				if(subhandle) newimage=[[[XeeIndexedRawImage alloc] initWithHandle:subhandle width:subwidth height:subheight palette:pal] autorelease];
+				if(subhandle) newimage=[[[XeeIndexedRawImage alloc] initWithHandle:subhandle
+				width:subwidth height:subheight depth:bpc palette:pal] autorelease];
 				[newimage setDepthIndexed:colours];
 			}
 		}

@@ -35,6 +35,7 @@
 	jpeg_created=NO;
 	ycbcr_buffers=NULL;
 	cmyk_buffer=NULL;
+	invert_cmyk=NO;
 	thumb_ptr=NULL;
 	thumb_len=0;
 
@@ -182,6 +183,7 @@
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
 			NSLocalizedString(@"Adobe APP14 marker",@"Adobe APP14 marker property title")
 			value:XeeHexDump(&marker->data[5],marker->data_length-5,16)]];
+			if(marker->data_length==12&&marker->data[11]==2) invert_cmyk=YES;
 		}
 		else
 		{
@@ -322,7 +324,7 @@
 			uint8 y=*cmyk++;
 			uint8 k=*cmyk++;
 
-		    if(cinfo.saw_Adobe_marker)
+		    if(invert_cmyk)
 			{
 				*rgb++=(k*c)/255;
 				*rgb++=(k*m)/255;
@@ -474,6 +476,7 @@
 	NSMutableArray *xmphandles=[NSMutableArray array];
 	NSMutableArray *pshandles=[NSMutableArray array];
 	NSArray *duckyprops=nil;
+	BOOL invert_cmyk=NO;
 
 	for(struct jpeg_marker_struct *marker=cinfo.marker_list;marker;marker=marker->next)
 	{
@@ -546,6 +549,8 @@
 			[markerprops addObject:[XeePropertyItem itemWithLabel:
 			NSLocalizedString(@"Adobe APP14 marker",@"Adobe APP14 marker property title")
 			value:XeeHexDump(&marker->data[5],marker->data_length-5,16)]];
+
+			if(marker->data_length==12&&marker->data[11]==2) invert_cmyk=YES;
 		}
 		else
 		{
@@ -684,7 +689,7 @@
 					uint8 y=*cmyk++;
 					uint8 k=*cmyk++;
 
-					if(cinfo.saw_Adobe_marker)
+					if(invert_cmyk)
 					{
 						*rgb++=(k*c)/255;
 						*rgb++=(k*m)/255;
