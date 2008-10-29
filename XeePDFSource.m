@@ -93,6 +93,9 @@ static int XeePDFSortPages(id first,id second,void *context)
 				if(page) name=[NSString stringWithFormat:@"Page %@, object %d",page,[ref number]];
 				else name=[NSString stringWithFormat:@"Object %d",[ref number]];
 
+				NSString *imgname=[[image dictionary] objectForKey:@"Name"];
+				if(imgname) name=[NSString stringWithFormat:@"%@ (%@)",imgname,name];
+
 				[self addEntry:[[[XeePDFEntry alloc] initWithPDFStream:image name:name] autorelease]];
 			}
 

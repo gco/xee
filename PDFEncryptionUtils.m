@@ -183,12 +183,15 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if(self=[super initWithName:[handle name]])
+	if(self=[super initWithName:[handle name] bufferSize:16])
 	{
 		parent=[handle retain];
 		key=[keydata retain];
-		pos=0;
+
+		iv=[parent copyDataOfLength:16];
 		startoffs=[parent offsetInFile];
+
+		AES_set_decrypt_key([key bytes],[key length]*8,&aeskey);
 	}
 	return self;
 }
@@ -197,34 +200,33 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 {
 	[parent release];
 	[key release];
+	[iv release];
 	[super dealloc];
 }
 
--(off_t)offsetInFile { return pos; }
-
--(BOOL)atEndOfFile { return [parent atEndOfFile]; }
-
--(void)seekToFileOffset:(off_t)offs
+-(void)resetBufferedStream
 {
-/*	if(offs==pos) return;
-
-	if(offs<pos)
-	{
-		[rc4 release];
-		rc4=[[PDFRC4Engine engineWithKey:key] retain];
-		[rc4 skipBytes:offs];
-	}
-	else [rc4 skipBytes:offs-pos];*/
-
-	[parent seekToFileOffset:startoffs+offs];
-	pos=offs;
+	[parent seekToFileOffset:startoffs];
+	memcpy(ivbuffer,[iv bytes],16);
 }
 
--(int)readAtMost:(int)num toBuffer:(void *)buffer
+-(int)fillBufferAtOffset:(off_t)pos
 {
-	int actual=[parent readAtMost:num toBuffer:buffer];
-//	[rc4 encryptBytes:buffer length:actual];
-	return actual;
+	uint8_t inbuf[16];
+	[parent readBytes:16 toBuffer:inbuf];
+	AES_cbc_encrypt(inbuf,streambuffer,16,&aeskey,ivbuffer,AES_DECRYPT);
+
+	if([parent atEndOfFile])
+	{
+		int val=streambuffer[15];
+		if(val>0&&val<=16)
+		{
+			for(int i=1;i<val;i++) if(streambuffer[15-val]!=val) return 0;
+			return 16-val;
+		}
+		else return 0;
+	}
+	else return 16;
 }
 
 @end

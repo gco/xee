@@ -105,14 +105,7 @@
 		[fh seekToFileOffset:startoffs];
 	}
 
-	int skip=offs-zs.total_out;
-	uint8_t dummybuf[16384];
-	while(skip)
-	{
-		int num=sizeof(dummybuf);
-		if(num>skip) num=skip;
-		skip-=[self readAtMost:num toBuffer:dummybuf];
-	}
+	[self readAndDiscardBytes:offs-zs.total_out];
 }
 
 -(void)seekToEndOfFile

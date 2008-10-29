@@ -47,7 +47,7 @@
 -(id)initWithHandle:(CSHandle *)handle rows:(int)numrows bytesPerRow:(int)bpr channel:(int)channel of:(int)numchannels previousSize:(off_t)prevsize;
 -(void)dealloc;
 
--(uint8)produceByte;
+-(uint8)produceByteAtOffset:(off_t)pos;
 
 -(off_t)totalSize;
 
@@ -60,6 +60,6 @@
 }
 
 -(id)initWithHandle:(CSHandle *)handle depth:(int)bitdepth columns:(int)columns;
--(uint8)produceByte;
+-(uint8)produceByteAtOffset:(off_t)pos;
 
 @end

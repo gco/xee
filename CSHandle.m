@@ -4,6 +4,12 @@
 #include <sys/stat.h>
 
 
+NSString *CSOutOfMemoryException=@"CSOutOfMemoryException";
+NSString *CSEndOfFileException=@"CSEndOfFileException";
+NSString *CSNotImplementedException=@"CSNotImplementedException";
+NSString *CSNotSupportedException=@"CSNotSupportedException";
+
+
 
 static inline int16_t CSBEInt16(uint8_t *b) { return ((int16_t)b[0]<<8)|(int16_t)b[1]; }
 static inline int32_t CSBEInt32(uint8_t *b) { return ((int32_t)b[0]<<24)|((int32_t)b[1]<<16)|((int32_t)b[2]<<8)|(int32_t)b[3]; }
@@ -324,25 +330,25 @@ CSWriteValueImpl(uint32_t,writeID,CSSetBEUInt32)
 
 -(void)_raiseMemory
 {
-	[NSException raise:@"CSOutOfMemoryException"
+	[NSException raise:CSOutOfMemoryException
 	format:@"Out of memory while attempting to read from file \"%@\" (%@).",name,[self class]];
 }
 
 -(void)_raiseEOF
 {
-	[NSException raise:@"CSEndOfFileException"
+	[NSException raise:CSEndOfFileException
 	format:@"Attempted to read past the end of file \"%@\" (%@).",name,[self class]];
 }
 
 -(void)_raiseNotImplemented:(SEL)selector
 {
-	[NSException raise:@"CSNotImplementedException"
+	[NSException raise:CSNotImplementedException
 	format:@"Attempted to use unimplemented method +[%@ %@] when reading from file \"%@\".",[self class],NSStringFromSelector(selector),name];
 }
 
 -(void)_raiseNotSupported:(SEL)selector
 {
-	[NSException raise:@"CSNotSupportedException"
+	[NSException raise:CSNotSupportedException
 	format:@"Attempted to use unsupported method +[%@ %@] when reading from file \"%@\".",[self class],NSStringFromSelector(selector),name];
 }
 

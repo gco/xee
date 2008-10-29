@@ -1,20 +1,17 @@
-#import "CSHandle.h"
-#import "CSCoroutine.h"
-#import "XeeTypes.h"
+#import "CSStreamHandle.h"
 
 
 
-@interface CSFilterHandle:CSHandle
+@interface CSFilterHandle:CSStreamHandle
 {
 	@public
 	CSHandle *parent;
-	uint8 (*producebyte_ptr)(id,SEL);
-	off_t startoffs,pos;
-	BOOL eof;
+	off_t startoffs;
+	uint8_t (*producebyte_ptr)(id,SEL,off_t);
 
 	@public
-	uint8 *inbuffer;
-	int bufsize,bufbytes,currbyte,currbit;
+	uint8_t *filterbuffer;
+	int filterbufsize,filterbufbytes,currfilterbyte,currfilterbit;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;
@@ -22,49 +19,84 @@
 -(id)initAsCopyOf:(CSFilterHandle *)other;
 -(void)dealloc;
 
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
--(void)seekToFileOffset:(off_t)offs;
--(int)readAtMost:(int)num toBuffer:(void *)buffer;
-
 -(void)seekParentToFileOffset:(off_t)offset;
 
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer;
+-(void)resetStream;
+
 -(void)resetFilter;
--(uint8)produceByte;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end
 
-static inline void CSFilterEOF() { [NSException raise:@"CSFilterEOFReachedException" format:@""]; }
+extern NSString *CSFilterEOFReachedException;
+
+static inline void CSFilterEOF() { [NSException raise:CSFilterEOFReachedException format:@""]; }
+
+static inline void CSFilterCheckAndFillBuffer(CSFilterHandle *self)
+{
+	if(self->currfilterbyte>=self->filterbufbytes)
+	{
+		self->filterbufbytes=[self->parent readAtMost:self->filterbufsize toBuffer:self->filterbuffer];
+		if(!self->filterbufbytes) CSFilterEOF();
+		self->currfilterbyte=0;
+	}
+}
+
+static inline int CSFilterPeekByte(CSFilterHandle *self) { return self->filterbuffer[self->currfilterbyte]; }
+
+static inline void CSFilterByteConsumed(CSFilterHandle *self) { self->currfilterbyte++; }
 
 static inline int CSFilterNextByte(CSFilterHandle *self)
 {
-	if(self->currbyte>=self->bufbytes)
-	{
-		self->bufbytes=[self->parent readAtMost:self->bufsize toBuffer:self->inbuffer];
-		if(!self->bufbytes) CSFilterEOF();
-		self->currbyte=0;
-	}
-	return self->inbuffer[self->currbyte++];
+	CSFilterCheckAndFillBuffer(self);
+
+	int byte=CSFilterPeekByte(self);
+
+	CSFilterByteConsumed(self);
+
+	return byte;
 }
 
 static inline int CSFilterNextBit(CSFilterHandle *self)
 {
-	if(self->currbyte>=self->bufbytes)
+	CSFilterCheckAndFillBuffer(self);
+
+	int bit=(CSFilterPeekByte(self)>>self->currfilterbit)&1;
+
+	self->currfilterbit--;
+	if(self->currfilterbit<0)
 	{
-		self->bufbytes=[self->parent readAtMost:self->bufsize toBuffer:self->inbuffer];
-		if(!self->bufbytes) CSFilterEOF();
-		self->currbyte=0;
+		self->currfilterbit=7;
+		CSFilterByteConsumed(self);
 	}
-	int bit=(self->inbuffer[self->currbyte]>>self->currbit)&1;
-	self->currbit--;
-	if(self->currbit<0)
-	{
-		self->currbit=7;
-		self->currbyte++;
-	}
+
 	return bit;
 }
 
+static inline int CSFilterNextBitString(CSFilterHandle *self,int bits)
+{
+	int res=0;
+
+	while(bits)
+	{
+		CSFilterCheckAndFillBuffer(self);
+
+		int num=bits;
+		if(num>self->currfilterbit+1) num=self->currfilterbit+1;
+		res=(res<<num)| ((CSFilterPeekByte(self)>>(self->currfilterbit+1-num))&((1<<num)-1));
+
+		bits-=num;
+		self->currfilterbit-=num;
+
+		if(self->currfilterbit<0)
+		{
+			self->currfilterbit=7;
+			CSFilterByteConsumed(self);
+		}
+	}
+	return res;
+}
 
 
 /*
@@ -76,7 +108,7 @@ static inline int CSFilterNextBit(CSFilterHandle *self)
 
 	off_t pos;
 	int left;
-	uint8 *ptr;
+	uint8_t *ptr;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;
@@ -94,7 +126,7 @@ static inline int CSFilterNextBit(CSFilterHandle *self)
 #define CSFilterGet() __CSFilterGet(readatmost_ptr,parent,coro)
 #define CSFilterPut(b) __CSFilterPut(b,&pos,&left,&ptr,coro)
 
-static uint8 inline __CSFilterGet(int (*readatmost_ptr)(id,SEL,int,void *),CSHandle *parent,CSCoroutine *coro)
+static uint8_t inline __CSFilterGet(int (*readatmost_ptr)(id,SEL,int,void *),CSHandle *parent,CSCoroutine *coro)
 {
 	uint8 b;
 	if(readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,&b)!=1) [coro returnFrom];

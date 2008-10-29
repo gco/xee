@@ -1,5 +1,3 @@
-#import <Foundation/Foundation.h>
-
 #import "CSFilterHandle.h"
 
 extern NSString *CCITTCodeException;
@@ -13,7 +11,7 @@ extern NSString *CCITTCodeException;
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns white:(int)whitevalue;
 
 -(void)resetFilter;
--(uint8)produceByte;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 -(void)startNewLine;
 -(void)findNextSpanLength;

@@ -74,7 +74,7 @@ static int ReadLengthWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer ta
 	[self startNewLine];
 }
 
--(uint8)produceByte
+-(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	int byte=0;
 	int bitsempty=8;

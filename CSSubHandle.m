@@ -4,7 +4,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle from:(off_t)from length:(off_t)length
 {
-	if(self=[super initWithName:[handle name]])
+	if(self=[super initWithName:[NSString stringWithFormat:@"%@ (Subrange from %qd, length %qd)",[handle name],from,length]])
 	{
 		parent=[handle copy];
 		start=from;

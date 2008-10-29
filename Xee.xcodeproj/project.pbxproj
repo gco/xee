@@ -72,6 +72,9 @@
 		1B3EB0CE08FD76FE00CB908E /* zoom.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0BE08FD76FE00CB908E /* zoom.png */; };
 		1B3EB0F808FDA57800CB908E /* depth_amiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0F708FDA57800CB908E /* depth_amiga.png */; };
 		1B4072A80EB40787008D5F17 /* CCITTHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA0D2B0EABF4B20016D207 /* CCITTHandle.m */; };
+		1B4074FD0EB62C34008D5F17 /* CSStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4074FC0EB62C34008D5F17 /* CSStreamHandle.m */; };
+		1B4075DB0EB758D8008D5F17 /* CSBufferedStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4075DA0EB758D8008D5F17 /* CSBufferedStreamHandle.m */; };
+		1B40762F0EB7C325008D5F17 /* LZWHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B40762E0EB7C325008D5F17 /* LZWHandle.m */; };
 		1B5552040B278EEB00DC7FF3 /* XeeGraphicsStuff.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5552030B278EEB00DC7FF3 /* XeeGraphicsStuff.m */; };
 		1B5553EA0B28DCF800DC7FF3 /* CSDesktopServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5553E90B28DCF700DC7FF3 /* CSDesktopServices.m */; };
 		1B5D4894086B7D57004480AB /* XeeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5D4892086B7D57004480AB /* XeeView.m */; };
@@ -393,6 +396,12 @@
 		1B3EB0BD08FD76FE00CB908E /* depth_bitmap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = depth_bitmap.png; path = images/depth_bitmap.png; sourceTree = "<group>"; };
 		1B3EB0BE08FD76FE00CB908E /* zoom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = zoom.png; path = images/zoom.png; sourceTree = "<group>"; };
 		1B3EB0F708FDA57800CB908E /* depth_amiga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = depth_amiga.png; path = images/depth_amiga.png; sourceTree = "<group>"; };
+		1B4074FB0EB62C34008D5F17 /* CSStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSStreamHandle.h; sourceTree = "<group>"; };
+		1B4074FC0EB62C34008D5F17 /* CSStreamHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSStreamHandle.m; sourceTree = "<group>"; };
+		1B4075D90EB758D8008D5F17 /* CSBufferedStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSBufferedStreamHandle.h; sourceTree = "<group>"; };
+		1B4075DA0EB758D8008D5F17 /* CSBufferedStreamHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSBufferedStreamHandle.m; sourceTree = "<group>"; };
+		1B40762D0EB7C325008D5F17 /* LZWHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZWHandle.h; sourceTree = "<group>"; };
+		1B40762E0EB7C325008D5F17 /* LZWHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZWHandle.m; sourceTree = "<group>"; };
 		1B5552020B278EEB00DC7FF3 /* XeeGraphicsStuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeGraphicsStuff.h; sourceTree = "<group>"; };
 		1B5552030B278EEB00DC7FF3 /* XeeGraphicsStuff.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeGraphicsStuff.m; sourceTree = "<group>"; };
 		1B5553E80B28DCF700DC7FF3 /* CSDesktopServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSDesktopServices.h; sourceTree = "<group>"; };
@@ -806,16 +815,20 @@
 				1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */,
 				1B909CC80C9A175B009E5ACE /* CSMultiHandle.h */,
 				1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */,
-				1B9096B10C887180009E5ACE /* CSFilterHandle.h */,
-				1B9096B20C887180009E5ACE /* CSFilterHandle.m */,
 				1B2826A80C67E60900AA7D9C /* CSFileHandle.h */,
 				1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */,
 				1B2826A90C67E60900AA7D9C /* CSMemoryHandle.h */,
 				1B2826A70C67E60900AA7D9C /* CSMemoryHandle.m */,
-				1B2826AB0C67E60900AA7D9C /* CSIFFHandle.h */,
-				1B2826AC0C67E60900AA7D9C /* CSIFFHandle.m */,
+				1B4074FB0EB62C34008D5F17 /* CSStreamHandle.h */,
+				1B4074FC0EB62C34008D5F17 /* CSStreamHandle.m */,
+				1B4075D90EB758D8008D5F17 /* CSBufferedStreamHandle.h */,
+				1B4075DA0EB758D8008D5F17 /* CSBufferedStreamHandle.m */,
+				1B9096B10C887180009E5ACE /* CSFilterHandle.h */,
+				1B9096B20C887180009E5ACE /* CSFilterHandle.m */,
 				1B2826A60C67E60900AA7D9C /* CSZlibHandle.h */,
 				1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */,
+				1B2826AB0C67E60900AA7D9C /* CSIFFHandle.h */,
+				1B2826AC0C67E60900AA7D9C /* CSIFFHandle.m */,
 			);
 			name = CSHandle;
 			sourceTree = "<group>";
@@ -835,6 +848,8 @@
 				1BCA08A70E9D5D060016D207 /* NSDictionaryNumberExtension.m */,
 				1BCA0D2A0EABF4B20016D207 /* CCITTHandle.h */,
 				1BCA0D2B0EABF4B20016D207 /* CCITTHandle.m */,
+				1B40762D0EB7C325008D5F17 /* LZWHandle.h */,
+				1B40762E0EB7C325008D5F17 /* LZWHandle.m */,
 			);
 			name = PDF;
 			sourceTree = "<group>";
@@ -1673,6 +1688,9 @@
 				1BCA08E50E9D75BF0016D207 /* XeeSWFSource.m in Sources */,
 				1BCA0C080EA008980016D207 /* PDFEncryptionHandler.m in Sources */,
 				1B4072A80EB40787008D5F17 /* CCITTHandle.m in Sources */,
+				1B4074FD0EB62C34008D5F17 /* CSStreamHandle.m in Sources */,
+				1B4075DB0EB758D8008D5F17 /* CSBufferedStreamHandle.m in Sources */,
+				1B40762F0EB7C325008D5F17 /* LZWHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

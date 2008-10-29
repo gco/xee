@@ -375,7 +375,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	for(;;)
 	{
 		int c=[fh readUInt8];
-		uint8 b=0;
+		uint8_t b=0;
 
 		switch(c)
 		{

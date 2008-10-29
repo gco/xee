@@ -3,7 +3,7 @@
 #import "PDFEncryptionHandler.h"
 
 #import "CCITTHandle.h"
-//#import "LZWHandle.h"
+#import "LZWHandle.h"
 
 #import "CSZlibHandle.h"
 #import "CSMemoryHandle.h"
@@ -260,6 +260,8 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 -(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
 {
+	if(!decodeparms) decodeparms=[NSDictionary dictionary];
+
 	if([filtername isEqual:@"FlateDecode"])
 	{
 		return [self predictorHandleForDecodeParms:decodeparms
@@ -277,12 +279,12 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 //		else if(k>0) return [[[CCITTFaxT42DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 		else return [[[CCITTFaxT6Handle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 	}
-//	else if([filtername isEqual:@"LZWDecode"])
-//	{
-//		int =[decodeparms intValueForKey:@"" default:];
-//		return [self predictorHandleForDecodeParms:decodeparms
-//		parentHandle:[[[LZWHandle alloc] initWithHandle:parent ...] autorelease]];
-//	}
+	else if([filtername isEqual:@"LZWDecode"])
+	{
+		int early=[decodeparms intValueForKey:@"EarlyChange" default:1];
+		return [self predictorHandleForDecodeParms:decodeparms
+		parentHandle:[[[LZWHandle alloc] initWithHandle:parent earlyChange:early] autorelease]];
+	}
 	else if([filtername isEqual:@"ASCII85Decode"])
 	{
 		return [[[PDFASCII85Handle alloc] initWithHandle:parent] autorelease];
@@ -294,8 +296,6 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 -(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
 {
-	if(!decodeparms) return parent;
-
 	NSNumber *predictor=[decodeparms objectForKey:@"Predictor"];
 	if(!predictor) return parent;
 
@@ -342,7 +342,7 @@ static uint8_t ASCII85NextByte(PDFASCII85Handle *self)
 	return b;
 }
 
--(uint8_t)produceByte
+-(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	int byte=pos&3;
 	if(byte==0)
@@ -405,7 +405,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 	return self;
 }
 
--(uint8_t)produceByte
+-(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if(bpc==8)
 	{
@@ -420,6 +420,8 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 @end
 
 
+
+static inline int iabs(int a) { return a>=0?a:-a; }
 
 @implementation PDFPNGPredictorHandle
 
@@ -450,7 +452,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 	memset(prevbuf,0,cols*comps+2*comps);
 }
 
--(uint8_t)produceByte
+-(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if(bpc<=8)
 	{

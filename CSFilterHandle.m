@@ -1,5 +1,6 @@
 #import "CSFilterHandle.h"
 
+NSString *CSFilterEOFReachedException=@"CSFilterEOFReachedException";
 
 @implementation CSFilterHandle
 
@@ -14,16 +15,13 @@
 	{
 		parent=[handle retain];
 		startoffs=[handle offsetInFile];
+		producebyte_ptr=(uint8_t (*)(id,SEL,off_t))[self methodForSelector:@selector(produceByteAtOffset:)];
 
-		producebyte_ptr=(uint8 (*)(id,SEL))[self methodForSelector:@selector(produceByte)];
-		pos=0;
-		eof=NO;
-
-		inbuffer=malloc(buffersize);
-		bufsize=buffersize;
-		bufbytes=0;
-		currbyte=0;
-		currbit=7;
+		filterbuffer=malloc(buffersize);
+		filterbufsize=buffersize;
+		filterbufbytes=0;
+		currfilterbyte=0;
+		currfilterbit=7;
 
 		[self resetFilter];
 	}
@@ -39,66 +37,48 @@
 -(void)dealloc
 {
 	[parent release];
-	free(inbuffer);
+	free(filterbuffer);
 	[super dealloc];
 }
 
--(off_t)offsetInFile { return pos; }
-
--(BOOL)atEndOfFile { return eof||[parent atEndOfFile]; }
-
--(void)seekToFileOffset:(off_t)offs
+-(void)seekParentToFileOffset:(off_t)offset
 {
-	if(offs==pos) return;
-
-	if(offs<pos)
-	{
-		[self seekParentToFileOffset:startoffs];
-		[self resetFilter];
-		pos=0;
-		eof=NO;
-	}
-
-	if(offs==0) return;
-
-	[self readAndDiscardBytes:offs];
+	[parent seekToFileOffset:offset];
+	currfilterbyte=filterbufbytes=0;
+	currfilterbit=7;
 }
 
--(int)readAtMost:(int)num toBuffer:(void *)buffer
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
 {
-	if(eof) return 0;
-
 	int n=0;
 
 	@try
 	{
 		while(n<num)
 		{
-			uint8 byte=producebyte_ptr(self,@selector(produceByte));
-			((uint8 *)buffer)[n++]=byte;
-			pos++;
+			uint8_t byte=producebyte_ptr(self,@selector(produceByteAtOffset:),streampos+n);
+			if(endofstream) break;
+			((uint8_t *)buffer)[n++]=byte;
 		}
 	}
 	@catch(id e)
 	{
-		if(![e isKindOfClass:[NSException class]]||![[e name] isEqual:@"CSFilterEOFReachedException"])
-		@throw e;
-		eof=YES;
+		if([e isKindOfClass:[NSException class]]&&[e name]==CSFilterEOFReachedException) endofstream=YES;
+		else @throw e;
 	}
 
 	return n;
 }
 
--(void)seekParentToFileOffset:(off_t)offset
+-(void)resetStream
 {
-	[parent seekToFileOffset:offset];
-	currbyte=bufbytes=0;
-	currbit=7;
+	[self seekParentToFileOffset:startoffs];
+	[self resetFilter];
 }
 
 -(void)resetFilter {}
 
--(uint8)produceByte { return -1; }
+-(uint8_t)produceByteAtOffset:(off_t)pos { return 0; }
 
 @end
 

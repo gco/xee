@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <openssl/md5.h>
+#import <openssl/aes.h>
 #import "CSHandle.h"
+#import "CSBufferedStreamHandle.h"
 
 extern NSString *PDFMD5FinishedException;
 
@@ -70,19 +72,20 @@ extern NSString *PDFMD5FinishedException;
 
 
 
-@interface PDFAESHandle:CSHandle
+@interface PDFAESHandle:CSBufferedStreamHandle
 {
 	CSHandle *parent;
-	NSData *key;
-	off_t pos,startoffs;
+	off_t startoffs;
+
+	NSData *key,*iv;
+
+	AES_KEY aeskey;
+	unsigned char ivbuffer[16];
 }
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata;
 -(void)dealloc;
 
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
--(void)seekToFileOffset:(off_t)offs;
--(int)readAtMost:(int)num toBuffer:(void *)buffer;
+-(int)fillBufferAtOffset:(off_t)pos;
 
 @end

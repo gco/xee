@@ -60,7 +60,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 }
 
 -(void)resetFilter;
--(uint8_t)produceByte;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end
 
@@ -68,7 +68,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 {
 }
 
--(uint8_t)produceByte;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end
 
@@ -94,7 +94,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns
 components:(int)components bitsPerComponent:(int)bitspercomp;
--(uint8_t)produceByte;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end
 
@@ -108,6 +108,6 @@ components:(int)components bitsPerComponent:(int)bitspercomp;
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns
 components:(int)components bitsPerComponent:(int)bitspercomp;
 -(void)resetFilter;
--(uint8_t)produceByte;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

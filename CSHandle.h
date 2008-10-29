@@ -1,6 +1,14 @@
 #import <Foundation/Foundation.h>
 #import <sys/types.h>
 
+
+extern NSString *CSOutOfMemoryException;
+extern NSString *CSEndOfFileException;
+extern NSString *CSNotImplementedException;
+extern NSString *CSNotSupportedException;
+
+
+
 @interface CSHandle:NSObject <NSCopying>
 {
 	NSString *name;

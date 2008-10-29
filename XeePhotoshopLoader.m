@@ -400,7 +400,6 @@
 		rows=numrows;
 		bytesperrow=bpr;
 
-		pos=0;
 		totalsize=0;
 		offsets=malloc(sizeof(off_t)*rows);
 		off_t firstrow=[handle offsetInFile]+numchannels*rows*2+prevsize;
@@ -421,7 +420,7 @@
 	[super dealloc];
 }
 
--(uint8)produceByte
+-(uint8)produceByteAtOffset:(off_t)pos
 {
 	if(pos%bytesperrow==0)
 	{
@@ -470,7 +469,7 @@
 	return self;
 }
 
--(uint8)produceByte
+-(uint8)produceByteAtOffset:(off_t)pos
 {
 	if(depth==16)
 	{
