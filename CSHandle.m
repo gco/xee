@@ -164,6 +164,43 @@ CSReadValueImpl(uint32_t,readID,CSBEUInt32)
 -(void)flushReadBits { readbitsleft=0; }
 
 
+-(NSData *)readLine
+{
+	int (*readatmost_ptr)(id,SEL,int,void *)=(void *)[self methodForSelector:@selector(readAtMost:toBuffer:)];
+
+	NSMutableData *data=[NSMutableData data];
+	for(;;)
+	{
+		uint8_t b[1];
+		int actual=readatmost_ptr(self,@selector(readAtMost:toBuffer:),1,b);
+
+		if(actual==0)
+		if([data length]==0) [self _raiseEOF];
+		else break;
+
+		if(b[0]=='\n') break;
+
+		[data appendBytes:b length:1];
+	}
+
+	const char *bytes=[data bytes];
+	int length=[data length];
+	if(length&&bytes[length-1]=='\r') [data setLength:length-1];
+
+	return [NSData dataWithData:data];
+}
+
+-(NSString *)readLineWithEncoding:(NSStringEncoding)encoding
+{
+	return [[[NSString alloc] initWithData:[self readLine] encoding:encoding] autorelease];
+}
+
+-(NSString *)readUTF8Line
+{
+	return [[[NSString alloc] initWithData:[self readLine] encoding:NSUTF8StringEncoding] autorelease];
+}
+
+
 -(NSData *)fileContents
 {
 	[self seekToFileOffset:0];

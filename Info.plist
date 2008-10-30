@@ -761,6 +761,22 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>pbm</string>
+				<string>pgm</string>
+				<string>ppm</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>PNM Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>fax</string>
 				<string>FAX</string>
 				<string>jfx</string>
@@ -1060,7 +1076,7 @@
 	<key>CFBundleSignature</key>
 	<string>xee!</string>
 	<key>CFBundleVersion</key>
-	<string>2.1 alpha 2</string>
+	<string>2.1 alpha 4</string>
 	<key>CFShortVersion</key>
 	<string>2.1 alpha 1</string>
 	<key>CSHiddenDocumentTypes</key>

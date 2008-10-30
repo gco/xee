@@ -96,8 +96,9 @@
 
 -(BOOL)atEndOfFile
 {
-	if(multi) return pos==[self fileSize];
-	else return feof(fh);
+	return [self offsetInFile]==[self fileSize];
+/*	if(multi) return pos==[self fileSize];
+	else return feof(fh);*/ // feof() only returns true after trying to read past the end
 }
 
 

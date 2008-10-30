@@ -62,6 +62,10 @@ extern NSString *CSNotSupportedException;
 -(int32_t)readSignedBits:(int)bits;
 -(void)flushReadBits;
 
+-(NSData *)readLine;
+-(NSString *)readLineWithEncoding:(NSStringEncoding)encoding;
+-(NSString *)readUTF8Line;
+
 -(NSData *)fileContents;
 -(NSData *)remainingFileContents;
 -(NSData *)readDataOfLength:(int)length;

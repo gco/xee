@@ -25,6 +25,9 @@
 #import "XeePCXLoader.h"
 #import "XeeMayaLoader.h"
 //#import "XeeDreamcastLoader.h"
+#import "XeePNMLoader.h"
+#import "XeeXBMLoader.h"
+#import "XeeXPMLoader.h"
 
 #import "XeeImageIOSaver.h"
 #import "XeeLosslessSaver.h"
@@ -75,6 +78,9 @@ BOOL finderlaunch;
 	[XeeImage registerImageClass:[XeePCXImage class]];
 	[XeeImage registerImageClass:[XeeMayaImage class]];
 //	[XeeImage registerImageClass:[XeeDreamcastImage class]];
+	[XeeImage registerImageClass:[XeePNMImage class]];
+	[XeeImage registerImageClass:[XeeXBMImage class]];
+//	[XeeImage registerImageClass:[XeeXPMImage class]];
 	[XeeImage registerImageClass:[XeeImageIOImage class]];
 	[XeeImage registerImageClass:[XeeQuicktimeImage class]];
 
