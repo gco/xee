@@ -105,6 +105,8 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 -(CSHandle *)handle { return fh; }
 
--(NSData *)tagContents { return [fh readDataOfLength:nexttag-[fh offsetInFile]]; }
+-(CSHandle *)tagHandle { return [fh subHandleOfLength:[self tagBytesLeft]]; }
+
+-(NSData *)tagContents { return [fh readDataOfLength:[self tagBytesLeft]]; }
 
 @end

@@ -40,19 +40,23 @@
 
 
 #ifdef __BIG_ENDIAN__
-#define XeeMakeARGB8(a,r,g,b) (((a)<<24)|((r)<<16)|((g)<<8)|(b))
-#define XeeMakeNRGB8(r,g,b) ((0xff<<24)|((r)<<16)|((g)<<8)|(b))
-#define XeeGetAFromARGB8(argb) (((argb)>>24)&0xff)
-#define XeeGetRFromARGB8(argb) (((argb)>>16)&0xff)
-#define XeeGetGFromARGB8(argb) (((argb)>>8)&0xff)
-#define XeeGetBFromARGB8(argb) (((argb))&0xff)
+static inline uint32 XeeMakeARGB8(uint8 a,uint8 r,uint8 g,uint8 b)
+{ return (a<<24)|(r<<16)|(g<<8)|b; }
+static inline uint32 XeeMakeNRGB8(uint8 r,uint8 g,uint8 b)
+{ return (0xff<<24)|(r<<16)|(g<<8)|b; }
+static inline int XeeGetAFromARGB8(uint32 argb) { return (argb>>24)&0xff; }
+static inline int XeeGetRFromARGB8(uint32 argb) { return (argb>>16)&0xff; }
+static inline int XeeGetGFromARGB8(uint32 argb) { return (argb>>8)&0xff; }
+static inline int XeeGetBFromARGB8(uint32 argb) { return argb&0xff; }
 #else
-#define XeeMakeARGB8(a,r,g,b) ((a)|((r)<<8)|((g)<<16)|((b)<<24))
-#define XeeMakeNRGB8(r,g,b) ((0xff)|((r)<<8)|((g)<<16)|((b)<<24))
-#define XeeGetAFromARGB8(argb) (((argb))&0xff)
-#define XeeGetRFromARGB8(argb) (((argb)>>8)&0xff)
-#define XeeGetGFromARGB8(argb) (((argb)>>16)&0xff)
-#define XeeGetBFromARGB8(argb) (((argb)>>24)&0xff)
+static inline uint32 XeeMakeARGB8(uint8 a,uint8 r,uint8 g,uint8 b)
+{ return a|(r<<8)|(g<<16)|(b<<24); }
+static inline uint32 XeeMakeNRGB8(uint8 r,uint8 g,uint8 b)
+{ return 0xff|(r<<8)|(g<<16)|(b<<24); }
+static inline int XeeGetAFromARGB8(uint32 argb) { return argb&0xff; }
+static inline int XeeGetRFromARGB8(uint32 argb) { return (argb>>8)&0xff; }
+static inline int XeeGetGFromARGB8(uint32 argb) { return (argb>>16)&0xff; }
+static inline int XeeGetBFromARGB8(uint32 argb) { return (argb>>24)&0xff; }
 #endif
 
 #define XeeGetRFromNRGB8 XeeGetRFromARGB8

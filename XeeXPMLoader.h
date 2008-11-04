@@ -1,16 +1,16 @@
-//
-//  XeeXPMLoader.h
-//  Xee
-//
-//  Created by Dag Ågren on 2008-10-30.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
+#import "XeeBitmapImage.h"
 
-#import <Cocoa/Cocoa.h>
-
-
-@interface XeeXPMLoader : NSObject {
-
+@interface XeeXPMImage:XeeBitmapImage
+{
+	int version;
 }
+
++(NSArray *)fileTypes;
++(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes;
+
+-(void)load;
+
+-(NSString *)nextLine;
+-(NSString *)nextString;
 
 @end

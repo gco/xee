@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 
 
-#ifdef __MINGW__
+#if defined(__MINGW__)||defined(__COCOTRON__)
 #define FTELL(fh) ftell(fh)
 #else
 #define FTELL(fh) ftello(fh)

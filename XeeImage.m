@@ -70,7 +70,7 @@
 		@catch(id e)
 		{
 			[CSCoroutine setCurrentCoroutine:currcoro];
-			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self filename],[self class],e);
+			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self descriptiveFilename],[self class],e);
 			finished=YES;
 		}
 
@@ -110,7 +110,7 @@
 		}
 		@catch(id e)
 		{
-			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self filename],[self class],e);
+			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self descriptiveFilename],[self class],e);
 			nextselector=NULL;
 		}
 
@@ -157,7 +157,7 @@
 	@catch(id e)
 	{
 		[CSCoroutine setCurrentCoroutine:currcoro];
-		NSLog(@"Exception during loading of \"%@\" (%@): %@",[self filename],[self class],e);
+		NSLog(@"Exception during loading of \"%@\" (%@): %@",[self descriptiveFilename],[self class],e);
 		finished=YES;
 	}
 
@@ -214,7 +214,7 @@
 	}
 	@catch(id e)
 	{
-		NSLog(@"Exception during loading of \"%@\": %@",[self filename],e);
+		NSLog(@"Exception during loading of \"%@\": %@",[self descriptiveFilename],e);
 		nextselector=NULL;
 	}
 
@@ -518,6 +518,14 @@
 
 -(int)fileSize { return [attrs fileSize]; }
 
+-(NSString *)descriptiveFilename
+{
+	NSString *name=[self filename];
+	if(name) return name;
+	if(delegate&&[delegate isKindOfClass:[XeeImage class]]) return [delegate filename];
+	return nil;
+}
+
 -(NSString *)descriptiveFileSize
 {
 	int size=[self fileSize];
@@ -689,7 +697,7 @@
 -(id)description
 {
 	return [NSString stringWithFormat:@"<%@> %@ (%dx%d %@ %@, %@, created on %@)",
-	[[self class] description],[[self filename] lastPathComponent],[self width],[self height],
+	[[self class] description],[[self descriptiveFilename] lastPathComponent],[self width],[self height],
 	[self depth],[self format],[self descriptiveFileSize],[self descriptiveDate]];
 }
 

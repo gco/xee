@@ -120,6 +120,7 @@
 -(NSArray *)fullProperties;
 
 -(int)fileSize;
+-(NSString *)descriptiveFilename;
 -(NSString *)descriptiveFileSize;
 -(NSString *)descriptiveDate;
 

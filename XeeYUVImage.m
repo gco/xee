@@ -123,7 +123,7 @@ static uint8 range_table[256*3],*range_limit;
 #define ONE_HALF (1<<15)
 #define FIX(x) ((int)((x)*(1<<16)+0.5))
 
-void XeeBuildYUVConversionTables()
+static void XeeBuildYUVConversionTables()
 {
 	for(int i=0;i<256;i++)
 	{

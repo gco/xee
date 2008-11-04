@@ -1,11 +1,116 @@
 #import "XeeDreamcastLoader.h"
 
+#define PIXEL_ARGB1555 0
+#define PIXEL_RGB565 1
+#define PIXEL_ARGB4444 2
+#define PIXEL_YUV422 3
+#define PIXEL_BUMP 4
+#define PIXEL_4BIT 5
+#define PIXEL_8BIT 6
+#define PIXEL_LAST_EXPANDABLE PIXEL_ARGB4444
+
+
+static int CalculateMipmapSize(int width,int height)
+{
+	int sum=0;
+	while(width&&height)
+	{
+		width/=2;
+		height/=2;
+		sum+=width*height;
+	}
+	return sum+1;
+}
+
+static uint32 InterleavedCoords(uint32 x,uint32 y)
+{
+	x=(x|(x<<8))&0x00ff00ff;
+	x=(x|(x<<4))&0x0f0f0f0f;
+	x=(x|(x<<2))&0x33333333;
+	x=(x|(x<<1))&0x55555555;
+
+	y=(y|(y<<8))&0x00ff00ff;
+	y=(y|(y<<4))&0x0f0f0f0f;
+	y=(y|(y<<2))&0x33333333;
+	y=(y|(y<<1))&0x55555555;
+
+	return (x<<1)|y;
+}
+
+static uint32 UnInterleavedXCoord(uint32 n)
+{
+	n=(n>>1)&0x55555555;
+	n=(n|(n>>1))&0x33333333;
+	n=(n|(n>>2))&0x0f0f0f0f;
+	n=(n|(n>>4))&0x00ff00ff;
+	n=(n|(n>>8))&0x0000ffff;
+	return n;
+}
+
+static uint32 UnInterleavedYCoord(uint32 n)
+{
+	n=n&0x55555555;
+	n=(n|(n>>1))&0x33333333;
+	n=(n|(n>>2))&0x0f0f0f0f;
+	n=(n|(n>>4))&0x00ff00ff;
+	n=(n|(n>>8))&0x0000ffff;
+	return n;
+}
+
+static uint32 ExpandColour(int col,int pixelformat)
+{
+	switch(pixelformat)
+	{
+		case PIXEL_ARGB1555:
+			return XeeMakeARGB8(
+			(-(col>>15))&0xff,
+			((col>>7)&0xf8)|((col>>12)&0x07),
+			((col>>2)&0xf8)|((col>>7)&0x07),
+			((col<<3)&0xf8)|((col>>2)&0x07));
+
+		case PIXEL_RGB565:
+			return XeeMakeNRGB8(
+			((col>>8)&0xf8)|((col>>13)&0x07),
+			((col>>3)&0xfc)|((col>>9)&0x03),
+			((col<<3)&0xf8)|((col>>2)&0x07));
+
+		case PIXEL_ARGB4444:
+			return XeeMakeARGB8(
+			((col>>8)&0xf0)|((col>>12)&0x0f),
+			((col>>4)&0xf0)|((col>>8)&0x0f),
+			(col&0xf0)|((col>>4)&0x0f),
+			((col<<4)&0xf0)|(col&0x0f));
+
+		case PIXEL_YUV422:
+			return XeeMakeNRGB8(col>>8,col>>8,col>>8);
+
+		default: return 0;
+	}
+}
+
+#define ONE_HALF (1<<15)
+#define FIX(x) ((int)((x)*(1<<16)+0.5))
+#define LIMIT(x) ((x)<0?0:(x)>255?255:(x))
+
+static uint32 ConvertYUV(int y,int u,int v)
+{
+	int r=y+((FIX(1.40200)*(v-128)+ONE_HALF)>>16);
+	int g=y+((-FIX(0.34414)*(u-128)-FIX(0.71414)*(v-128)+ONE_HALF)>>16);
+	int b=y+((FIX(1.77200)*(u-128)+ONE_HALF)>>16);
+	return XeeMakeNRGB8(LIMIT(r),LIMIT(g),LIMIT(b));
+}
 
 @implementation XeeDreamcastImage
 
+static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
+{
+	if(x<self->width&&y<self->height) ((uint32 *)&self->data[y*self->bytesperrow])[x]=col;
+}
+
+
 +(NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"pvr",nil];
+	return [NSArray arrayWithObject:@"pvr"];
 }
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
@@ -20,9 +125,10 @@
 	return NO;
 }
 
--(SEL)initLoader
+
+-(void)load
 {
-	CSFileHandle *fh=[self handle];
+	CSHandle *fh=[self handle];
 
 	uint32 magic=[fh readID];
 	if(magic=='GBIX')
@@ -32,871 +138,382 @@
 		magic=[fh readID];
 	}
 
-	if(magic!='PVRT') return NULL;
+	if(magic!='PVRT') return;
 
-	uint32 length=[fh readUInt32LE];
-	uint32 type=[fh readUInt32LE];
+	/*uint32 length=*/[fh readUInt32LE];
+	int pixelformat=[fh readUInt8];
+	int packingtype=[fh readUInt8];
+	[fh skipBytes:2];
 	width=[fh readUInt16LE];
 	height=[fh readUInt16LE];
 
 	[self setFormat:@"Dreamcast PVR"];
 
-	switch(type&0xff)
+	switch(pixelformat)
 	{
-		case 0:
+		case PIXEL_ARGB1555:
 			[self setDepth:@"1:5:5:5 bit ARGB" iconName:@"depth_rgba"];
-			return @selector(loadARGB1555:);
-		case 1:
+			transparent=YES;
+		break;
+		case PIXEL_RGB565:
 			[self setDepth:@"5:6:5 bit RGB" iconName:@"depth_rgb"];
-			return @selector(loadRGB565:);
-		case 2:
+		break;
+		case PIXEL_ARGB4444:
 			[self setDepthRGBA:4];
-			return @selector(loadARGB4444:);
-		case 3:
+			transparent=YES;
+		break;
+		case PIXEL_YUV422:
 			[self setDepth:@"YUV422" iconName:@"depth_rgb"];
-			return @selector(loadARGB4444:);
-		case 4: // BUMP
-		case 5: // 4BPP
+		break;
+		case PIXEL_BUMP:
+		break;
+		case PIXEL_4BIT:
 			[self setDepthIndexed:16];
-			return @selector(loadARGB4444:);
-		case 6: // 8BPP
+		break;
+		case PIXEL_8BIT:
 			[self setDepthIndexed:256];
-			return @selector(loadARGB4444:);
+		break;
 		default:
-			return NULL;
+			return;
 	}
 
-//	current_line=0;
+	[properties addObject:[XeePropertyItem subSectionItemWithLabel:
+	NSLocalizedString(@"PVR properties",@"PVR properties section title")
+	identifier:@"pvr.properites"
+	labelsAndValues:
+		NSLocalizedString(@"Pixel format",@"PVR pixel format property label"),
+		[NSString stringWithFormat:@"0x%02x",pixelformat],
+		NSLocalizedString(@"Pixel packing",@"PVR pixel packing property label"),
+		[NSString stringWithFormat:@"0x%02x",packingtype],
+	nil]];
 
-	return @selector(startLoading);
+	XeeImageLoaderHeaderDone();
+
+	[self allocWithType:XeeBitmapTypeARGB8 width:width height:height];
+
+	switch(packingtype)
+	{
+		case 0x01: // square twiddled
+		case 0x0d: // rectangle twiddled
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadTwiddledWithOffset:0 pixelFormat:pixelformat];
+			else if(pixelformat==PIXEL_YUV422) [self loadTwiddledYUVWithOffset:0];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+		case 0x02: // square twiddled with mipmap
+		//case 0x0e: // rectangle twiddled with mipmap
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadTwiddledWithOffset:CalculateMipmapSize(width,height)*2 pixelFormat:pixelformat];
+			else if(pixelformat==PIXEL_YUV422) [self loadTwiddledYUVWithOffset:CalculateMipmapSize(width,height)*2];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+
+		case 0x03: // VQ
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadVQWithOffset:0 entries:256 pixelFormat:pixelformat];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+		case 0x04: // VQ with mipmap
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadVQWithOffset:CalculateMipmapSize(width/2,height/2) entries:256 pixelFormat:pixelformat];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+
+		case 0x05: // 4-bit direct twiddled
+			[self load4BitWithPalette:NO pixelFormat:0];
+		break;
+		//case 0x06: // 4-bit paletted twiddled
+		//	if(pixelformat!=PIXEL_8BIT) [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		//	[self load4BitWithPalette:YES pixelFormat:pixelformat];
+		//break;
+		case 0x07: // 8-bit direct twiddled
+			[self load8BitWithPalette:NO pixelFormat:0];
+		break;
+		//case 0x08: // 8-bit paletted twiddled
+		//	if(pixelformat>PIXEL_LAST_EXPANDABLE) [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		//	[self load8BitWithPalette:YES pixelFormat:pixelformat];
+		//break;
+
+		case 0x09: // rectangle linear
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadRectangleWithOffset:0 pixelFormat:pixelformat];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+		//case 0x0a: // rectangle linear with mipmap
+		//	if(pixelformat>PIXEL_LAST_EXPANDABLE) [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		//	[self loadRectangleWithOffset:CalculateMipmapOffset(width,height)*2 pixelFormat:pixelformat];
+		//break;
+
+		case 0x10: // small VQ
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadVQWithOffset:0 entries:(width*height/32+15)&~15 pixelFormat:pixelformat];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+		case 0x11:  // small VQ with mipmap
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadVQWithOffset:CalculateMipmapSize(width/2,height/2)
+			entries:(CalculateMipmapSize(width,height)/8+31)&~31 pixelFormat:pixelformat];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+
+		case 0x12: // square twiddled with mipmap and padding?
+			if(pixelformat<=PIXEL_LAST_EXPANDABLE) [self loadTwiddledWithOffset:CalculateMipmapSize(width,height)*2+4 pixelFormat:pixelformat];
+			else if(pixelformat==PIXEL_YUV422)  [self loadTwiddledYUVWithOffset:CalculateMipmapSize(width,height)*2+4];
+			else [self raiseFormatMismatchWithPixelFormat:pixelformat packingType:packingtype];
+		break;
+
+		default:
+			[NSException raise:@"XeeDreamcastException" format:@"Unknown PVR packing type %02x",packingtype];
+		break;
+	}
+	[self setCompleted];
+
+	XeeImageLoaderDone(YES);
 }
 
--(void)deallocLoader
+-(void)loadTwiddledWithOffset:(int)offset pixelFormat:(int)pixelformat
 {
+	CSHandle *fh=[self handle];
+
+	[fh skipBytes:offset];
+
+	int x_offs,y_offs,size;
+	if(width>height) { x_offs=height; y_offs=0; size=height*height; }
+	else { x_offs=0; y_offs=width; size=width*width; }
+
+	for(int n=0;n<height*width;n++)
+	{
+		int n_square=n%size;
+		int offs=n/size;
+		int x=UnInterleavedXCoord(n_square)+offs*x_offs;
+		int y=UnInterleavedYCoord(n_square)+offs*y_offs;
+		WritePixel(self,x,y,ExpandColour([fh readUInt16LE],pixelformat));
+
+		if(n%1024==0) XeeImageLoaderYield();
+	}
 }
 
--(SEL)startLoading
+-(void)loadTwiddledYUVWithOffset:(int)offset
 {
-	return NULL;
+	CSHandle *fh=[self handle];
+
+	[fh skipBytes:offset];
+
+	int x_offs,y_offs,size;
+	if(width>height) { x_offs=height; y_offs=0; size=height*height; }
+	else { x_offs=0; y_offs=width; size=width*width; }
+
+	for(int n=0;n<height*width;n+=4)
+	{
+		uint16 val11=[fh readUInt16LE];
+		uint16 val21=[fh readUInt16LE];
+		uint16 val12=[fh readUInt16LE];
+		uint16 val22=[fh readUInt16LE];
+		int y11=val11>>8,y21=val21>>8,y12=val12>>8,y22=val22>>8;
+		int u1=val11&0xff,u2=val21&0xff,v1=val12&0xff,v2=val22&0xff;
+
+		int n_square=n%size;
+		int offs=n/size;
+		int x=UnInterleavedXCoord(n_square)+offs*x_offs;
+		int y=UnInterleavedYCoord(n_square)+offs*y_offs;
+		WritePixel(self,x,y,ConvertYUV(y11,u1,v1));
+		WritePixel(self,x,y+1,ConvertYUV(y21,u2,v2));
+		WritePixel(self,x+1,y,ConvertYUV(y12,u1,v1));
+		WritePixel(self,x+1,y+1,ConvertYUV(y22,u2,v2));
+
+		if(n%1024==0) XeeImageLoaderYield();
+	}
 }
 
--(SEL)loadImage
+-(void)load8BitWithPalette:(BOOL)haspalette pixelFormat:(int)pixelformat
 {
-	return NULL;
+	CSHandle *fh=[self handle];
+
+	uint32 palette[256];
+	if(haspalette)
+	{
+		for(int i=0;i<256;i++) palette[i]=ExpandColour([fh readUInt16LE],pixelformat);
+		[fh skipBytes:1024-256*2];
+	}
+	else
+	{
+		for(int i=0;i<256;i++) palette[i]=XeeMakeNRGB8(i,i,i);
+	}
+
+	int x_offs,y_offs,size;
+	if(width>height) { x_offs=height; y_offs=0; size=height*height; }
+	else { x_offs=0; y_offs=width; size=width*width; }
+
+	for(int n=0;n<height*width;n++)
+	{
+		int n_square=n%size;
+		int offs=n/size;
+		int x=UnInterleavedXCoord(n_square)+offs*x_offs;
+		int y=UnInterleavedYCoord(n_square)+offs*y_offs;
+		WritePixel(self,x,y,palette[[fh readUInt8]]);
+
+		if(n%1024==0) XeeImageLoaderYield();
+	}
+}
+
+-(void)load4BitWithPalette:(BOOL)haspalette pixelFormat:(int)pixelformat
+{
+	CSHandle *fh=[self handle];
+
+	uint32 palette[16];
+	if(haspalette)
+	{
+		for(int i=0;i<16;i++) palette[i]=ExpandColour([fh readUInt16LE],pixelformat);
+		[fh skipBytes:1024-16*2];
+	}
+	else
+	{
+		for(int i=0;i<16;i++) palette[i]=XeeMakeNRGB8(i*0x11,i*0x11,i*0x11);
+/*		if([self ref]) @try
+		{
+			CSHandle *binfile=[CSFileHandle fileHandleForReadingAtPath:
+			[[[[self ref] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"BIN"]];
+
+			[binfile skipBytes:8];
+			for(int i=0;i<16;i++) palette[i]=XeeMakeNRGB8([binfile readUInt8],[binfile readUInt8],[binfile readUInt8]);
+		}
+		@catch(id e) { }*/
+
+//		[NSException raise:@"XeeDreamcastException" format:"Direct palette mode not implemented"];
+	}
+
+	int x_offs,y_offs,size;
+	if(width>height) { x_offs=height; y_offs=0; size=height*height; }
+	else { x_offs=0; y_offs=width; size=width*width; }
+
+	for(int n=0;n<height*width;n+=2)
+	{
+		uint8 val=[fh readUInt8];
+
+		int n_square=n%size;
+		int offs=n/size;
+		int x1=UnInterleavedXCoord(n_square)+offs*x_offs;
+		int y1=UnInterleavedYCoord(n_square)+offs*y_offs;
+		WritePixel(self,x1,y1,palette[val&0x0f]);
+
+		int x2=x1; //=UnInterleavedXCoord(n+1);
+		int y2=y1+1; //=UnInterleavedYCoord(n+1);
+		WritePixel(self,x2,y2,palette[val>>4]);
+
+		if(n%1024==0) XeeImageLoaderYield();
+	}
+}
+
+-(void)loadVQWithOffset:(int)offset entries:(int)entries pixelFormat:(int)pixelformat
+{
+	CSHandle *fh=[self handle];
+
+	uint32 vqtab[entries][4];
+	for(int i=0;i<entries;i++)
+	for(int j=0;j<4;j++)
+	vqtab[i][j]=ExpandColour([fh readUInt16LE],pixelformat);
+
+	[fh skipBytes:offset];
+
+	for(int n=0;n<(height/2)*(height/2);n++)
+	{
+		int x=UnInterleavedXCoord(n)*2;
+		int y=UnInterleavedYCoord(n)*2;
+
+		uint32 *vq=vqtab[[fh readUInt8]];
+		WritePixel(self,x,y,vq[0]);
+		WritePixel(self,x,y+1,vq[1]);
+		WritePixel(self,x+1,y,vq[2]);
+		WritePixel(self,x+1,y+1,vq[3]);
+
+		if(n%1024==0) XeeImageLoaderYield();
+	}
+}
+
+-(void)loadRectangleWithOffset:(int)offset pixelFormat:(int)pixelformat
+{
+	CSHandle *fh=[self handle];
+
+	[fh skipBytes:offset];
+
+	uint8 rowbuf[width*2];
+	for(int row=0;row<height;row++)
+	{
+		[fh readBytes:width*2 toBuffer:rowbuf];
+
+		uint32 *dest=(uint32 *)(data+row*bytesperrow);
+		for(int col=0;col<width;col++) dest[col]=ExpandColour(XeeLEUInt16(&rowbuf[2*col]),pixelformat);
+
+		[self setCompletedRowCount:row+1];
+		XeeImageLoaderYield();
+	}
+}
+
+-(void)raiseFormatMismatchWithPixelFormat:(int)pixelformat packingType:(int)packingtype
+{
+	[NSException raise:@"XeeDreamcastException" format:@"Pixel format %02x not compatible with packing type %02x",pixelformat,packingtype];
 }
 
 
 @end
 
 
-#if 0
-
-/*
-	PowerVR texture Susie-plugin
-
-	(c) 2000 by BERO
-
-	susie by takechin http://www.digitalpad.co.jp/~takechin/
-	pvr hdr by loser http://www.consoledev.com/loser-console/dc/
-	twiddled decode by macsus http://mc.pp.se/dc/
-	plugin skelton by 43T http://www.asahi-net.or.jp/~kh4s-smz/
-*/
 
 
-/***************************************************************************
- * SUSIE32 '00IN' Plug-in for BMP(8bit, 24bitÇÃÇ›)                         *
- * 2000.12.05                                                              *
- ***************************************************************************/
-#include <windows.h>
-#include <string.h>
+@implementation XeeDreamcastMultiImage
 
-typedef struct {
-	BYTE  id[4];
-	DWORD length;
-	BYTE  type[4];
-	WORD width;
-	WORD height;
-} PVRHDR;
++(NSArray *)fileTypes
+{
+	return [NSArray arrayWithObject:@"pvm"];
+}
 
-#define	SKIP_GBIX(data) \
-	if (memcmp(data,"GBIX",4)==0) {\
-		long size = ((long*)data)[1]; \
-		data+=size+8; \
++(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
+{
+	if([block length]>16)
+	{
+		uint32 magic=XeeBEUInt32([block bytes]);
+		if(magic=='GBIX') return YES;
+		if(magic=='PVMH') return YES;
 	}
-
-enum {ARGB1555,RGB565,ARGB4444,YUV422,BUMP,PAL4,PAL8};
-
-
-#ifndef CONV
-/*-------------------------------------------------------------------------*/
-/* Ç±ÇÃPluginÇÃèÓïÒ                                                        */
-/*-------------------------------------------------------------------------*/
-const char *pluginfo[] = {
-    "00IN",                     /* Plug-in APIÉoÅ[ÉWÉáÉì */
-    "PVR - DreamCast Texture by BERO", /* Plug-inñºÅAÉoÅ[ÉWÉáÉìãyÇ— copyright */
-    "*.PVR",                    /* ë„ï\ìIÇ»ägí£éq ("*.JPG" "*.JPG;*.JPEG" Ç»Ç«) */
-    "DreamCast Texture (*.PVR)",          /* ÉtÉ@ÉCÉãå`éÆñº */
-};
-
-/*-------------------------------------------------------------------------*/
-/* âÊëúèÓïÒç\ë¢ëÃ                                                          */
-/*-------------------------------------------------------------------------*/
-#pragma pack(push)
-#pragma pack(1) //ç\ë¢ëÃÇÃÉÅÉìÉoã´äEÇ1ÉoÉCÉgÇ…Ç∑ÇÈ
-typedef struct PictureInfo {
-    long left,top;       // âÊëúÇìWäJÇ∑ÇÈà íu
-    long width;          // âÊëúÇÃïù(pixel)
-    long height;         // âÊëúÇÃçÇÇ≥(pixel)
-    WORD x_density;      // âÊëfÇÃêÖïΩï˚å¸ñßìx
-    WORD y_density;      // âÊëfÇÃêÇíºï˚å¸ñßìx
-    short colorDepth;    // âÊëfìñÇΩÇËÇÃbitêî
-    HLOCAL hInfo;        // âÊëúì‡ÇÃÉeÉLÉXÉgèÓïÒ
-} PictureInfo;
-#pragma pack(pop)
-
-/*-------------------------------------------------------------------------*/
-/* ÉGÉâÅ[ÉRÅ[Éh                                                            */
-/*-------------------------------------------------------------------------*/
-#define SPI_NO_FUNCTION       -1  /* ÇªÇÃã@î\ÇÕÉCÉìÉvÉäÉÅÉìÉgÇ≥ÇÍÇƒÇ¢Ç»Ç¢ */
-#define SPI_ALL_RIGHT          0  /* ê≥èÌèIóπ */
-#define SPI_ABORT              1  /* ÉRÅ[ÉãÉoÉbÉNä÷êîÇ™îÒ0Çï‘ÇµÇΩÇÃÇ≈ìWäJÇíÜé~ÇµÇΩ */
-#define SPI_NOT_SUPPORT        2  /* ñ¢ímÇÃÉtÉHÅ[É}ÉbÉg */
-#define SPI_OUT_OF_ORDER       3  /* ÉfÅ[É^Ç™âÛÇÍÇƒÇ¢ÇÈ */
-#define SPI_NO_MEMORY          4  /* ÉÅÉÇÉäÅ[Ç™ämï€èoóàÇ»Ç¢ */
-#define SPI_MEMORY_ERROR       5  /* ÉÅÉÇÉäÅ[ÉGÉâÅ[ */
-#define SPI_FILE_READ_ERROR    6  /* ÉtÉ@ÉCÉãÉäÅ[ÉhÉGÉâÅ[ */
-#define	SPI_WINDOW_ERROR       7  /* ëãÇ™äJÇØÇ»Ç¢ (îÒåˆäJÇÃÉGÉâÅ[ÉRÅ[Éh) */
-#define SPI_OTHER_ERROR        8  /* ì‡ïîÉGÉâÅ[ */
-#define	SPI_FILE_WRITE_ERROR   9  /* èëÇ´çûÇ›ÉGÉâÅ[ (îÒåˆäJÇÃÉGÉâÅ[ÉRÅ[Éh) */
-#define	SPI_END_OF_FILE       10  /* ÉtÉ@ÉCÉãèIí[ (îÒåˆäJÇÃÉGÉâÅ[ÉRÅ[Éh) */
-
-/*-------------------------------------------------------------------------*/
-/* '00IN'ä÷êîÇÃÉvÉçÉgÉ^ÉCÉvêÈåæ                                            */
-/*-------------------------------------------------------------------------*/
-typedef int (CALLBACK *SPI_PROGRESS)(int, int, long);
-    int __declspec(dllexport) WINAPI GetPluginInfo
-            (int infono, LPSTR buf, int buflen);
-    int __declspec(dllexport) WINAPI IsSupported(LPSTR filename, DWORD dw);
-    int __declspec(dllexport) WINAPI GetPictureInfo
-            (LPSTR buf,long len, unsigned int flag, PictureInfo *lpInfo);
-    int __declspec(dllexport) WINAPI GetPicture
-            (LPSTR buf,long len, unsigned int flag,
-             HANDLE *pHBInfo, HANDLE *pHBm,
-             SPI_PROGRESS lpPrgressCallback, long lData);
-    int __declspec(dllexport) WINAPI GetPreview
-            (LPSTR buf,long len, unsigned int flag,
-             HANDLE *pHBInfo, HANDLE *pHBm,
-             SPI_PROGRESS lpPrgressCallback, long lData);
-
-//---------------------------------------------------------------------------
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
-{
-    return TRUE;
-}
-//---------------------------------------------------------------------------
-
-/***************************************************************************
- * âÊëúå`éÆàÀë∂ÇÃèàóùÅB                                                    *
- * Å`Exä÷êîÇâÊëúå`éÆÇ…çáÇÌÇπÇƒèëÇ´ä∑Ç¶ÇÈÅB                                *
- ***************************************************************************/
-//---------------------------------------------------------------------------
-//ÉwÉbÉ_Çå©ÇƒëŒâûÉtÉHÅ[É}ÉbÉgÇ©ämîFÅB
-//ëŒâûÇµÇƒÇ¢ÇÈÇ‡ÇÃÇ»ÇÁtrueÅAÇªÇ§Ç≈Ç»ÇØÇÍÇŒfalseÅAÇï‘Ç∑ÅB
-//filnameÇÕÉtÉ@ÉCÉãñºÇ≈ÅANULLÇ™ì¸Ç¡ÇƒÇ¢ÇÈÇ±Ç∆Ç‡Ç†ÇÈÅB
-//dataÇÕÉtÉ@ÉCÉãÇÃÉwÉbÉ_Ç≈ÅAÉTÉCÉYÇÕ2000ÉoÉCÉgà»è„ÅB
-#define HEADBUF_SIZE 2000 /* 2kbyte=2048byte? */
-
-BOOL IsSupportedEx(char *filename, char *data)
-{
-	SKIP_GBIX(data);
-	if (memcmp(data,"PVRT",4)!=0) return FALSE;
-
-    return TRUE;
-}
-
-static	char *str_table[]={"ARGB1555","RGB565","ARGB4444","YUV422","BUMP","PAL4","PAL8"};
-//---------------------------------------------------------------------------
-//âÊëúÉtÉ@ÉCÉãÇÃèÓïÒÇèëÇ´çûÇ›ÅAÉGÉâÅ[ÉRÅ[ÉhÇï‘Ç∑ÅB
-//dataÇÕÉtÉ@ÉCÉãÉCÉÅÅ[ÉWÇ≈ÅAÉTÉCÉYÇÕdatasizeÉoÉCÉgÅB
-int GetPictureInfoEx(long datasize, struct PictureInfo *lpInfo, char *data)
-{
-    HLOCAL htxt;
-    char *txt;
-    char str[] = "test";
-	PVRHDR *hdr;
-	static int depth_table[]={16,16,16,16,8,8/*?*/,4,8};
-
-	SKIP_GBIX(data);
-	if (memcmp(data,"PVRT",4)!=0) return SPI_NOT_SUPPORT;
-
-    hdr = (PVRHDR*)data;
-
-    lpInfo->left       = 0;
-    lpInfo->top        = 0;
-    lpInfo->width      = hdr->width;
-    lpInfo->height     = hdr->height;
-    lpInfo->x_density  = 0;
-    lpInfo->y_density  = 0;
-    lpInfo->colorDepth = depth_table[hdr->type[0]];
-#if 1
-    //ÉRÉÅÉìÉgÇ»Ç«ÇÃì‡ë†ÉeÉLÉXÉgÇ™ñ≥Ç¢èÍçá
-    lpInfo->hInfo      = NULL;
-#else
-    //"BMP"ÇÃÉvÉâÉOÉCÉìÇ»ÇÃÇ≈ÅAÇ±ÇÃÉvÉâÉOÉCÉìÇ™èàóùÇµÇΩÇÃÇ©ïsñæäm
-    //Ç±ÇÃÉvÉâÉOÉCÉìÇ™èàóùÇµÇΩèÿñæÇ…ì‡ë†ÉeÉLÉXÉgÇèëÇ´Ç±Çﬁ
-    htxt = LocalAlloc(LMEM_MOVEABLE, strlen(str)+1);
-    txt = (char *)LocalLock(htxt);
-    strcpy(txt, str);
-    lpInfo->hInfo      = htxt;
-    LocalUnlock(htxt);
-#endif
-
-    return SPI_ALL_RIGHT;
-}
-
-
-//---------------------------------------------------------------------------
-//âÊëúÉtÉ@ÉCÉãÇDIBÇ…ïœä∑ÇµÅAÉGÉâÅ[ÉRÅ[ÉhÇï‘Ç∑ÅB
-//dataÇÕÉtÉ@ÉCÉãÉCÉÅÅ[ÉWÇ≈ÅAÉTÉCÉYÇÕdatasizeÉoÉCÉgÅB
-int GetPictureEx(long datasize, HANDLE *pHBInfo, HANDLE *pHBm,
-             SPI_PROGRESS lpPrgressCallback, long lData, char *data)
-{
-
-    unsigned int info_size;
-    unsigned int img_size;
-    BITMAPINFOHEADER *pInfo;
-    char *pBm;
-	PVRHDR *hdr;
-	int bits;
-
-    if (lpPrgressCallback != NULL)
-        if (lpPrgressCallback(0, 1, lData)) //0%
-            return SPI_ABORT;
-
-	SKIP_GBIX(data);
-	hdr = (PVRHDR*)data;
-
-    *pHBInfo = LocalAlloc(LMEM_MOVEABLE, sizeof(BITMAPINFOHEADER));
-    if (*pHBInfo==NULL) return SPI_NO_MEMORY;
-
-    pInfo = LocalLock(*pHBInfo);
-    pvr2bmphdr(pInfo,hdr);
-    img_size = pInfo->biSizeImage;
-    LocalUnlock(*pHBInfo);
-
-    *pHBm    = LocalAlloc(LMEM_MOVEABLE, img_size);
-    if (*pHBm == NULL) {
-        if (*pHBInfo != NULL) LocalFree(*pHBInfo);
-        return SPI_NO_MEMORY;
-    }
-
-    //ÉÅÉÇÉäÇÉçÉbÉN
-    pBm   = LocalLock(*pHBm);
-    pvr2bmp(pBm,hdr);
-    LocalUnlock(*pHBm);
-
-    //ÉÅÉÇÉäÇÉAÉìÉçÉbÉN
-
-    if (lpPrgressCallback != NULL)
-        if (lpPrgressCallback(1, 1, lData)) //100%
-            return SPI_ABORT;
-            
-    return SPI_ALL_RIGHT;
-}
-//---------------------------------------------------------------------------
-
-/***************************************************************************
- * SPIä÷êî                                                                 *
- * åàÇ‹ÇËêÿÇ¡ÇΩèàóùÇÕÇ±ÇøÇÁÇ≈çœÇ‹ÇπÇƒÇ¢ÇÈÅB                                *
- ***************************************************************************/
-//---------------------------------------------------------------------------
-int WINAPI GetPluginInfo(int infono, LPSTR buf, int buflen)
-{
-    if (infono < 0 || infono >= (sizeof(pluginfo) / sizeof(char *))) 
-        return 0;
-
-    lstrcpyn(buf, pluginfo[infono], buflen);
-
-    return lstrlen(buf);
-}
-//---------------------------------------------------------------------------
-int WINAPI IsSupported(LPSTR filename, DWORD dw)
-{
-    char *data;
-    char buff[HEADBUF_SIZE];
-
-    if ((dw & 0xFFFF0000) == 0) {
-    /* dwÇÕÉtÉ@ÉCÉãÉnÉìÉhÉã */
-        DWORD ReadBytes;
-        memset(buff, 0, HEADBUF_SIZE);
-        if (!ReadFile((HANDLE)dw, buff, HEADBUF_SIZE, &ReadBytes, NULL)) {
-            return 0;
-        }
-        data = buff;
-    } else {
-    /* dwÇÕÉoÉbÉtÉ@Ç÷ÇÃÉ|ÉCÉìÉ^ */
-        data = (char *)dw;
-    }
-
-
-    /* ÉtÉHÅ[É}ÉbÉgämîF */
-    if (IsSupportedEx(filename, data)) return 1;
-
-    return 0;
-}
-//---------------------------------------------------------------------------
-int WINAPI GetPictureInfo
-(LPSTR buf, long len, unsigned int flag, struct PictureInfo *lpInfo)
-{
-    int ret = SPI_OTHER_ERROR;
-    char *data;
-    char *filename;
-    long datasize;
-
-    if ((flag & 7) == 0) {
-    /* bufÇÕÉtÉ@ÉCÉãñº */
-        HANDLE hf;
-        DWORD ReadBytes;
-        hf = CreateFile(buf, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-        if (hf == INVALID_HANDLE_VALUE) return SPI_FILE_READ_ERROR;
-        datasize = GetFileSize(hf, NULL) -len;
-        if (datasize < 0) {
-            CloseHandle(hf);
-            return SPI_NOT_SUPPORT;
-        }
-        SetFilePointer(hf, len, NULL, FILE_BEGIN);
-
-        data = (char *)LocalAlloc(LMEM_FIXED, datasize);
-        if (data == NULL) {
-            CloseHandle(hf);
-            return SPI_NO_MEMORY;
-        }
-        if (!ReadFile(hf, data, datasize, &ReadBytes, NULL)) {
-            CloseHandle(hf);
-            LocalFree(data);
-            return SPI_FILE_READ_ERROR;
-        }
-        CloseHandle(hf);
-        filename = buf;
-    } else {
-    /* bufÇÕÉtÉ@ÉCÉãÉCÉÅÅ[ÉWÇ÷ÇÃÉ|ÉCÉìÉ^ */
-        data = (char *)buf;
-        datasize = len;
-        filename = NULL;
-    }
-
-    /* àÍâûÉtÉHÅ[É}ÉbÉgämîF */
-    if (!IsSupportedEx(filename, data)) {
-        ret = SPI_NOT_SUPPORT;
-    } else {
-        ret = GetPictureInfoEx(datasize, lpInfo, data);
-    }
-
-    if ((flag & 7) == 0) LocalFree(data);
-
-    return ret;
-}
-//---------------------------------------------------------------------------
-int WINAPI GetPicture(
-        LPSTR buf, long len, unsigned int flag, 
-        HANDLE *pHBInfo, HANDLE *pHBm,
-        SPI_PROGRESS lpPrgressCallback, long lData)
-{
-    int ret = SPI_OTHER_ERROR;
-    char *data;
-    char *filename;
-    long datasize;
-
-    if ((flag & 7) == 0) {
-    /* bufÇÕÉtÉ@ÉCÉãñº */
-#ifdef USE_MMAP
-		/* memory mapped file */
-		HANDLE hShare = OpenFileMapping(FILE_MAP_READ,FALSE,buf);
-		data = MapViewOfFile(hShare,FILE_MAP_READ,0,len,datasize);
-#else
-		/* file io */
-        HANDLE hf;
-        DWORD ReadBytes;
-        hf = CreateFile(buf, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-        if (hf == INVALID_HANDLE_VALUE) return SPI_FILE_READ_ERROR;
-        datasize = GetFileSize(hf, NULL) -len;
-        if (datasize < 0) {
-            CloseHandle(hf);
-            return SPI_NOT_SUPPORT;
-        }
-        SetFilePointer(hf, len, NULL, FILE_BEGIN);
-
-        data = (char *)LocalAlloc(LMEM_FIXED, datasize);
-        if (data == NULL) {
-            CloseHandle(hf);
-            return SPI_NO_MEMORY;
-        }
-        if (!ReadFile(hf, data, datasize, &ReadBytes, NULL)) {
-            CloseHandle(hf);
-            LocalFree(data);
-            return SPI_FILE_READ_ERROR;
-        }
-
-        CloseHandle(hf);
-#endif
-        filename = buf;
-    } else {
-    /* bufÇÕÉtÉ@ÉCÉãÉCÉÅÅ[ÉWÇ÷ÇÃÉ|ÉCÉìÉ^ */
-        data = buf;
-        datasize = len;
-        filename = NULL;
-    }
-
-    /* àÍâûÉtÉHÅ[É}ÉbÉgämîF */
-    if (!IsSupportedEx(filename, data)) {
-        ret = SPI_NOT_SUPPORT;
-    } else {
-        ret = GetPictureEx(datasize, pHBInfo, pHBm, lpPrgressCallback, lData, data);
-    }
-
-    if ((flag & 7) == 0) {
-#ifdef USE_MMAP
-		/* memory mapped file */
-		UnMapViewOfFile(data);
-		CloseHandle(hShare);
-#else
-		LocalFree(data);
-#endif
-	}
-
-    return ret;
-}
-//---------------------------------------------------------------------------
-int WINAPI GetPreview(
-    LPSTR buf, long len, unsigned int flag,
-    HANDLE *pHBInfo, HANDLE *pHBm,
-    SPI_PROGRESS lpPrgressCallback, long lData)
-{
-    return SPI_NO_FUNCTION;
-}
-//---------------------------------------------------------------------------
-
-#else
-
-#include <stdio.h>
-#include <stdlib.h>
-int pvr2bmpfile(char *infile,char *outfile)
-{
-	FILE *in,*out;
-	char *buf,*data,*pBm;
-	int fsize,img_size;
-	PVRHDR *hdr;
-	BITMAPINFOHEADER bmih;
-	BITMAPFILEHEADER bf;
-
-	in = fopen(infile,"rb");
-	if (in==NULL) return -1;
-
-	fseek(in,0,SEEK_END);
-	fsize = ftell(in);
-	fseek(in,0,SEEK_SET);
-
-	buf = malloc(fsize);
-	fread(buf,1,fsize,in);
-	fclose(in);
-
-	data = buf;
-	SKIP_GBIX(data);
-	if (memcmp(data,"PVRT",4)) return -1;
-	hdr = (PVRHDR*)data;
-
-	pvr2bmphdr(&bmih,hdr);
-
-	img_size = bmih.biSizeImage;
-	pBm = malloc(img_size);
-
-	pvr2bmp(pBm,hdr);
-
-	out = fopen(outfile,"wb");
-	if (out==NULL) return -1;
-
-	bf.bfType = 'B'+'M'*256;
-	bf.bfSize = img_size + sizeof(bmih);
-	bf.bfReserved1 = 0;
-	bf.bfReserved2 = 0;
-	bf.bfOffBits = sizeof(bmih) + sizeof(bf);
-
-	fwrite(&bf,1,sizeof(bf),out);
-	fwrite(&bmih,1,sizeof(bmih),out);
-	fwrite(pBm,1,img_size,out);
-
-	fclose(out);
 	
-	free(pBm);
-	free(buf);
-
-	return 0;
+	return NO;
 }
 
-int main(int argc,char **argv)
+
+-(void)load
 {
-	int i;
+	CSHandle *fh=[self handle];
 
-	if (argc<2) {
-		printf("DreamCast PVR->BMP converter by bero\n"
-		" pvr2bmp <infile>\n"
-		"http://www.geocities.co.jp/Playtown/2004/\n"
-		);
-		return -1;
+	uint32 magic=[fh readID];
+	if(magic=='GBIX')
+	{
+		uint32 size=[fh readUInt32LE];
+		[fh skipBytes:size];
+		magic=[fh readID];
 	}
-
-	for(i=1;i<argc;i++) {
-		char *infile = argv[i];
-		char *p,outfile[256];
-
-		p = strrchr(infile,'\\');
-		if (p) p++; else p=infile;
-		strcpy(outfile,p);
-
-		p = strrchr(outfile,'.');
-		if (!p) p = outfile+strlen(outfile);
-		strcpy(p,".bmp");
-
-		pvr2bmpfile(infile,outfile);
-	}
-	return 0;
-}
-
-#endif
-
-static int calc_n(int n)
-{
-	int sum = 1;
-	while(n) {
-		n>>=1;
-		sum +=n*n;
-	}
-	return sum;
-}
-
-typedef struct {
-	int rshift,rmask;
-	int gshift,gmask;
-	int bshift,bmask;
-} SHIFTTBL;
-
-const static SHIFTTBL shifttbl[]= {
-	{ /* ARGB1555 */
-		7,0xf8,
-		2,0xf8,
-		3,0xf8
-	},{
-		/* RGB565 */
-		8,0xf8,
-		3,0xfc,
-		3,0xf8
-	},{
-		/* ARGB4444 */
-		4,0xf0,
-		0,0xf0,
-		4,0xf0
-	}
-};
-
-/* form marcus tatest */
-static void init_twiddletab(int *twiddletab)
-{
-	int x;
-#if 0
-  for(x=0; x<1024; x++)
-    twiddletab[x] = (x&1)|((x&2)<<1)|((x&4)<<2)|((x&8)<<3)|((x&16)<<4)|
-      ((x&32)<<5)|((x&64)<<6)|((x&128)<<7)|((x&256)<<8)|((x&512)<<9);
-#else
-	for(x=0;x<32;x++)
-		twiddletab[x] = (x&1)|((x&2)<<1)|((x&4)<<2)|((x&8)<<3)|((x&16)<<4);
-	for(;x<1024;x++)
-		twiddletab[x] = twiddletab[x&31] | (twiddletab[(x>>5)&31]<<10);
-#endif
-}
-
-enum {B,G,R};
-
-int decode_small_vq(char *out,void *in0,void *in1,int width,int height,int mode)
-{
-	unsigned char vqtab[3*4*16];
-	unsigned char *in;
-
-	int twiddletab[1024];
-	int x,y,wbyte;
-	const SHIFTTBL *s;
-
-	unsigned short *in_w = in1;
-	char *p = vqtab;
-
-	s = &shifttbl[mode];
-	for(x=0;x<16*4;x++) {
-		int c = in_w[x];
-		p[R] = (c >> s->rshift) & s->rmask;
-		p[G] = (c >> s->gshift) & s->gmask;
-		p[B] = (c << s->bshift) & s->bmask;
-		p+=3;
-	}
-
-	init_twiddletab(twiddletab);
-
-	in = (unsigned char*)in0;
-	wbyte = (width*3+3)&~3;
-	for(y=0;y<height;y+=4) {
-		char *p = out+(height-y-1)*wbyte;
-		for(x=0;x<width;x+=2) {
-			int c = in[(twiddletab[y/2]>>1)|twiddletab[x/2]];
-			unsigned char *vq;
-
-			vq = &vqtab[(c&15)*12];
-
-			p[0] = vq[0];
-			p[1] = vq[1];
-			p[2] = vq[2];
-
-			p[3] = vq[6];
-			p[4] = vq[7];
-			p[5] = vq[8];
-
-			p[0-wbyte] = vq[3];
-			p[1-wbyte] = vq[4];
-			p[2-wbyte] = vq[5];
-
-			p[3-wbyte] = vq[9];
-			p[4-wbyte] = vq[10];
-			p[5-wbyte] = vq[11];
-
-			vq = &vqtab[(c>>4)*12];
-			p-=wbyte*2;
-
-			p[0] = vq[0];
-			p[1] = vq[1];
-			p[2] = vq[2];
-
-			p[3] = vq[6];
-			p[4] = vq[7];
-			p[5] = vq[8];
-
-			p[0-wbyte] = vq[3];
-			p[1-wbyte] = vq[4];
-			p[2-wbyte] = vq[5];
-
-			p[3-wbyte] = vq[9];
-			p[4-wbyte] = vq[10];
-			p[5-wbyte] = vq[11];
-
-			p+=wbyte*2;
-			p+=6;
-		}
-	}
-}
-
-int decode_twiddled_vq(char *out,void *in0,void *in1,int width,int height,int mode)
-{
-	unsigned char vqtab[3*4*256];
-	unsigned char *in;
-
-	int twiddletab[1024];
-	int x,y,wbyte;
-	const SHIFTTBL *s;
-
-	unsigned short *in_w = in1;
-	char *p = vqtab;
-
-	s = &shifttbl[mode];
-	for(x=0;x<256*4;x++) {
-		int c = in_w[x];
-		p[R] = (c >> s->rshift) & s->rmask;
-		p[G] = (c >> s->gshift) & s->gmask;
-		p[B] = (c << s->bshift) & s->bmask;
-		p+=3;
-	}
-
-	init_twiddletab(twiddletab);
-
-	in = (unsigned char*)in0;
-	wbyte = (width*3+3)&~3;
-	for(y=0;y<height;y+=2) {
-		char *p = out+(height-y-1)*wbyte;
-		for(x=0;x<width;x+=2) {
-			int c = in[twiddletab[y/2]|(twiddletab[x/2]<<1)];
-			unsigned char *vq = &vqtab[c*12];
-
-			p[0] = vq[0];
-			p[1] = vq[1];
-			p[2] = vq[2];
-
-			p[3] = vq[6];
-			p[4] = vq[7];
-			p[5] = vq[8];
-
-			p[0-wbyte] = vq[3];
-			p[1-wbyte] = vq[4];
-			p[2-wbyte] = vq[5];
-
-			p[3-wbyte] = vq[9];
-			p[4-wbyte] = vq[10];
-			p[5-wbyte] = vq[11];
-
-			p+=6;
-		}
-	}
-}
-
-int decode_twiddled(char *out,void *in0,int width,int height,int mode)
-{
-	int twiddletab[1024];
-	int x,y,wbyte;
-	const SHIFTTBL *s;
-
-	init_twiddletab(twiddletab);
-
-	if (0) {char tmp[80];
-	wsprintf(tmp,"%d x %d x %d %s",width,height,mode,str_table[mode]);
-	MessageBox(NULL,tmp,"AAA",MB_OK);
-	}
-
-  switch(mode){
-  case PAL4:
-	wbyte = (width/2+3)&~3;
-	for(y=0;y<height;y+=2) {
-		char *p = out+(height-y-1)*wbyte;
-		unsigned char *in=in0;
-		for(x=0;x<width;x+=2) {
-			int c0 = in[(twiddletab[y]>>1)|twiddletab[x  ]];
-			int c1 = in[(twiddletab[y]>>1)|twiddletab[x+1]];
-			p[x/2      ] = c0&0x0f | c1<<4;
-			p[x/2-wbyte] = c0>>4   | c1&0xf0;
-		}
-	}
-	break;
-  case PAL8:
-	wbyte = (width+3)&~3;
-	for(y=0;y<height;y++) {
-		char *p = out+(height-y-1)*wbyte;
-		unsigned char *in=in0;
-		for(x=0;x<width;x++) {
-			p[x] = in[twiddletab[y]|(twiddletab[x]<<1)];
-		}
-	}
-	break;
-  default:
-	s = &shifttbl[mode];
-	wbyte = (width*3+3)&~3;
-	for(y=0;y<height;y++) {
-		unsigned char *p = out+(height-y-1)*wbyte;
-		unsigned short *in=in0;
-		for(x=0;x<width;x++) {
-			int c = in[twiddletab[y]|(twiddletab[x]<<1)];
-#if 1
-			p[R] = p[G] = p[B] = (c >> 8);
-#else
-			p[R] = (c >> s->rshift) & s->rmask;
-			p[G] = (c >> s->gshift) & s->gmask;
-			p[B] = (c << s->bshift) & s->bmask;
-#endif
-			p+=3;
-		}
-	}
-  }
-}
-
-int decode_rectangle(char *out,void *in0,int width,int height,int mode)
-{
-	int x,y,wbyte;
-	const SHIFTTBL *s;
-	if (mode<=2)
-		s = &shifttbl[mode];
-
-	wbyte = (width*3+3)&~3;
-	for(y=0;y<height;y++) {
-		char *p = out+(height-y-1)*wbyte;
-		unsigned short *in = in0;
-		for(x=0;x<width;x++) {
-			int c = in[x];
-			p[R] = (c >> s->rshift) & s->rmask;
-			p[G] = (c >> s->gshift) & s->gmask;
-			p[B] = (c << s->bshift) & s->bmask;
-			p+=3;
-		}
-	}
-}
-
-int pvr2bmphdr(BITMAPINFOHEADER *pInfo,PVRHDR *hdr)
-{
-	int bits,img_size;
-
-	switch(hdr->type[0]){
-	case 0x00: /* ARGB155 */
-	case 0x01: /* RGB565 */
-	case 0x02: /* ARGB4444 */
-	case 0x03: /* YUV422 */
-		bits = 24; break;
-	case 0x04: /* BUMP */
-	case 0x05: /* 4BPP */
-		bits = 4; break;
-	case 0x06: /* 8BPP */
-		bits = 8; break;
-	default:
-	}
-	img_size = ((hdr->width*bits/8+3)&~3) * hdr->height;
-
-    //*pHBInfoÇ…ÇÕBITMAPINFOÇì¸ÇÍÇÈ
-	pInfo->biSize = sizeof(BITMAPINFOHEADER);
-	pInfo->biWidth = hdr->width;
-	pInfo->biHeight = hdr->height;
-	pInfo->biPlanes = 1;
-	pInfo->biBitCount = bits;
-	pInfo->biCompression = BI_RGB;
-	pInfo->biSizeImage = img_size;
-	pInfo->biXPelsPerMeter = 0;
-	pInfo->biYPelsPerMeter = 0;
-	pInfo->biClrUsed = 0;
-	pInfo->biClrImportant = 0;
-}
-
-int pvr2bmp(char *pBm,PVRHDR *hdr)
-{
-	char *data = (char*)(hdr+1);
 	
-    //*pHBmÇ…ÇÕÉrÉbÉgÉ}ÉbÉvÉfÅ[É^Çì¸ÇÍÇÈ
-	switch(hdr->type[1]){
-	case 0x01: /* twiddled */
-		decode_twiddled(pBm,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x02: /* twiddled & mipmap */
-		decode_twiddled(pBm,data+calc_n(hdr->width)*2,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x03: /* VQ */
-		decode_twiddled_vq(pBm,data+2048,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x04: /* VQ & MIPMAP */
-		decode_twiddled_vq(pBm,data+2048+calc_n(hdr->width/2),data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x05: /* twiddled 4bit? */
-		decode_twiddled(pBm,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x06: /* twiddled & mipmap 4bit? */
-		decode_twiddled(pBm,data+calc_n(hdr->width)/2,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x07: /* twiddled 8bit? */
-		decode_twiddled(pBm,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x08: /* twiddled & mipmap 8bit? */
-		decode_twiddled(pBm,data+calc_n(hdr->width),hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x09: /* RECTANGLE */
-		decode_rectangle(pBm,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x10: /* SMALL_VQ */
-		decode_small_vq(pBm,data+128,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	case 0x11: /* SMALL_VQ & MIPMAP */
-		decode_small_vq(pBm,data+128+calc_n(hdr->width/2)/2,data,hdr->width,hdr->height,hdr->type[0]);
-		break;
-	default:
-		break;
+	if(magic!='PVMH') return;
+	uint32 headsize=[fh readUInt32LE];
+	[fh skipBytes:headsize];
+
+	int numimages=(headsize-4)/38;
+
+	[self setFormat:@"Dreamcast PVM"];
+
+	for(int i=0;i<numimages;i++)
+	{
+		off_t start=[fh offsetInFile];
+
+		int magic=[fh readID];
+		if(magic!='PVRT') break;
+		int len=[fh readUInt32LE];
+
+		XeeDreamcastImage *subimage=[[[XeeDreamcastImage alloc]
+		initWithHandle:[fh subHandleWithRange:NSMakeRange(start,len+8)]] autorelease];
+
+		[self addSubImage:subimage];
+
+		if(i==0) XeeImageLoaderHeaderDone();
+
+		[self runLoaderOnSubImage:subimage];
+
+		[fh skipBytes:len];
 	}
+
+	XeeImageLoaderDone(YES);
 }
 
-
-#endif
+@end

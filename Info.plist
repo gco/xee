@@ -180,7 +180,7 @@
 				<string>image/exr</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>OpenEXR</string>
+			<string>OpenEXR Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>exr </string>
@@ -208,7 +208,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>pic.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Radiance</string>
+			<string>Radiance Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -229,7 +229,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>dng.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Adobe raw image</string>
+			<string>Adobe Raw Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>DNG </string>
@@ -249,7 +249,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Leica raw image</string>
+			<string>Leica Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -270,7 +270,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Panasonic raw image</string>
+			<string>Panasonic Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -291,7 +291,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Kodak raw image</string>
+			<string>Kodak Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -312,7 +312,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Canon CR2 raw image</string>
+			<string>Canon CR2 Raw Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>CR2 </string>
@@ -337,7 +337,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Canon CRW raw image</string>
+			<string>Canon CRW Raw Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>CRW </string>
@@ -362,7 +362,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Minolta raw image</string>
+			<string>Minolta Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -383,7 +383,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Fuji raw image</string>
+			<string>Fuji Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -404,7 +404,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Nikon raw image</string>
+			<string>Nikon Raw Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>NEF </string>
@@ -429,7 +429,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Olympus raw image</string>
+			<string>Olympus Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -450,7 +450,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>raw.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Sony raw image</string>
+			<string>Sony Raw Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
@@ -742,7 +742,7 @@
 				<string>image/x-xbitmap</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>XBM</string>
+			<string>X BitMap Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>XBM </string>
@@ -761,12 +761,41 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>xpm</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>X PixMap Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>pbm</string>
 				<string>pgm</string>
 				<string>ppm</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>PNM Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>pvr</string>
+				<string>pvm</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Dreamcast PVR Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
