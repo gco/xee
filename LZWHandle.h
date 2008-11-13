@@ -2,21 +2,28 @@
 
 extern NSString *LZWInvalidCodeException;
 
+typedef struct LZWTreeNode
+{
+	uint16_t chr;
+	int16_t parent;
+} LZWTreeNode;
+
 @interface LZWHandle:CSFilterHandle
 {
 	BOOL early;
 
-	int table[4096];
 	int numsymbols,symbolsize;
-
-	uint8_t *strings;
-	int stringsize;
+	LZWTreeNode *nodes;
 
 	int prevsymbol;
-	int outputoffs,outputend;
+
+	int currbyte,numbytes;
+	uint8_t buffer[4096];
 }
 
 -(id)initWithHandle:(CSHandle *)handle earlyChange:(BOOL)earlychange;
+
+-(void)clearTable;
 
 -(void)resetFilter;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
