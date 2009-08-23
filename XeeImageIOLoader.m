@@ -216,6 +216,7 @@ static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
 		@"NEF",@"com.nikon.raw-image",
 		@"ORF",@"com.olympus.raw-image",
 		@"SRF",@"com.sony.raw-image",
+		@"PEF",@"com.pentax.raw-image"
 	nil] retain];
 
 	NSString *shortformat=[formatdict objectForKey:type];

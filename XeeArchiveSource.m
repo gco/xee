@@ -143,6 +143,7 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 
 		struct xadFileInfo *info=[archive xadFileInfoForEntry:n];
 
+		// TODO: change to modern calls!
 		size=info->xfi_Size;
 		if(!(info->xfi_Flags&XADFIF_NODATE))
 		{

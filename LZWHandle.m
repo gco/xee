@@ -33,8 +33,6 @@ static int FillBuffer(uint8_t *buffer,LZWTreeNode *nodes,int symbol)
 			nodes[i].chr=i;
 			nodes[i].parent=-1;
 		}
-
-		[self clearTable];
 	}
 	return self;
 }
