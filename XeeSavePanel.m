@@ -45,6 +45,7 @@
 	if(self=[super init])
 	{
 		textview=nil;
+		textfield=nil;
 		image=[img retain];
 		controller=[cont retain];
 		formats=nil;
@@ -96,10 +97,12 @@
 
 -(BOOL)makeFirstResponder:(NSResponder *)responder
 {
-	if(!textview && [responder class]==[NSTextView class])
+	if(!textview&&!textfield)
 	{
-		textview=(NSTextView *)responder;
-		[self performSelector:@selector(selectNamePart) withObject:nil afterDelay:0
+		if(!textview && [responder isKindOfClass:[NSTextView class]]) textview=(NSTextView *)responder;
+		else if(!textfield && [responder isKindOfClass:[NSTextField class]]) textfield=(NSTextField *)responder;
+
+		if(textview||textfield) [self performSelector:@selector(selectNamePart) withObject:nil afterDelay:0
 		inModes:[NSArray arrayWithObjects:NSDefaultRunLoopMode,NSModalPanelRunLoopMode,nil]];
 	}
 
@@ -144,7 +147,7 @@
 {
 	NSSavePanel *panel=(NSSavePanel *)[view window];
 
-	[textview setString:[self updateExtension:[textview string]]];
+	[self setFilenameFieldContents:[self updateExtension:[self filenameFieldContents]]];
 	[self selectNamePart];
 
 	NSView *superview=[[[NSView alloc] initWithFrame:[view frame]] autorelease];
@@ -165,9 +168,28 @@
 	else return @"";
 }
 
+-(NSString *)filenameFieldContents
+{
+	if(textview) return [textview string];
+	else return [textfield stringValue];
+}
+
+-(void)setFilenameFieldContents:(NSString *)filename
+{
+	if(textview) [textview setString:filename];
+	else [textfield setStringValue:filename];
+}
+
 -(void)selectNamePart
 {
-	[textview setSelectedRange:NSMakeRange(0,[[[textview string] stringByDeletingPathExtension] length])];
+	int length=[[[self filenameFieldContents] stringByDeletingPathExtension] length];
+	NSRange range=NSMakeRange(0,length);
+	if(textview) [textview setSelectedRange:range];
+	else
+	{
+		[self makeFirstResponder:textfield];
+		[[self fieldEditor:NO forObject:textfield] setSelectedRange:range];
+	}
 }
 
 @end

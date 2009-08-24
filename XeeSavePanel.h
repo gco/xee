@@ -11,6 +11,7 @@
 	XeeSimpleLayout *view;
 
 	NSTextView *textview;
+	NSTextField *textfield;
 
 	BOOL wasanimating;
 }
@@ -24,6 +25,8 @@
 -(void)xeeSLUpdated:(XeeSimpleLayout *)alsoview;
 
 -(NSString *)updateExtension:(NSString *)filename;
+-(NSString *)filenameFieldContents;
+-(void)setFilenameFieldContents:(NSString *)filename;
 -(void)selectNamePart;
 
 @end
