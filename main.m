@@ -33,6 +33,11 @@ int main(int argc, char *argv[])
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"windowBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]],@"fullScreenBackground",
 	nil]];
+
+	// Include the system sound prefs on Leopard
+	if(floor(NSAppKitVersionNumber)>824)
+	[[NSUserDefaults standardUserDefaults] addSuiteNamed:@"com.apple.systemsound"];
+
     [pool release];
 
 	finderlaunch=argc!=1;

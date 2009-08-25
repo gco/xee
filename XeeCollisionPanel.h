@@ -10,6 +10,7 @@
 {
 	XeeImage *srcimage,*destimage;
 	int transfermode;
+	BOOL sheet;
 
 	IBOutlet XeeController *controller;
 	IBOutlet XeeView *icon;

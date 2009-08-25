@@ -61,7 +61,17 @@
 	[replacebutton setKeyEquivalent:@"\r"];
 	[renamebutton setKeyEquivalent:@""];
 
-	[[NSApplication sharedApplication] beginSheet:self modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+	if(window)
+	{
+		sheet=YES;
+		[NSApp beginSheet:self modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+	}
+	else
+	{
+		sheet=NO;
+		[self makeKeyAndOrderFront:nil];
+	}
+
 }
 
 -(void)loadThumbnail:(XeeImage *)image
@@ -78,7 +88,7 @@
 
 -(void)cancelClick:(id)sender
 {
-	[[NSApplication sharedApplication] endSheet:self];
+	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
 	[destimage setAnimating:NO];
@@ -90,7 +100,7 @@
 
 -(void)renameClick:(id)sender
 {
-	[[NSApplication sharedApplication] endSheet:self];
+	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
 	NSString *destination=[[[destimage filename] stringByDeletingLastPathComponent]
@@ -106,7 +116,7 @@
 
 -(void)replaceClick:(id)sender
 {
-	[[NSApplication sharedApplication] endSheet:self];
+	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
 	[controller transferFile:[srcimage filename] to:[destimage filename] mode:transfermode];

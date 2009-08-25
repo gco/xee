@@ -554,7 +554,7 @@ static BOOL HasAppleMouse()
 -(NSRect)availableScreenSpace
 {
 	NSRect rect=[[window screen] visibleFrame];
-	if([drawer state]==NSDrawerOpenState) rect.size.width-=[drawer contentSize].width+6;
+	if([drawer state]==NSDrawerOpenState) rect.size.width-=[drawer contentSize].width+XeeDrawerEdgeWidth;
 	return rect;
 }
 

@@ -16,7 +16,7 @@
 	if(window)
 	{
 		sheet=YES;
-		[[NSApplication sharedApplication] beginSheet:self modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+		[NSApp beginSheet:self modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
 	}
 	else
 	{
@@ -30,7 +30,7 @@
 
 -(void)cancelClick:(id)sender
 {
-	if(sheet) [[NSApplication sharedApplication] endSheet:self];
+	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
 	[image release];
@@ -38,7 +38,7 @@
 
 -(void)renameClick:(id)sender
 {
-	if(sheet) [[NSApplication sharedApplication] endSheet:self];
+	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
 	NSString *newname=[[[image filename] stringByDeletingLastPathComponent]

@@ -6,6 +6,8 @@
 #define XeeMoveMode 1
 #define XeeCopyMode 2
 
+#define XeeDrawerEdgeWidth 6.0
+
 @class XeeImage,XeeImageSource,XeeView,XeeDisplayWindow,XeeFullScreenWindow;
 @class XeeCollisionPanel,XeeRenamePanel,XeeStatusBar,XeeDestinationView;
 @class XeeMoveTool,XeeCropTool;

@@ -180,6 +180,23 @@
 	if(state==NSDrawerClosedState||state==NSDrawerClosingState)
 	{
 		[drawer openOnEdge:NSMaxXEdge];
+
+		NSRect frame=[window frame];
+		NSRect visible=[[window screen] visibleFrame];
+		float drawerwidth=[drawer contentSize].width+XeeDrawerEdgeWidth;
+
+		// See if the drawer fits on screen, and if not, move and resize to make it fit.
+		if(frame.origin.x+frame.size.width+drawerwidth>visible.origin.x+visible.size.width)
+		{
+			frame.origin.x=visible.origin.x+visible.size.width-frame.size.width-drawerwidth;
+			if(frame.origin.x<visible.origin.x)
+			{
+				frame.size.width+=frame.origin.x;
+				frame.origin.x=0;
+			}
+
+			[window setFrame:frame display:YES animate:YES];
+		}
 	}
 	else
 	{
@@ -274,7 +291,7 @@
 			}
 
 			XeeImage *destimage=[XeeImage imageForFilename:destination];
-			[collisionpanel run:window source:currimage destination:destimage mode:mode];
+			[collisionpanel run:fullscreenwindow?nil:window source:currimage destination:destimage mode:mode];
 		}
 		else
 		{
