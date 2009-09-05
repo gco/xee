@@ -40,9 +40,10 @@
 			nil];
 		}
 		else handle=[CSMemoryHandle memoryHandleForReadingData:data];
-NSLog(@"what");
-[[[[handle copy] autorelease] remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
 
+/*NSLog(@"what");
+[[[[handle copy] autorelease] remainingFileContents] writeToFile:@"/Users/dag/Desktop/test.pict" atomically:NO];
+*/
 		image=[[XeeImage imageForHandle:handle] retain];
 
 		if(image) return self;
@@ -76,8 +77,6 @@ NSLog(@"what");
 -(int)indexOfCurrentImage { return 0; }
 
 -(NSString *)descriptiveNameOfCurrentImage { return @"Clipboard contents"; }
-
--(BOOL)isNavigatable { return NO; }
 
 -(void)pickImageAtIndex:(int)index next:(int)next
 {

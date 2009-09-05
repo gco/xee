@@ -1,5 +1,6 @@
 #import "XeeImage.h"
 #import "XeeMultiImage.h"
+#import "XeeStringAdditions.h"
 
 #import <pthread.h>
 
@@ -472,8 +473,8 @@
 			filename,
 			NSLocalizedString(@"File size",@"File size property label"),//	55.92 kB (57264 bytes)
 			[NSString stringWithFormat:
-			NSLocalizedString(@"%@ (%d bytes)",@"File size property value (%@ is shortened filesize, %d is exact)"),
-			[self descriptiveFileSize],[self fileSize]],
+			NSLocalizedString(@"%@ (%qu bytes)",@"File size property value (%@ is shortened filesize, %qu is exact)"),
+			XeeDescribeSize([self fileSize]),[self fileSize]],
 			NSLocalizedString(@"Modification date",@"Modification date property label"),
 			[attrs fileModificationDate],
 			NSLocalizedString(@"Creation date",@"Creation date property label"),
@@ -516,7 +517,9 @@
 
 
 
--(int)fileSize { return [attrs fileSize]; }
+-(uint64_t)fileSize { return [attrs fileSize]; }
+
+-(NSDate *)date { return [attrs fileModificationDate]; }
 
 -(NSString *)descriptiveFilename
 {
@@ -524,24 +527,6 @@
 	if(name) return name;
 	if(delegate&&[delegate isKindOfClass:[XeeImage class]]) return [delegate filename];
 	return nil;
-}
-
--(NSString *)descriptiveFileSize
-{
-	int size=[self fileSize];
-	if(size<10000) return [NSString stringWithFormat:
-		NSLocalizedString(@"%d B",@"A file size in bytes"),size];
-	else if(size<102400) return [NSString stringWithFormat:
-		NSLocalizedString(@"%.2f kB",@"A file size in kilobytes with two decimals"),((float)size/1024.0)];
-	else if(size<1024000) return [NSString stringWithFormat:
-		NSLocalizedString(@"%.1f kB",@"A file size in kilobytes with one decimal"),((float)size/1024.0)];
-	else return [NSString stringWithFormat:
-		NSLocalizedString(@"%d kB",@"A file size in kilobytes with no decimals"),size/1024];
-}
-
--(NSString *)descriptiveDate
-{
-	return [[attrs fileModificationDate] descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M" timeZone:nil locale:nil];
 }
 
 
@@ -698,7 +683,7 @@
 {
 	return [NSString stringWithFormat:@"<%@> %@ (%dx%d %@ %@, %@, created on %@)",
 	[[self class] description],[[self descriptiveFilename] lastPathComponent],[self width],[self height],
-	[self depth],[self format],[self descriptiveFileSize],[self descriptiveDate]];
+	[self depth],[self format],XeeDescribeSize([self fileSize]),XeeDescribeDate([self date])];
 }
 
 

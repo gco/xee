@@ -5,12 +5,11 @@
 -(IBAction)revealInFinder:(id)sender;
 
 -(IBAction)renameFileFromMenu:(id)sender;
--(void)renameFile:(NSString *)filename to:(NSString *)newname;
+-(void)renamePanelEnd:(XeeRenamePanel *)panel returnCode:(int)res filename:(NSString *)newname;
 
 -(IBAction)deleteFileFromMenu:(id)sender;
 -(IBAction)askAndDelete:(id)sender;
--(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(XeeFSRef *)ref;
--(void)deleteFile:(XeeFSRef *)ref;
+-(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(void *)info;
 
 -(IBAction)moveFile:(id)sender;
 -(IBAction)copyFile:(id)sender;
@@ -37,13 +36,11 @@
 -(void)triggerDrawer:(int)mode;
 -(void)drawerDidClose:(NSNotification *)notification;
 -(void)destinationListClick:(id)sender;
--(void)destinationPanelEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(NSString *)filename;
+-(void)destinationPanelEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(void *)info;
 -(void)transferToDestination:(int)index mode:(int)mode;
--(void)attemptToTransferFile:(NSString *)filename to:(NSString *)destination mode:(int)mode;
--(void)transferFile:(NSString *)filename to:(NSString *)destination mode:(int)mode;
-
--(void)playSound:(NSString *)filename;
--(void)actuallyPlaySound:(NSString *)filename;
+-(void)attemptToTransferCurrentImageTo:(NSString *)destination mode:(int)mode;
+-(void)collisionPanelEnd:(XeeCollisionPanel *)panel returnCode:(int)res path:(NSString *)destination mode:(int)mode;
+-(void)transferCurrentImageTo:(NSString *)destination mode:(int)mode;
 
 -(IBAction)launchAppFromMenu:(id)sender;
 -(IBAction)launchDefaultEditor:(id)sender;

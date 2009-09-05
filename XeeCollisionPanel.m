@@ -8,53 +8,75 @@
 
 @implementation XeeCollisionPanel
 
--(void)run:(NSWindow *)window source:(XeeImage *)src destination:(XeeImage *)dest mode:(int)mode;
+-(void)run:(NSWindow *)window sourceImage:(XeeImage *)srcimage size:(off_t)srcsize
+date:(NSDate *)srcdate destinationPath:(NSString *)destpath mode:(int)mode
+delegate:(id)delegate didEndSelector:(SEL)selector
 {
-	srcimage=[src retain];
-	destimage=[dest retain];
+	enddelegate=delegate;
+	endselector=selector;
+
+	destinationpath=[destpath retain];
 	transfermode=mode;
 
-//	NSImage *iconimage=[[NSWorkspace sharedWorkspace] iconForFile:[destimage filename]];
-//	[iconimage setSize:NSMakeSize(128,128)];
-//	[icon setImage:iconimage];
+	XeeImage *destimage=[XeeImage imageForFilename:destpath];
+	if(destimage)
+	{
+		float horiz_zoom=128/(float)[destimage width];
+		float vert_zoom=128/(float)[destimage height];
+		float min_zoom=horiz_zoom<vert_zoom?horiz_zoom:vert_zoom;
+		float zoom;
 
-	float horiz_zoom=128/(float)[destimage width];
-	float vert_zoom=128/(float)[destimage height];
-	float min_zoom=horiz_zoom<vert_zoom?horiz_zoom:vert_zoom;
-	float zoom;
+		if(min_zoom<1) zoom=min_zoom;
+		else zoom=1;
 
-	if(min_zoom<1) zoom=min_zoom;
-	else zoom=1;
+		[icon setImage:destimage];
+		[icon setImageSize:NSMakeSize(zoom*(float)[destimage width],zoom*(float)[destimage height])];
+		[NSThread detachNewThreadSelector:@selector(loadThumbnail:) toTarget:self withObject:destimage];
+	}
+	else
+	{
+		// TODO: display icon
+/*		NSImage *iconimage=[[NSWorkspace sharedWorkspace] iconForFile:destination];
+		[iconimage setSize:NSMakeSize(128,128)];
+		[icon setImage:[XeeNSImageiconimage];*/
+		[icon setImage:nil];
+	}
 
-	[icon setImage:destimage];
-	[icon setImageSize:NSMakeSize(zoom*(float)[destimage width],zoom*(float)[destimage height])];
-
-	[NSThread detachNewThreadSelector:@selector(loadThumbnail:) toTarget:self withObject:destimage];
+	NSDictionary *destattrs=[[NSFileManager defaultManager] fileAttributesAtPath:destpath traverseLink:YES];
 
 	[titlefield setStringValue:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" already exists.",
-	@"Title of the file exists dialog"),[[[destimage filename] lastPathComponent] stringByMappingColonToSlash]]];
+	@"Title of the file exists dialog"),[[destpath lastPathComponent] stringByMappingColonToSlash]]];
 
-	[oldsize setStringValue:[NSString stringWithFormat:@"%d",[destimage fileSize]]];
-	[newsize setStringValue:[NSString stringWithFormat:@"%d",[srcimage fileSize]]];
+	[oldsize setStringValue:[NSString stringWithFormat:@"%qu",[destattrs fileSize]]];
+	[newsize setStringValue:[NSString stringWithFormat:@"%qu",srcsize]];
 
-	[oldformat setStringValue:[NSString stringWithFormat:@"%dx%d\n%@ %@",
-	[destimage width],[destimage height],[destimage depth],[destimage format]]];
-	[newformat setStringValue:[NSString stringWithFormat:@"%dx%d\n%@ %@",
-	[srcimage width],[srcimage height],[srcimage depth],[srcimage format]]];
+	[olddate setStringValue:XeeDescribeDate([destattrs fileModificationDate])];
+	[newdate setStringValue:XeeDescribeDate(srcdate)];
 
-	[olddate setStringValue:[destimage descriptiveDate]];
-	[newdate setStringValue:[srcimage descriptiveDate]];
+	if(destimage)
+	{
+		[oldformat setStringValue:[NSString stringWithFormat:@"%dx%d\n%@ %@",
+		[destimage width],[destimage height],[destimage depth],[destimage format]]];
+	}
+	else [oldformat setStringValue:@""];
 
-	NSString *newname;
-	NSString *destdir=[[destimage filename] stringByDeletingLastPathComponent];
-	NSString *destname=[[[destimage filename] lastPathComponent] stringByDeletingPathExtension];
-	NSString *destext=[[destimage filename] pathExtension];
+	if(srcimage)
+	{
+		[newformat setStringValue:[NSString stringWithFormat:@"%dx%d\n%@ %@",
+		[srcimage width],[srcimage height],[srcimage depth],[srcimage format]]];
+	}
+	else [newformat setStringValue:@""];
+
+	NSString *newpath;
+	NSString *destdir=[destpath stringByDeletingLastPathComponent];
+	NSString *destname=[[destpath lastPathComponent] stringByDeletingPathExtension];
+	NSString *destext=[destpath pathExtension];
 	int n=1;
 
-	do { newname=[destdir stringByAppendingPathComponent:[[NSString stringWithFormat:@"%@-%d",destname,n++] stringByAppendingPathExtension:destext]]; }
-	while([[NSFileManager defaultManager] fileExistsAtPath:newname]);
+	do { newpath=[destdir stringByAppendingPathComponent:[[NSString stringWithFormat:@"%@-%d",destname,n++] stringByAppendingPathExtension:destext]]; }
+	while([[NSFileManager defaultManager] fileExistsAtPath:newpath]);
 
-	[namefield setStringValue:[[newname lastPathComponent] stringByMappingColonToSlash]];
+	[namefield setStringValue:[[newpath lastPathComponent] stringByMappingColonToSlash]];
 	[self makeFirstResponder:namefield];
 	[[namefield currentEditor] setSelectedRange:NSMakeRange(0,[[[namefield stringValue] stringByDeletingPathExtension] length])];
 
@@ -86,47 +108,40 @@
 	[pool release];
 }
 
--(void)cancelClick:(id)sender
+-(IBAction)cancelClick:(id)sender
+{
+	[self endWithReturnCode:0 path:nil];
+}
+
+-(IBAction)renameClick:(id)sender
+{
+	[self endWithReturnCode:2 path:[[destinationpath stringByDeletingLastPathComponent]
+	stringByAppendingPathComponent:[[namefield stringValue] stringByMappingSlashToColon]]];
+}
+
+-(IBAction)replaceClick:(id)sender
+{
+	[self endWithReturnCode:1 path:destinationpath];
+}
+
+-(void)endWithReturnCode:(int)res path:(NSString *)destination
 {
 	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
-	[destimage setAnimating:NO];
-
-	[srcimage release];
-	[destimage release];
 	[icon setImage:nil];
+	[destinationpath autorelease]; // Avoid releasing the destination string when clicking replace
+
+	NSInvocation *invocation=[NSInvocation invocationWithMethodSignature:[enddelegate methodSignatureForSelector:endselector]];
+	[invocation setSelector:endselector];
+	[invocation setArgument:&self atIndex:2];
+	[invocation setArgument:&res atIndex:3];
+	[invocation setArgument:&destination atIndex:4];
+	[invocation setArgument:&transfermode atIndex:5];
+
+	[invocation invokeWithTarget:enddelegate];
 }
 
--(void)renameClick:(id)sender
-{
-	if(sheet) [NSApp endSheet:self];
-	[self orderOut:nil];
-
-	NSString *destination=[[[destimage filename] stringByDeletingLastPathComponent]
-	stringByAppendingPathComponent:[[namefield stringValue] stringByMappingSlashToColon]];
-	[controller attemptToTransferFile:[srcimage filename] to:destination mode:transfermode];
-
-	[destimage setAnimating:NO];
-
-	[srcimage release];
-	[destimage release];
-	[icon setImage:nil];
-}
-
--(void)replaceClick:(id)sender
-{
-	if(sheet) [NSApp endSheet:self];
-	[self orderOut:nil];
-
-	[controller transferFile:[srcimage filename] to:[destimage filename] mode:transfermode];
-
-	[destimage setAnimating:NO];
-
-	[srcimage release];
-	[destimage release];
-	[icon setImage:nil];
-}
 
 -(void)controlTextDidChange:(NSNotification *)notification
 {

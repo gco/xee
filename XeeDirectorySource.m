@@ -13,6 +13,7 @@
 	if(self=[super init])
 	{
 		imgref=dirref=nil;
+		scheduledimagerename=scheduledimagerefresh=scheduleddirrefresh=NO;
 
 		[self startListUpdates];
 		BOOL res=[self scanDirectory:directory];
@@ -43,6 +44,8 @@
 	if(self=[super init])
 	{
 		imgref=dirref=nil;
+		scheduledimagerename=scheduledimagerefresh=scheduleddirrefresh=NO;
+
 		XeeDirectoryEntry *curr=[XeeDirectoryEntry entryWithRef:ref image:image];
 
 		[self startListUpdates];
@@ -72,10 +75,183 @@
 
 
 
--(int)capabilities
+-(NSString *)representedFilename { return [(XeeFileEntry *)currentry path]; }
+
+
+
+-(BOOL)canBrowse { return YES; }
+-(BOOL)canSort { return YES; }
+-(BOOL)canRenameCurrentImage { return YES; }
+-(BOOL)canDeleteCurrentImage { return YES; }
+-(BOOL)canCopyCurrentImage { return YES; }
+-(BOOL)canMoveCurrentImage { return YES; }
+-(BOOL)canOpenCurrentImage { return YES; }
+
+-(BOOL)canSaveCurrentImage
 {
-	return XeeNavigationCapable|XeeRenamingCapable|XeeCopyingCapable|
-	XeeMovingCapable|XeeDeletionCapable|XeeSortingCapable;
+	// TODO: check if directory is writable
+	//[dirref isWriteable]&&[imgref isWritable];
+	return YES;
+}
+
+
+
+-(NSError *)renameCurrentImageTo:(NSString *)newname
+{
+	NSError *err=[super renameCurrentImageTo:newname];
+	if(!err) [self scheduleImageRename];
+	return err;
+}
+
+-(NSError *)deleteCurrentImage
+{
+	NSError *err=[super deleteCurrentImage];
+	if(!err) [self removeCurrentEntryAndUpdate];
+	return err;
+}
+
+-(NSError *)moveCurrentImageTo:(NSString *)destination
+{
+	NSError *err=[super moveCurrentImageTo:destination];
+	if(!err) [self removeCurrentEntryAndUpdate];
+	return err;
+}
+
+-(void)beginSavingImage:(XeeImage *)image
+{
+}
+
+-(void)endSavingImage:(XeeImage *)image
+{
+	if([[image ref] isEqual:[(XeeDirectoryEntry *)currentry ref]]) [self scheduleImageRefresh];
+}
+
+
+
+-(void)setCurrentEntry:(XeeFileEntry *)entry
+{
+	[[XeeKQueue defaultKQueue] removeObserver:self ref:imgref];
+	[imgref release];
+	imgref=nil;
+
+	// Cancel pending image updates if the image changed.
+	if(entry!=currentry) scheduledimagerename=scheduledimagerefresh=NO;
+
+	[super setCurrentEntry:entry];
+
+	if(entry)
+	{
+		imgref=[[entry ref] retain];
+		[[XeeKQueue defaultKQueue] addObserver:self selector:@selector(fileChanged:)
+		ref:imgref flags:NOTE_WRITE|NOTE_DELETE|NOTE_RENAME|NOTE_ATTRIB];
+	}
+}
+
+
+
+-(void)fileChanged:(XeeKEvent *)event
+{
+	int flags=[event flags];
+	XeeFSRef *ref=[event ref];
+
+	if(ref!=imgref) return; // Ignore spurious events after switching images
+
+	if(flags&NOTE_WRITE) [self scheduleImageRefresh];
+
+	if(flags&NOTE_ATTRIB)
+	{
+		if(sortorder==XeeDateSortOrder) [self sortFiles];
+	}
+
+	if(flags&NOTE_RENAME)
+	{
+		if([ref isValid]&&[[ref parent] isEqual:dirref]) [self scheduleImageRename];
+		else [self removeCurrentEntryAndUpdate];
+	}
+
+	if(flags&NOTE_DELETE) [self removeCurrentEntryAndUpdate];
+}
+
+-(void)directoryChanged:(XeeKEvent *)event
+{
+	int flags=[event flags];
+	XeeFSRef *ref=[event ref];
+
+	if(flags&NOTE_WRITE) [self scheduleDirectoryRefresh];
+
+	if(flags&NOTE_RENAME)
+	{
+		if(![ref isValid]) [self removeAllEntriesAndUpdate];
+		else [[currentry image] triggerPropertyChangeAction];
+	}
+
+	if(flags&NOTE_DELETE) [self removeAllEntriesAndUpdate];
+}
+
+
+
+-(void)scheduleImageRename
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(performScheduledTasks) object:nil];
+	[self performSelector:@selector(performScheduledTasks) withObject:nil afterDelay:0];
+	scheduledimagerename=YES;
+}
+
+-(void)scheduleImageRefresh
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(performScheduledTasks) object:nil];
+	[self performSelector:@selector(performScheduledTasks) withObject:nil afterDelay:0.2];
+	scheduledimagerefresh=YES;
+}
+
+-(void)scheduleDirectoryRefresh
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(performScheduledTasks) object:nil];
+	[self performSelector:@selector(performScheduledTasks) withObject:nil afterDelay:0.2];
+	scheduleddirrefresh=YES;
+}
+
+-(void)performScheduledTasks
+{
+	if(scheduledimagerename)
+	{
+		[[currentry image] triggerPropertyChangeAction];
+		if(sortorder==XeeNameSortOrder) [self sortFiles];
+	}
+
+	if(scheduledimagerefresh)
+	{
+		// pretty stupid
+		int index=[self indexOfCurrentImage];
+		[self setCurrentEntry:nil];
+		[self pickImageAtIndex:index next:nextentry?[entries indexOfObject:nextentry]:-1];
+		if(sortorder==XeeSizeSortOrder) [self sortFiles];
+	}
+
+	if(scheduleddirrefresh)
+	{
+		[self startListUpdates];
+		[self readDirectory:dirref];
+		[self endListUpdates];
+	}
+
+	scheduledimagerename=scheduledimagerefresh=scheduleddirrefresh=NO;
+}
+
+
+
+-(void)removeCurrentEntryAndUpdate
+{
+	[self startListUpdates];
+	[self removeEntry:currentry];
+	[self endListUpdates];
+}
+
+-(void)removeAllEntriesAndUpdate
+{
+	[self startListUpdates];
+	[self removeAllEntries];
+	[self endListUpdates];
 }
 
 
@@ -106,8 +282,6 @@
 
 	[[XeeKQueue defaultKQueue] addObserver:self selector:@selector(directoryChanged:)
 	ref:dirref flags:NOTE_WRITE|NOTE_DELETE|NOTE_RENAME];
-
-	needsrefresh=NO;
 
 	return YES;
 }
@@ -149,126 +323,6 @@
 	//NSLog(@"readDirectory: %g s read, %g s sort, %g s total",sorttime-starttime,endtime-sorttime,endtime-starttime);
 }
 
--(void)setCurrentEntry:(XeeFileEntry *)entry
-{
-	[[XeeKQueue defaultKQueue] removeObserver:self ref:imgref];
-	[imgref release];
-	imgref=nil;
-
-	[super setCurrentEntry:entry];
-
-	if(entry)
-	{
-		imgref=[[entry ref] retain];
-		written=NO;
-		[[XeeKQueue defaultKQueue] addObserver:self selector:@selector(fileChanged:)
-		ref:imgref flags:NOTE_WRITE|NOTE_DELETE|NOTE_RENAME|NOTE_ATTRIB];
-	}
-}
-
-
-
--(void)fileChanged:(XeeKEvent *)event
-{
-	int flags=[event flags];
-	XeeFSRef *ref=[event ref];
-
-	if(ref!=imgref) return; // probably doesn't happen
-
-	if(flags&NOTE_WRITE)
-	{
-		written=YES;
-		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(refreshImage) object:nil];
-	}
-	if(flags&NOTE_ATTRIB)
-	{
-		if(sortorder==XeeDateSortOrder) [self sortFiles];
-
-		if(written&&!(flags&NOTE_WRITE))
-		{
-			written=NO;
-			[self performSelector:@selector(refreshImage) withObject:nil afterDelay:0.2];
-		}
-	}
-	if(flags&NOTE_RENAME)
-	{
-		if([ref isValid]&&[[ref parent] isEqual:dirref])
-		{
-			if(sortorder==XeeNameSortOrder) [self sortFiles];
-			[[currentry image] triggerPropertyChangeAction];
-		}
-		else
-		{
-			[self startListUpdates];
-			[self removeEntryMatchingObject:ref];
-			[self endListUpdates];
-		}
-	}
-	if(flags&NOTE_DELETE)
-	{
-		[self startListUpdates];
-		[self removeEntryMatchingObject:ref];
-		[self endListUpdates];
-	}
-}
-
--(void)refreshImage
-{
-	// pretty stupid
-	int index=[self indexOfCurrentImage];
-	[self setCurrentEntry:nil];
-	[self pickImageAtIndex:index next:nextentry?[entries indexOfObject:nextentry]:-1];
-	if(sortorder==XeeSizeSortOrder) [self sortFiles];
-}
-
--(void)directoryChanged:(XeeKEvent *)event
-{
-	int flags=[event flags];
-	XeeFSRef *ref=[event ref];
-
-	if(flags&NOTE_WRITE)
-	{
-		[self setNeedsRefresh:YES];
-	}
-	if(flags&NOTE_RENAME)
-	{
-		if(![ref isValid])
-		{
-			[self startListUpdates];
-			[self removeAllEntries];
-			[self endListUpdates];
-		}
-		else [[currentry image] triggerPropertyChangeAction];
-	}
-	if(flags&NOTE_DELETE)
-	{
-		[self startListUpdates];
-		[self removeAllEntries];
-		[self endListUpdates];
-	}
-}
-
-
-
--(void)setNeedsRefresh:(BOOL)refresh
-{
-	if(needsrefresh==refresh) return;
-
-	needsrefresh=refresh;
-
-	if(needsrefresh) [self performSelector:@selector(refresh) withObject:nil afterDelay:0];
-}
-
--(void)refresh
-{
-	if(!needsrefresh) return;
-
-	[self startListUpdates];
-	[self readDirectory:dirref];
-	[self endListUpdates];
-
-	needsrefresh=NO;
-}
 
 @end
 
@@ -325,7 +379,7 @@
 		break;
 
 		case XeeDateSortOrder:
-			time=(long)[ref modificationTime];
+			time=[ref modificationTime];
 		break;
 
 		default:
@@ -340,18 +394,24 @@
 	}
 }
 
--(NSString *)path { return [ref path]; }
-
--(XeeFSRef *)ref { return ref; }
-
--(off_t)size { return size; }
-
--(long)time { return time; }
-
 -(NSString *)descriptiveName
 {
 	return [[ref name] stringByMappingColonToSlash];
 }
+
+-(XeeFSRef *)ref { return ref; }
+
+-(NSString *)path { return [ref path]; }
+
+-(NSString *)filename
+{
+	return [ref name];
+}
+
+-(uint64_t)size { return size; }
+
+-(double)time { return time; }
+
 
 -(BOOL)matchesObject:(id)obj { return [obj isKindOfClass:[XeeFSRef class]]&&[ref isEqual:obj]; }
 

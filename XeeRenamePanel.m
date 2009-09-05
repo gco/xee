@@ -6,11 +6,12 @@
 
 @implementation XeeRenamePanel
 
--(void)run:(NSWindow *)window image:(XeeImage *)img
+-(void)run:(NSWindow *)window filename:(NSString *)filename
+delegate:(id)delegate didEndSelector:(SEL)selector
 {
-	image=[img retain];
+	enddelegate=delegate;
+	endselector=selector;
 
-	NSString *filename=[[[image filename] lastPathComponent] stringByMappingColonToSlash];
 	[namefield setStringValue:filename];
 
 	if(window)
@@ -30,22 +31,26 @@
 
 -(void)cancelClick:(id)sender
 {
-	if(sheet) [NSApp endSheet:self];
-	[self orderOut:nil];
-
-	[image release];
+	[self endWithReturnCode:0 filename:nil];
 }
 
 -(void)renameClick:(id)sender
 {
+	[self endWithReturnCode:1 filename:[namefield stringValue]];
+}
+
+-(void)endWithReturnCode:(int)res filename:(NSString *)newname
+{
 	if(sheet) [NSApp endSheet:self];
 	[self orderOut:nil];
 
-	NSString *newname=[[[image filename] stringByDeletingLastPathComponent]
-	stringByAppendingPathComponent:[[namefield stringValue] stringByMappingSlashToColon]];
-	[controller renameFile:[image filename] to:newname];
+	NSInvocation *invocation=[NSInvocation invocationWithMethodSignature:[enddelegate methodSignatureForSelector:endselector]];
+	[invocation setSelector:endselector];
+	[invocation setArgument:&self atIndex:2];
+	[invocation setArgument:&res atIndex:3];
+	[invocation setArgument:&newname atIndex:4];
 
-	[image release];
+	[invocation invokeWithTarget:enddelegate];
 }
 
 @end

@@ -127,7 +127,7 @@ static int XeePDFSortPages(id first,id second,void *context)
 
 -(NSString *)representedFilename { return filename; }
 
--(int)capabilities { return XeeNavigationCapable; }
+-(BOOL)canBrowse { return YES; }
 
 @end
 

@@ -170,7 +170,7 @@
 
 -(NSString *)representedFilename { return filename; }
 
--(int)capabilities { return XeeNavigationCapable; }
+-(BOOL)canBrowse { return YES; }
 
 @end
 

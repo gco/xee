@@ -15,7 +15,6 @@
 -(int)numberOfImages;
 -(int)indexOfCurrentImage;
 -(NSString *)descriptiveNameOfCurrentImage;
--(BOOL)isNavigatable;
 
 -(void)pickImageAtIndex:(int)index next:(int)next;
 

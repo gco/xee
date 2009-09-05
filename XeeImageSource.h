@@ -1,16 +1,18 @@
 #import <Cocoa/Cocoa.h>
 
-#define XeeNavigationCapable 1
-#define XeeRenamingCapable 2
-#define XeeCopyingCapable 4
-#define XeeMovingCapable 8
-#define XeeDeletionCapable 16
-#define XeeSortingCapable 32
-
 #define XeeDefaultSortOrder 0
 #define XeeNameSortOrder 1
 #define XeeDateSortOrder 2
 #define XeeSizeSortOrder 3
+
+extern NSString *XeeErrorDomain;
+
+#define XeeFileExistsError 1
+#define XeeRenameError 2
+#define XeeDeleteError 3
+#define XeeCopyError 4
+#define XeeMoveError 5
+#define XeeNotSupportedError 6
 
 @class XeeImage;
 
@@ -20,6 +22,10 @@
 	NSImage *icon;
 
 	int sortorder;
+
+	BOOL actionsblocked;
+	XeeImage *pendingimage;
+	BOOL pendinglistchange;
 
 	struct rand_entry { int next,prev; } *rand_ordering;
 	int rand_size;
@@ -40,10 +46,25 @@
 -(int)indexOfCurrentImage;
 -(NSString *)representedFilename;
 -(NSString *)descriptiveNameOfCurrentImage;
--(int)capabilities;
+-(NSString *)filenameOfCurrentImage;
+-(uint64_t)sizeOfCurrentImage;
+-(NSDate *)dateOfCurrentImage;
+-(BOOL)isCurrentImageRemote;
+-(BOOL)isCurrentImageAtPath:(NSString *)path;
+
+-(BOOL)canBrowse;
+-(BOOL)canSort;
+-(BOOL)canRenameCurrentImage;
+-(BOOL)canDeleteCurrentImage;
+-(BOOL)canCopyCurrentImage;
+-(BOOL)canMoveCurrentImage;
+-(BOOL)canOpenCurrentImage;
+-(BOOL)canSaveCurrentImage;
 
 -(int)sortOrder;
 -(void)setSortOrder:(int)order;
+
+-(void)setActionsBlocked:(BOOL)blocked;
 
 -(void)pickImageAtIndex:(int)index next:(int)next;
 
@@ -54,6 +75,15 @@
 -(void)pickNextImageAtRandom;
 -(void)pickPreviousImageAtRandom;
 -(void)pickCurrentImage;
+
+-(NSError *)renameCurrentImageTo:(NSString *)newname;
+-(NSError *)deleteCurrentImage;
+-(NSError *)copyCurrentImageTo:(NSString *)destination;
+-(NSError *)moveCurrentImageTo:(NSString *)destination;
+-(NSError *)openCurrentImageInApp:(NSString *)app;
+
+-(void)beginSavingImage:(XeeImage *)image;
+-(void)endSavingImage:(XeeImage *)image;
 
 -(void)updateRandomList;
 -(void)triggerImageChangeAction:(XeeImage *)image;

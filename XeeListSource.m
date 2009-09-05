@@ -54,7 +54,6 @@
 
 -(NSString *)descriptiveNameOfCurrentImage { return [currentry descriptiveName]; }
 
--(int)capabilities { return XeeNavigationCapable; }
 
 
 
@@ -121,7 +120,7 @@
 			[self setCurrentEntry:nil];
 
 			int count=[entries count];
-	/*		if(count&&currfile)
+			/*if(count&&currfile)
 			{
 				int index;
 				for(index=0;index<count;index++)

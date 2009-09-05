@@ -74,7 +74,11 @@
 
 -(NSString *)representedFilename { return [archive filename]; }
 
--(int)capabilities { return XeeNavigationCapable|XeeCopyingCapable|XeeSortingCapable; }
+
+
+-(BOOL)canBrowse { return YES; }
+-(BOOL)canSort { return YES; }
+-(BOOL)canCopyCurrentImage { return YES; }
 
 
 
@@ -130,8 +134,6 @@
 
 @implementation XeeArchiveEntry
 
-extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag, ...)  __attribute__((weak_import));
-
 -(id)initWithArchive:(XADArchive *)parentarchive entry:(int)num realPath:(NSString *)realpath
 {
 	if(self=[super init])
@@ -141,21 +143,11 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 		n=num;
 		ref=nil;
 
-		struct xadFileInfo *info=[archive xadFileInfoForEntry:n];
+		size=[archive uncompressedSizeOfEntry:n];
 
-		// TODO: change to modern calls!
-		size=info->xfi_Size;
-		if(!(info->xfi_Flags&XADFIF_NODATE))
-		{
-			struct xadDate *xd=&info->xfi_Date;
-			NSCalendarDate *date=[NSCalendarDate dateWithYear:xd->xd_Year month:xd->xd_Month
-			day:xd->xd_Day hour:xd->xd_Hour minute:xd->xd_Minute second:xd->xd_Second
-			timeZone:[NSTimeZone defaultTimeZone]];
-
-			time=[date timeIntervalSince1970];
-		}
-		else time=0;
-		//xadConvertDates([archive xadMasterBase],XAD_DATEXADDATE,&info->xfi_Date,XAD_GETDATEUNIX,&time,TAG_DONE);
+		NSDate *date=[[archive dataForkParserDictionaryForEntry:n] objectForKey:@"XADLastModificationDate"];
+		if(date) time=[date timeIntervalSinceReferenceDate];
+		else date=0;
 	}
 	return self;
 }
@@ -182,7 +174,7 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 	[super dealloc];
 }
 
--(NSString *)path { return path; }
+-(NSString *)descriptiveName { return [archive nameOfEntry:n]; }
 
 -(XeeFSRef *)ref
 {
@@ -194,11 +186,15 @@ extern xadERROR xadConvertDates(struct xadMasterBase *xadMasterBase, xadTag tag,
 	return ref;
 }
 
--(off_t)size { return size; }
+-(NSString *)path { return path; }
 
--(long)time { return time; }
+-(NSString *)filename { return [[archive nameOfEntry:n] lastPathComponent]; }
 
--(NSString *)descriptiveName { return [archive nameOfEntry:n]; }
+-(uint64_t)size { return size; }
+
+-(double)time { return time; }
+
+
 
 -(BOOL)isEqual:(XeeArchiveEntry *)other { return archive==other->archive&&n==other->n; }
 

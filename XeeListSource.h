@@ -23,7 +23,6 @@
 -(int)numberOfImages;
 -(int)indexOfCurrentImage;
 -(NSString *)descriptiveNameOfCurrentImage;
--(int)capabilities;
 
 -(void)pickImageAtIndex:(int)index next:(int)next;
 -(void)pickImageAtIndex:(int)index;

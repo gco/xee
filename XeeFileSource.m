@@ -1,5 +1,6 @@
 #import "XeeFileSource.h"
 #import "XeeImage.h"
+#import "XeeStringAdditions.h"
 
 #define XeeAdditionChange 0x0001
 #define XeeDeletionChange 0x0002
@@ -20,9 +21,34 @@
 	[super dealloc];
 }
 
--(NSString *)representedFilename { return [(XeeFileEntry *)currentry path]; }
+-(NSString *)filenameOfCurrentImage
+{
+	return [(XeeFileEntry *)currentry filename];
+}
 
--(int)capabilities { return XeeNavigationCapable|XeeSortingCapable; }
+-(uint64_t)sizeOfCurrentImage
+{
+	[(XeeFileEntry *)currentry prepareForSortingBy:XeeSizeSortOrder];
+	return [(XeeFileEntry *)currentry size];
+}
+
+-(NSDate *)dateOfCurrentImage
+{
+	[(XeeFileEntry *)currentry prepareForSortingBy:XeeDateSortOrder];
+	return [NSDate dateWithTimeIntervalSinceReferenceDate:[(XeeFileEntry *)currentry time]];
+}
+
+-(BOOL)isCurrentImageRemote
+{
+	XeeFSRef *ref=[(XeeFileEntry *)currentry ref];
+	if(!ref) return NO;
+	return [ref isRemote];
+}
+
+-(BOOL)isCurrentImageAtPath:(NSString *)path
+{
+	return [path isEqual:[(XeeFileEntry *)currentry path]];
+}
 
 
 
@@ -57,6 +83,130 @@
 	[self endListUpdates];
 }
 
+
+
+-(NSError *)renameCurrentImageTo:(NSString *)newname
+{
+	NSString *currpath=[(XeeFileEntry *)currentry path];
+	NSString *newpath=[[currpath stringByDeletingLastPathComponent]
+	stringByAppendingPathComponent:newname];
+
+	if([currpath isEqual:newpath]) return nil;
+
+	if([[NSFileManager defaultManager] fileExistsAtPath:newpath])
+	{
+		return [NSError errorWithDomain:XeeErrorDomain code:XeeFileExistsError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLocalizedString(@"Couldn't rename file",@"Title of the rename error dialog"),NSLocalizedDescriptionKey,
+			[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be renamed because another file with the same name already exists.",@"Content of the rename collision dialog"),
+			[currpath lastPathComponent]],NSLocalizedRecoverySuggestionErrorKey,
+		nil]];
+	}
+
+	if(![[NSFileManager defaultManager] movePath:currpath toPath:newpath handler:nil])
+	{
+		return [NSError errorWithDomain:XeeErrorDomain code:XeeRenameError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLocalizedString(@"Couldn't rename file",@"Title of the rename error dialog"),NSLocalizedDescriptionKey,
+			[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be renamed.",@"Content of the rename error dialog"),
+			[currpath lastPathComponent]],NSLocalizedRecoverySuggestionErrorKey,
+		nil]];
+	}
+
+	// success, let kqueue update list
+
+	return nil;
+}
+
+-(NSError *)deleteCurrentImage
+{
+	XeeFSRef *ref=[(XeeFileEntry *)currentry ref];
+	NSString *path=[ref path];
+	BOOL res;
+
+	if([ref isRemote]) res=[[NSFileManager defaultManager] removeFileAtPath:path handler:NULL];
+	else res=[[NSWorkspace sharedWorkspace] performFileOperation:NSWorkspaceRecycleOperation source:[path stringByDeletingLastPathComponent]
+	destination:nil files:[NSArray arrayWithObject:[path lastPathComponent]] tag:nil];
+
+	if(!res)
+	{
+		return [NSError errorWithDomain:XeeErrorDomain code:XeeDeleteError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLocalizedString(@"Couldn't delete file",@"Title of the delete failure dialog"),NSLocalizedDescriptionKey,
+			[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be deleted.",@"Content of the delet failure dialog"),
+			[path lastPathComponent]],NSLocalizedRecoverySuggestionErrorKey,
+		nil]];
+	}
+
+	// success, let kqueue update list
+	[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/dock/drag to trash.aif"];
+
+	return nil;
+}
+
+-(NSError *)copyCurrentImageTo:(NSString *)destination
+{
+	NSString *currpath=[(XeeFileEntry *)currentry path];
+
+	if([[NSFileManager defaultManager] fileExistsAtPath:destination])
+	[[NSFileManager defaultManager] removeFileAtPath:destination handler:nil];
+
+	if(![[NSFileManager defaultManager] copyPath:currpath toPath:destination handler:nil])
+	{
+		return [NSError errorWithDomain:XeeErrorDomain code:XeeCopyError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLocalizedString(@"Couldn't copy file",@"Title of the copy failure dialog"),NSLocalizedDescriptionKey,
+			[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be copied to the folder \"%@\".",@"Content of the copy failure dialog"),
+			[currpath lastPathComponent],[destination stringByDeletingLastPathComponent]],NSLocalizedRecoverySuggestionErrorKey,
+		nil]];
+	}
+
+	// "copied" message in status bar
+	[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/system/Volume Mount.aif"];
+
+	return nil;
+}
+
+-(NSError *)moveCurrentImageTo:(NSString *)destination
+{
+	NSString *currpath=[(XeeFileEntry *)currentry path];
+
+	if([[NSFileManager defaultManager] fileExistsAtPath:destination])
+	[[NSFileManager defaultManager] removeFileAtPath:destination handler:nil];
+
+	if(![[NSFileManager defaultManager] movePath:currpath toPath:destination handler:nil])
+	{
+		return [NSError errorWithDomain:XeeErrorDomain code:XeeMoveError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+			NSLocalizedString(@"Couldn't move file",@"Title of the move failure dialog"),NSLocalizedDescriptionKey,
+			[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be moved to the folder \"%@\".",@"Content of the move failure dialog"),
+			[currpath lastPathComponent],[destination stringByDeletingLastPathComponent]],NSLocalizedRecoverySuggestionErrorKey,
+		nil]];
+	}
+
+	// "moved" message in status bar
+	[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/system/Volume Mount.aif"];
+	// success, let kqueue update list
+
+	return nil;
+}
+
+-(NSError *)openCurrentImageInApp:(NSString *)app
+{
+	NSString *currpath=[(XeeFileEntry *)currentry path];
+
+	// TODO: handle errors
+	[[NSWorkspace sharedWorkspace] openFile:currpath withApplication:app];
+
+	return nil;
+}
+
+-(void)playSound:(NSString *)filename
+{
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"com.apple.sound.uiaudio.enabled"])
+	[self performSelector:@selector(actuallyPlaySound:) withObject:filename afterDelay:0];
+}
+
+-(void)actuallyPlaySound:(NSString *)filename
+{
+	[[[[NSSound alloc] initWithContentsOfFile:filename byReference:NO] autorelease] play];
+}
+
 @end
 
 
@@ -80,6 +230,7 @@
 
 
 
+
 -(XeeImage *)produceImage
 {
 	return [XeeImage imageForRef:[self ref]];
@@ -87,13 +238,15 @@
 
 
 
--(NSString *)path { return nil; }
-
 -(XeeFSRef *)ref { return nil; }
 
--(off_t)size { return 0; }
+-(NSString *)path { return [[self ref] path]; }
 
--(long)time { return 0; }
+-(NSString *)filename { return nil; }
+
+-(uint64_t)size { return 0; }
+
+-(double)time { return 0; }
 
 
 
@@ -130,8 +283,8 @@
 
 -(NSComparisonResult)compareSizes:(XeeFileEntry *)other
 {
-	off_t size1=[self size];
-	off_t size2=[other size];
+	uint64_t size1=[self size];
+	uint64_t size2=[other size];
 
 	if(size1==size2) return NSOrderedSame;
 	else if(size1>size2) return NSOrderedAscending;
@@ -140,8 +293,8 @@
 
 -(NSComparisonResult)compareTimes:(XeeFileEntry *)other
 {
-	long time1=[self time];
-	long time2=[other time];
+	double time1=[self time];
+	double time2=[other time];
 
 	if(time1==time2) return NSOrderedSame;
 	else if(time1>time2) return NSOrderedAscending;

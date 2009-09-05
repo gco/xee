@@ -10,13 +10,24 @@
 -(id)init;
 -(void)dealloc;
 
--(NSString *)representedFilename;
--(int)capabilities;
+-(uint64_t)sizeOfCurrentImage;
+-(NSDate *)dateOfCurrentImage;
+-(BOOL)isCurrentImageRemote;
+-(BOOL)isCurrentImageAtPath:(NSString *)path;
 
 -(void)setSortOrder:(int)order;
 
 -(void)runSorter;
 -(void)sortFiles;
+
+-(NSError *)renameCurrentImageTo:(NSString *)newname;
+-(NSError *)deleteCurrentImage;
+-(NSError *)copyCurrentImageTo:(NSString *)destination;
+-(NSError *)moveCurrentImageTo:(NSString *)destination;
+-(NSError *)openCurrentImageInApp:(NSString *)app;
+
+-(void)playSound:(NSString *)filename;
+-(void)actuallyPlaySound:(NSString *)filename;
 
 @end
 
@@ -31,10 +42,11 @@
 
 -(XeeImage *)produceImage;
 
--(NSString *)path;
 -(XeeFSRef *)ref;
--(off_t)size;
--(long)time;
+-(NSString *)path;
+-(NSString *)filename;
+-(uint64_t)size;
+-(double)time;
 
 -(void)prepareForSortingBy:(int)sortorder;
 -(void)finishSorting;

@@ -254,6 +254,7 @@
 -(BOOL)isEqual:(XeeFSRef *)other
 {
 //	if(![other isKindOfClass:[self class]]) return NO;
+	if(![self isValid]||![other isValid]) return NO;
 	if(hash!=other->hash) return NO;
 	return FSCompareFSRefs(&ref,&other->ref)==noErr;
 }

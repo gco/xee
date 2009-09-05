@@ -13,7 +13,10 @@
 -(void)dealloc;
 
 -(NSString *)representedFilename;
--(int)capabilities;
+
+-(BOOL)canBrowse;
+-(BOOL)canSort;
+-(BOOL)canCopyCurrentImage;
 
 -(XADArchive *)archiveForFile:(NSString *)archivename;
 
@@ -27,19 +30,20 @@
 	int n;
 	XeeFSRef *ref;
 	NSString *path;
-	off_t size;
-	long time;
+	uint64_t size;
+	double time;
 }
 
 -(id)initWithArchive:(XADArchive *)parentarchive entry:(int)num realPath:(NSString *)realpath;
 -(id)initAsCopyOf:(XeeArchiveEntry *)other;
 -(void)dealloc;
 
--(NSString *)path;
--(XeeFSRef *)ref;
--(off_t)size;
--(long)time;
 -(NSString *)descriptiveName;
+-(XeeFSRef *)ref;
+-(NSString *)path;
+-(NSString *)filename;
+-(uint64_t)size;
+-(double)time;
 
 -(BOOL)isEqual:(XeeArchiveEntry *)other;
 -(unsigned)hash;

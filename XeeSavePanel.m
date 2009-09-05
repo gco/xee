@@ -188,7 +188,7 @@
 	else
 	{
 		[self makeFirstResponder:textfield];
-		[[self fieldEditor:NO forObject:textfield] setSelectedRange:range];
+		[[textfield currentEditor] setSelectedRange:range];
 	}
 }
 

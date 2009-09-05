@@ -5,7 +5,7 @@
 {
 	XeeFSRef *dirref,*imgref;
 	int dirfd,filefd;
-	BOOL needsrefresh,written;
+	BOOL scheduledimagerename,scheduledimagerefresh,scheduleddirrefresh;
 }
 
 -(id)initWithDirectory:(XeeFSRef *)directory;
@@ -14,16 +14,38 @@
 -(id)initWithRef:(XeeFSRef *)ref image:(XeeImage *)image;
 -(void)dealloc;
 
--(int)capabilities;
+-(NSString *)representedFilename;
 
--(BOOL)scanDirectory:(XeeFSRef *)ref;
--(void)readDirectory:(XeeFSRef *)ref;
+-(BOOL)canBrowse;
+-(BOOL)canSort;
+-(BOOL)canRenameCurrentImage;
+-(BOOL)canDeleteCurrentImage;
+-(BOOL)canCopyCurrentImage;
+-(BOOL)canMoveCurrentImage;
+-(BOOL)canOpenCurrentImage;
+-(BOOL)canSaveCurrentImage;
+
+-(NSError *)renameCurrentImageTo:(NSString *)newname;
+-(NSError *)deleteCurrentImage;
+-(NSError *)moveCurrentImageTo:(NSString *)destination;
+-(void)beginSavingImage:(XeeImage *)image;
+-(void)endSavingImage:(XeeImage *)image;
+
 -(void)setCurrentEntry:(XeeFileEntry *)entry;
 
 -(void)fileChanged:(XeeKEvent *)event;
 -(void)directoryChanged:(XeeKEvent *)event;
--(void)setNeedsRefresh:(BOOL)refresh;
--(void)refresh;
+
+-(void)scheduleImageRename;
+-(void)scheduleImageRefresh;
+-(void)scheduleDirectoryRefresh;
+-(void)performScheduledTasks;
+
+-(void)removeCurrentEntryAndUpdate;
+-(void)removeAllEntriesAndUpdate;
+
+-(BOOL)scanDirectory:(XeeFSRef *)ref;
+-(void)readDirectory:(XeeFSRef *)ref;
 
 @end
 
@@ -32,8 +54,8 @@
 @interface XeeDirectoryEntry:XeeFileEntry
 {
 	XeeFSRef *ref;
-	off_t size;
-	long time;
+	uint64_t size;
+	double time;
 }
 
 +(XeeDirectoryEntry *)entryWithRef:(XeeFSRef *)ref;
@@ -46,11 +68,12 @@
 
 -(void)prepareForSortingBy:(int)sortorder;
 
--(NSString *)path;
--(XeeFSRef *)ref;
--(off_t)size;
--(long)time;
 -(NSString *)descriptiveName;
+-(XeeFSRef *)ref;
+-(NSString *)path;
+-(NSString *)filename;
+-(uint64_t)size;
+-(double)time;
 
 -(BOOL)matchesObject:(id)obj;
 

@@ -119,10 +119,9 @@
 -(NSArray *)properties;
 -(NSArray *)fullProperties;
 
--(int)fileSize;
+-(uint64_t)fileSize;
+-(NSDate *)date;
 -(NSString *)descriptiveFilename;
--(NSString *)descriptiveFileSize;
--(NSString *)descriptiveDate;
 
 //-(void)setFilename:(NSString *)name;
 -(void)setFormat:(NSString *)fmt;

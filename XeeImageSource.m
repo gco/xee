@@ -2,6 +2,8 @@
 
 #import <pthread.h>
 
+NSString *XeeErrorDomain=@"XeeErrorDomain";
+
 @implementation XeeImageSource
 
 -(id)init
@@ -11,6 +13,11 @@
 		delegate=nil;
 		icon=nil;
 		sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortingOrder"];
+
+		actionsblocked=NO;
+		pendingimage=nil;
+		pendinglistchange=NO;
+
 		rand_ordering=NULL;
 		rand_size=0;
 	}
@@ -21,6 +28,7 @@
 {
 	free(rand_ordering);
 	[icon release];
+	[pendingimage release];
 	[super dealloc];
 }
 
@@ -51,13 +59,55 @@
 
 -(NSString *)descriptiveNameOfCurrentImage { return nil; }
 
--(int)capabilities { return 0; }
+-(NSString *)filenameOfCurrentImage { return nil; }
+
+-(uint64_t)sizeOfCurrentImage { return 0; }
+
+-(NSDate *)dateOfCurrentImage { return nil; }
+
+-(BOOL)isCurrentImageRemote { return NO; }
+
+-(BOOL)isCurrentImageAtPath:(NSString *)path { return NO; }
+
+
+
+-(BOOL)canBrowse { return NO; }
+-(BOOL)canSort { return NO; }
+-(BOOL)canRenameCurrentImage { return NO; }
+-(BOOL)canDeleteCurrentImage { return NO; }
+-(BOOL)canCopyCurrentImage { return NO; }
+-(BOOL)canMoveCurrentImage { return NO; }
+-(BOOL)canOpenCurrentImage { return NO; }
+-(BOOL)canSaveCurrentImage { return NO; }
 
 
 
 -(int)sortOrder { return sortorder==XeeDefaultSortOrder?XeeNameSortOrder:sortorder; }
 
 -(void)setSortOrder:(int)order { sortorder=order; }
+
+
+
+-(void)setActionsBlocked:(BOOL)blocked
+{
+	if(actionsblocked&&!blocked)
+	{
+		actionsblocked=NO;
+		if(pendingimage)
+		{
+			[self triggerImageChangeAction:pendingimage];
+			[pendingimage release];
+			pendingimage=nil;
+		}
+
+		if(pendinglistchange)
+		{
+			[self triggerImageListChangeAction];
+			pendinglistchange=NO;
+		}
+	}
+	else actionsblocked=blocked;
+}
 
 
 
@@ -153,6 +203,16 @@
 
 
 
+-(NSError *)renameCurrentImageTo:(NSString *)newname  { return [NSError errorWithDomain:XeeErrorDomain code:XeeNotSupportedError userInfo:nil]; }
+-(NSError *)deleteCurrentImage { return [NSError errorWithDomain:XeeErrorDomain code:XeeNotSupportedError userInfo:nil]; }
+-(NSError *)copyCurrentImageTo:(NSString *)destination { return [NSError errorWithDomain:XeeErrorDomain code:XeeNotSupportedError userInfo:nil]; }
+-(NSError *)moveCurrentImageTo:(NSString *)destination { return [NSError errorWithDomain:XeeErrorDomain code:XeeNotSupportedError userInfo:nil]; }
+-(NSError *)openCurrentImageInApp:(NSString *)app { return [NSError errorWithDomain:XeeErrorDomain code:XeeNotSupportedError userInfo:nil]; }
+
+-(void)beginSavingImage:(XeeImage *)image {}
+-(void)endSavingImage:(XeeImage *)image {}
+
+
 
 -(void)updateRandomList
 {
@@ -189,20 +249,33 @@
 
 -(void)triggerImageChangeAction:(XeeImage *)image
 {
-/*	if(pthread_main_np())*/ [delegate xeeImageSource:self imageDidChange:image];
-/*	else
+	if(actionsblocked)
 	{
-		NSInvocation *invocation=[NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:@selector(XeeImageSource:imageDidChange:)]];
-		[invocation setArgument:<#(void *)argumentLocation#> atIndex:<#(int)index#>
+		if(image!=pendingimage)
+		{
+			[pendingimage release];
+			pendingimage=[image retain];
+		}
 	}
+	else
+	{
+		[delegate xeeImageSource:self imageDidChange:image];
+/*		if(pthread_main_np()) [delegate xeeImageSource:self imageDidChange:image];
+		else
+		{
+			NSInvocation *invocation=[NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:@selector(XeeImageSource:imageDidChange:)]];
+			[invocation setArgument:<#(void *)argumentLocation#> atIndex:<#(int)index#>
+		}
 
-	else [delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];
+		else [delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];
 */
+	}
 }
 
 -(void)triggerImageListChangeAction
 {
-	[delegate xeeImageSource:self imageListDidChange:[self numberOfImages]];
+	if(actionsblocked) pendinglistchange=YES;
+	else [delegate xeeImageSource:self imageListDidChange:[self numberOfImages]];
 }
 
 @end

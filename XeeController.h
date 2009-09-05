@@ -103,7 +103,10 @@
 -(NSSize)minViewSize;
 -(NSRect)availableScreenSpace;
 
--(void)errorMessage:(NSString *)title text:(NSString *)text;
+-(void)displayErrorMessage:(NSString *)title text:(NSString *)text;
+-(void)displayPossibleError:(NSError *)error;
+-(void)displayAlert:(NSAlert *)alert;
+
 -(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target object:(id)object;
 -(void)detachBackgroundTask:(NSDictionary *)task;
 

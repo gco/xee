@@ -10,6 +10,7 @@
 #import "XeePropertiesController.h"
 #import "XeeMoveTool.h"
 #import "XeeCropTool.h"
+#import "XeeStringAdditions.h"
 
 #import <Carbon/Carbon.h>
 
@@ -560,9 +561,9 @@ static BOOL HasAppleMouse()
 
 
 
--(void)errorMessage:(NSString *)title text:(NSString *)text
+-(void)displayErrorMessage:(NSString *)title text:(NSString *)text
 {
-	NSAlert *alert=[[NSAlert alloc] init];
+	NSAlert *alert=[[[NSAlert alloc] init] autorelease];
 
 	[alert setMessageText:title];
 	[alert setInformativeText:text];
@@ -572,13 +573,24 @@ static BOOL HasAppleMouse()
 	[self performSelector:@selector(displayAlert:) withObject:alert afterDelay:0];
 }
 
+-(void)displayPossibleError:(NSError *)error
+{
+	if(error)
+	{
+		NSAlert *alert=[NSAlert alertWithError:error];
+		[alert setAlertStyle:NSCriticalAlertStyle];
+
+		[self performSelector:@selector(displayAlert:) withObject:alert afterDelay:0];
+	}
+}
+
 -(void)displayAlert:(NSAlert *)alert
 {
 	if(fullscreenwindow) [alert runModal];
 	else [alert beginSheetModalForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nil];
-
-	[alert release];
 }
+
+
 
 -(void)detachBackgroundTaskWithMessage:(NSString *)message selector:(SEL)selector target:(id)target object:(id)object
 {
@@ -773,13 +785,13 @@ static BOOL HasAppleMouse()
 {
 	int count=[source numberOfImages];
 	int curr=[source indexOfCurrentImage];
-	int capabilities=[source capabilities];
 	BOOL wrap=[[NSUserDefaults standardUserDefaults] boolForKey:@"wrapImageBrowsing"];
 
 	if(action==@selector(toggleStatusBar:)) return fullscreenwindow?NO:YES;
 
 	else if(action==@selector(save:)) return [undo canUndo]&&currimage&&![currimage needsLoading]&&
-	([currimage losslessSaveFlags]&(XeeCanOverwriteLosslesslyFlag|XeeNotActuallyLosslessFlag))==XeeCanOverwriteLosslesslyFlag;
+	([currimage losslessSaveFlags]&(XeeCanOverwriteLosslesslyFlag|XeeNotActuallyLosslessFlag))==
+	XeeCanOverwriteLosslesslyFlag&&[source canSaveCurrentImage];
 	else if(action==@selector(saveAs:)) return currimage&&![currimage needsLoading];
 	else if(action==@selector(toggleAnimation:)) return currimage&&[currimage animated];
 	else if(action==@selector(frameSkipNext:)||
@@ -807,14 +819,14 @@ static BOOL HasAppleMouse()
 			action==@selector(skipFirst:)) return count>1&&(curr!=0||wrap);
 	else if(action==@selector(skipRandom:)||
 			action==@selector(skipRandomPrev:)) return count>1;
-	else if(action==@selector(setSortOrder:)) return capabilities&XeeSortingCapable;
+	else if(action==@selector(setSortOrder:)) return [source canSort];
 
 	else if(action==@selector(revealInFinder:)) return [window representedFilename]?YES:NO;
-	else if(action==@selector(renameFileFromMenu:)) return currimage&&(capabilities&XeeRenamingCapable);
+	else if(action==@selector(renameFileFromMenu:)) return [source canRenameCurrentImage];
 	else if(action==@selector(deleteFileFromMenu:)||
-			action==@selector(askAndDelete:)) return currimage&&(capabilities&XeeDeletionCapable);
-	else if(action==@selector(moveFile:)) return currimage&&(capabilities&XeeMovingCapable)&&!fullscreenwindow;
-	else if(action==@selector(copyFile:)) return currimage&&(capabilities&XeeCopyingCapable)&&!fullscreenwindow;
+			action==@selector(askAndDelete:)) return [source canDeleteCurrentImage];
+	else if(action==@selector(moveFile:)) return [source canMoveCurrentImage]&&!fullscreenwindow;
+	else if(action==@selector(copyFile:)) return [source canCopyCurrentImage]&&!fullscreenwindow;
 	else if(action==@selector(launchAppFromMenu:)) return currimage&&[currimage filename];
 	else if(action==@selector(launchDefaultEditor:)) return currimage&&[currimage filename]&&[maindelegate defaultEditor];
 
@@ -827,68 +839,68 @@ static BOOL HasAppleMouse()
 {
 	[statusbar removeAllCells];
 
-	if(!currimage)
+	if([source indexOfCurrentImage]==NSNotFound)
 	{
-		if([source indexOfCurrentImage]==NSNotFound)
-		{
-/*			if(![source numberOfImages])
-			[statusbar addEntry:NSLocalizedString(@"No images available",@"Status bar message when no images are available")
-			imageNamed:@"message"];
-			else*/
-			[statusbar addEntry:NSLocalizedString(@"No images available",@"Status bar message when no images are available")
-			imageNamed:@"message"];
-		}
-		else
-		{
-			if([source capabilities]&XeeNavigationCapable) [statusbar addEntry:
-			[NSString stringWithFormat:@"%d/%d",[source indexOfCurrentImage]+1,[source numberOfImages]]
-			image:[source icon]];
-
-			[statusbar addEntry:[NSString stringWithFormat:
-			NSLocalizedString(@"Couldn't display file \"%@\".",@"Statusbar message when image loading fails to even identify a file"),
-			[source descriptiveNameOfCurrentImage]] imageNamed:@"error"];
-		}
-
-		[statusbar setNeedsDisplay:YES];
+		[statusbar addEntry:NSLocalizedString(@"No images available",@"Status bar message when no images are available")
+		imageNamed:@"message"];
 		return;
 	}
 
-	if([source capabilities]&XeeNavigationCapable) [statusbar addEntry:
+	if([source canBrowse]) [statusbar addEntry:
 	[NSString stringWithFormat:@"%d/%d",[source indexOfCurrentImage]+1,[source numberOfImages]]
 	image:[source icon]];
 
-	[statusbar addEntry:
-	[NSString stringWithFormat:@"%d%%",(int)(zoom*100)]
-	imageNamed:@"zoom"];
-
-	if([currimage frames]>1) [statusbar addEntry:
-	[NSString stringWithFormat:@"%d/%d",[currimage frame]+1,[currimage frames]]
-	imageNamed:@"frames"];
-
-	[statusbar addEntry:
-	[NSString stringWithFormat:@"%dx%d",[currimage width],[currimage height]]
-	imageNamed:@"size"];
-
-	[statusbar addEntry:[currimage depth] image:[currimage depthIcon]];
-
-	if([currimage filename])
+	if(currimage)
 	{
-		[statusbar addEntry:[currimage descriptiveFileSize] imageNamed:@"filesize"];
-		[statusbar addEntry:[currimage descriptiveDate]];
+		[statusbar addEntry:
+		[NSString stringWithFormat:@"%d%%",(int)(zoom*100)]
+		imageNamed:@"zoom"];
+
+		if([currimage frames]>1) [statusbar addEntry:
+		[NSString stringWithFormat:@"%d/%d",[currimage frame]+1,[currimage frames]]
+		imageNamed:@"frames"];
+
+		[statusbar addEntry:
+		[NSString stringWithFormat:@"%dx%d",[currimage width],[currimage height]]
+		imageNamed:@"size"];
+
+		[statusbar addEntry:[currimage depth] image:[currimage depthIcon]];
+	}
+
+	[statusbar addEntry:XeeDescribeSize([source sizeOfCurrentImage]) imageNamed:@"filesize"];
+	[statusbar addEntry:XeeDescribeDate([source dateOfCurrentImage])];
+
+	if(currimage&&[currimage filename])
+	{
 		[statusbar addEntry:[currimage format] image:[currimage icon]];
 	}
 
-	if([tasks count]) [statusbar addEntry:[[tasks objectAtIndex:0] objectForKey:@"message"] imageNamed:@"message"];
-
-	else if([currimage failed]) [statusbar addEntry:[NSString stringWithFormat:
-	NSLocalizedString(@"Error loading image \"%@\".",@"Statusbar message when image loading fails"),
-	[source descriptiveNameOfCurrentImage]] imageNamed:@"error"];
-
-	else if([currimage needsLoading]) [statusbar addEntry:[NSString stringWithFormat:
-	NSLocalizedString(@"Loading \"%@\"...",@"Statusbar message while loading"),
-	[source descriptiveNameOfCurrentImage]] imageNamed:@"message"];
-
-	else [statusbar addEntry:[source descriptiveNameOfCurrentImage]];
+	if(!currimage)
+	{
+		[statusbar addEntry:[NSString stringWithFormat:
+		NSLocalizedString(@"Couldn't display file \"%@\".",@"Statusbar message when image loading fails to even identify a file"),
+		[source descriptiveNameOfCurrentImage]] imageNamed:@"error"];
+	}
+	else if([tasks count])
+	{
+		[statusbar addEntry:[[tasks objectAtIndex:0] objectForKey:@"message"] imageNamed:@"message"];
+	}
+	else if([currimage failed])
+	{
+		[statusbar addEntry:[NSString stringWithFormat:
+		NSLocalizedString(@"Error loading image \"%@\".",@"Statusbar message when image loading fails"),
+		[source descriptiveNameOfCurrentImage]] imageNamed:@"error"];
+	}
+	else if([currimage needsLoading])
+	{
+		[statusbar addEntry:[NSString stringWithFormat:
+		NSLocalizedString(@"Loading \"%@\"...",@"Statusbar message while loading"),
+		[source descriptiveNameOfCurrentImage]] imageNamed:@"message"];
+	}
+	else
+	{
+		[statusbar addEntry:[source descriptiveNameOfCurrentImage]];
+	}
 
 	[statusbar setNeedsDisplay:YES];
 }
@@ -938,9 +950,8 @@ static BOOL HasAppleMouse()
 
 -(void)setDrawerEnableState
 {
-	int capabilities=[source capabilities];
-	BOOL cancopy=capabilities&XeeCopyingCapable;
-	BOOL canmove=capabilities&XeeMovingCapable;
+	BOOL cancopy=[source canCopyCurrentImage];
+	BOOL canmove=[source canMoveCurrentImage];
 
 	if(cancopy&&canmove)
 	{

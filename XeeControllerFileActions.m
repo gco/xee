@@ -5,6 +5,7 @@
 #import "XeeCollisionPanel.h"
 #import "XeeRenamePanel.h"
 #import "XeeDelegate.h"
+#import "XeeStringAdditions.h"
 
 
 
@@ -32,43 +33,31 @@
 		[nib instantiateNibWithOwner:self topLevelObjects:nil];
 	}
 
-	[renamepanel run:fullscreenwindow?nil:window image:currimage];
+	[source setActionsBlocked:YES];
+
+	[renamepanel run:fullscreenwindow?nil:window filename:[source filenameOfCurrentImage]
+	delegate:self didEndSelector:@selector(renamePanelEnd:returnCode:filename:)];
 }
 
--(void)renameFile:(NSString *)filename to:(NSString *)newname
+-(void)renamePanelEnd:(XeeRenamePanel *)panel returnCode:(int)res filename:(NSString *)newname 
 {
-	if([filename isEqual:newname]) return;
+	if(res)
+	{
+		[self displayPossibleError:[source renameCurrentImageTo:[newname stringByMappingSlashToColon]]];
+	}
 
-	if([[NSFileManager defaultManager] fileExistsAtPath:newname])
-	{
-		[self errorMessage:NSLocalizedString(@"Couldn't rename file",@"Title of the rename error dialog")
-		text:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be renamed because another file with the same name already exists.",@"Content of the rename collision dialog"),
-		[filename lastPathComponent]]];
-	}
-	else
-	{
-		if([[NSFileManager defaultManager] movePath:filename toPath:newname handler:nil])
-		{
-			// success, let kqueue update list
-		}
-		else
-		{
-			[self errorMessage:NSLocalizedString(@"Couldn't rename file",@"Title of the rename error dialog")
-			text:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be renamed.",@"Content of the rename error dialog"),
-			[filename lastPathComponent]]];
-		}
-	}
+	[source setActionsBlocked:NO];
 }
 
 
 -(IBAction)deleteFileFromMenu:(id)sender
 {
-	if([[self currentRef] isRemote]) { [self askAndDelete:sender]; return; }
+	if([source isCurrentImageRemote]) { [self askAndDelete:sender]; return; }
 
 	if(![self validateAction:_cmd]) { NSBeep(); return; }
 
 	[self setResizeBlockFromSender:sender];
-	[self deleteFile:[self currentRef]];
+	[self displayPossibleError:[source deleteCurrentImage]];
 	[self setResizeBlock:NO];
 }
 
@@ -78,17 +67,18 @@
 
 	[self setResizeBlockFromSender:sender];
 
-	XeeFSRef *ref=[[self currentRef] retain];
 	NSAlert *alert=[[NSAlert alloc] init];
 
-	if([ref isRemote])
+	if([source isCurrentImageRemote])
 	{
-		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?\nThe file will be removed immediately.",@"Content of the delete confirmation dialog for remote files"),[[ref path] lastPathComponent]]];
+		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?\nThe file will be removed immediately.",@"Content of the delete confirmation dialog for remote files"),
+		[source descriptiveNameOfCurrentImage]]];
 		[alert setAlertStyle:NSCriticalAlertStyle];
 	}
 	else
 	{
-		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?",@"Content of the delete confirmation dialog"),[[ref path] lastPathComponent]]];
+		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Do you want to delete the image file \"%@\"?",@"Content of the delete confirmation dialog"),
+		[source descriptiveNameOfCurrentImage]]];
 		[alert setIcon:[[[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/Dock.app/Contents/Resources/trashfull.png"] autorelease]];
 	}
 
@@ -96,41 +86,19 @@
 	[alert addButtonWithTitle:NSLocalizedString(@"Delete",@"Delete button")];
 	[alert addButtonWithTitle:NSLocalizedString(@"Cancel",@"Cancel button")];
 
-	if(fullscreenwindow) [self deleteAlertEnd:alert returnCode:[alert runModal] contextInfo:ref];
-	else  [alert beginSheetModalForWindow:window modalDelegate:self didEndSelector:@selector(deleteAlertEnd:returnCode:contextInfo:) contextInfo:ref];
+	[source setActionsBlocked:YES];
+
+	if(fullscreenwindow) [self deleteAlertEnd:alert returnCode:[alert runModal] contextInfo:NULL];
+	else [alert beginSheetModalForWindow:window modalDelegate:self didEndSelector:@selector(deleteAlertEnd:returnCode:contextInfo:) contextInfo:NULL];
 
 	[self setResizeBlock:NO];
 }
 
--(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(XeeFSRef *)ref
+-(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(void *)info
 {
-	if(res==NSAlertFirstButtonReturn)
-	{
-		[self deleteFile:ref];
-	}
-	[ref release];
-}
+	if(res==NSAlertFirstButtonReturn) [self displayPossibleError:[source deleteCurrentImage]];
 
--(void)deleteFile:(XeeFSRef *)ref
-{
-	NSString *filename=[ref path];
-	BOOL res;
-
-	if([ref isRemote]) res=[[NSFileManager defaultManager] removeFileAtPath:filename handler:NULL];
-	else res=[[NSWorkspace sharedWorkspace] performFileOperation:NSWorkspaceRecycleOperation source:[filename stringByDeletingLastPathComponent]
-	destination:nil files:[NSArray arrayWithObject:[filename lastPathComponent]] tag:nil];
-
-	if(res)
-	{
-		// success, let kqueue update list
-		[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/dock/drag to trash.aif"];
-	}
-	else
-	{
-		[self errorMessage:NSLocalizedString(@"Couldn't delete file",@"Title of the delete failure dialog")
-		text:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be deleted.",@"Content of the delet failure dialog"),
-		[filename lastPathComponent]]];
-	}
+	[source setActionsBlocked:NO];
 }
 
 
@@ -227,7 +195,6 @@
 	if([drawerseg selectedSegment]==0) drawer_mode=XeeCopyMode;
 	else drawer_mode=XeeMoveMode;
 
-	NSString *filename=[self currentFilename];
 	int index=[sender selectedRow];
 
 	if(index==0)
@@ -239,144 +206,116 @@
 		if(drawer_mode==XeeMoveMode) [panel setPrompt:NSLocalizedString(@"Move",@"Move button")];
 		else if(drawer_mode==XeeCopyMode) [panel setPrompt:NSLocalizedString(@"Copy",@"Copy button and menuitem")];
 
+		[source setActionsBlocked:YES];
+
 		[panel beginSheetForDirectory:nil file:nil types:nil modalForWindow:window modalDelegate:self
-		didEndSelector:@selector(destinationPanelEnd:returnCode:contextInfo:) contextInfo:[filename retain]];
+		didEndSelector:@selector(destinationPanelEnd:returnCode:contextInfo:) contextInfo:NULL];
 	}
 	else [self transferToDestination:index mode:drawer_mode];
 }
 
--(void)destinationPanelEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(NSString *)filename
+-(void)destinationPanelEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(void *)info
 {
 	if(res==NSOKButton)
 	{
 		NSString *destdir=[[panel filenames] objectAtIndex:0];
-		NSString *destination=[destdir stringByAppendingPathComponent:[filename lastPathComponent]];
+		NSString *destination=[destdir stringByAppendingPathComponent:[source filenameOfCurrentImage]];
 
 		[XeeDestinationView suggestInsertion:destdir];
 
-		[self attemptToTransferFile:filename to:destination mode:drawer_mode];
+		[self attemptToTransferCurrentImageTo:destination mode:drawer_mode];
 	}
-	[filename release];
+	else
+	{
+		[source setActionsBlocked:NO];
+	}
 }
 
 -(void)transferToDestination:(int)index mode:(int)mode
 {
-	if(mode==XeeCopyMode&&!([source capabilities]&XeeCopyingCapable)) { NSBeep(); return; }
-	else if(mode==XeeMoveMode&&!([source capabilities]&XeeMovingCapable)) { NSBeep(); return; }
+	if(mode==XeeCopyMode&&![source canCopyCurrentImage]) { NSBeep(); return; }
+	else if(mode==XeeMoveMode&&![source canMoveCurrentImage]) { NSBeep(); return; }
 
-	NSString *filename=[self currentFilename];
 	NSString *path=[destinationtable pathForRow:index];
 	if(!path) { NSBeep(); return; }
-	NSString *destination=[path stringByAppendingPathComponent:[filename lastPathComponent]];
-	[self attemptToTransferFile:filename to:destination mode:mode];
+	NSString *destination=[path stringByAppendingPathComponent:[source filenameOfCurrentImage]];
+	[self attemptToTransferCurrentImageTo:destination mode:mode];
 }
 
--(void)attemptToTransferFile:(NSString *)filename to:(NSString *)destination mode:(int)mode
+-(void)attemptToTransferCurrentImageTo:(NSString *)destination mode:(int)mode
 {
-	if([filename isEqual:destination])
+	if([source isCurrentImageAtPath:destination])
 	{
-		[self errorMessage:NSLocalizedString(@"File already there",@"Title of the move/copy to same folder dialog")
+		[self displayErrorMessage:NSLocalizedString(@"File already there",@"Title of the move/copy to same folder dialog")
 		text:NSLocalizedString(@"The source and destination locations are the same.",@"Content of the move/copy to same folder dialog")];
+		[source setActionsBlocked:NO];
+		return;
+	}
+
+	NSDictionary *destinfo=[[NSFileManager defaultManager] fileAttributesAtPath:destination traverseLink:YES];
+	if(destinfo)
+	{
+		if(!collisionpanel)
+		{
+			NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"CollisionPanel" bundle:nil] autorelease];
+			[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		}
+
+		[source setActionsBlocked:YES];
+
+		[collisionpanel run:fullscreenwindow?nil:window sourceImage:currimage
+		size:[source sizeOfCurrentImage] date:[source dateOfCurrentImage]
+		destinationPath:destination mode:mode delegate:self
+		didEndSelector:@selector(collisionPanelEnd:returnCode:path:mode:)];
 	}
 	else
 	{
-		NSDictionary *destinfo=[[NSFileManager defaultManager] fileAttributesAtPath:destination traverseLink:YES];
-
-		if(destinfo)
-		{
-			if(!collisionpanel)
-			{
-				NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"CollisionPanel" bundle:nil] autorelease];
-				[nib instantiateNibWithOwner:self topLevelObjects:nil];
-			}
-
-			XeeImage *destimage=[XeeImage imageForFilename:destination];
-			[collisionpanel run:fullscreenwindow?nil:window source:currimage destination:destimage mode:mode];
-		}
-		else
-		{
 //		[self performSelector:@selector() withObject: afterDelay:0];
-			[self transferFile:filename to:destination mode:mode];
-		}
+		[self transferCurrentImageTo:destination mode:mode];
+		[source setActionsBlocked:NO];
 	}
 }
 
--(void)transferFile:(NSString *)filename to:(NSString *)destination mode:(int)mode
+-(void)collisionPanelEnd:(XeeCollisionPanel *)panel returnCode:(int)res path:(NSString *)destination mode:(int)mode
 {
-	if([[NSFileManager defaultManager] fileExistsAtPath:destination])
+	if(res==1)
 	{
-		[[NSFileManager defaultManager] removeFileAtPath:destination handler:nil];
+		[self transferCurrentImageTo:destination mode:mode];
+		[source setActionsBlocked:NO];
 	}
-
-	if(mode==XeeMoveMode)
+	else if(res==2)
 	{
-		if([[NSFileManager defaultManager] movePath:filename toPath:destination handler:nil])
-		{
-			// "moved" message in status bar
-			[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/system/Volume Mount.aif"];
-			// success, let kqueue update list
-		}
-		else
-		{
-			[self errorMessage:NSLocalizedString(@"Couldn't move file",@"Title of the move failure dialog")
-			text:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be moved to the folder \"%@\".",@"Content of the move failure dialog"),
-			[filename lastPathComponent],[destination stringByDeletingLastPathComponent]]];
-		}
+		[self attemptToTransferCurrentImageTo:destination mode:mode];
 	}
 	else
 	{
-		if([[NSFileManager defaultManager] copyPath:filename toPath:destination handler:nil])
-		{
-			// "copied" message in status bar
-			[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/system/Volume Mount.aif"];
-		}
-		else
-		{
-			[self errorMessage:NSLocalizedString(@"Couldn't copy file",@"Title of the copy failure dialog")
-			text:[NSString stringWithFormat:NSLocalizedString(@"The file \"%@\" could not be copied to the folder \"%@\".",@"Content of the copy failure dialog"),
-			[filename lastPathComponent],[destination stringByDeletingLastPathComponent]]];
-		}
+		[source setActionsBlocked:NO];
 	}
 }
 
-
-
--(void)playSound:(NSString *)filename
+-(void)transferCurrentImageTo:(NSString *)destination mode:(int)mode
 {
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"com.apple.sound.uiaudio.enabled"])
-	[self performSelector:@selector(actuallyPlaySound:) withObject:filename afterDelay:0];
+	if(mode==XeeMoveMode) [self displayPossibleError:[source moveCurrentImageTo:destination]];
+	else [self displayPossibleError:[source copyCurrentImageTo:destination]];
 }
 
--(void)actuallyPlaySound:(NSString *)filename
-{
-	[[[[NSSound alloc] initWithContentsOfFile:filename byReference:NO] autorelease] play];
-}
 
 
 
 -(IBAction)launchAppFromMenu:(id)sender
 {
-	if(!currimage) return;
-
-	NSString *filename=[self currentFilename];
-	if(!filename) return;
+	if(![self validateAction:_cmd]) { NSBeep(); return; }
 
 	NSString *app=[sender representedObject];
-
-	[[NSWorkspace sharedWorkspace] openFile:filename withApplication:app];
+	[self displayPossibleError:[source openCurrentImageInApp:app]];
 }
 
 -(IBAction)launchDefaultEditor:(id)sender
 {
-	if(!currimage) return;
-
-	NSString *filename=[self currentFilename];
-	if(!filename) return;
+	if(![self validateAction:_cmd]) { NSBeep(); return; }
 
 	NSString *app=[maindelegate defaultEditor];
-	if(!app) return;
-
-	[[NSWorkspace sharedWorkspace] openFile:filename withApplication:app];
+	[self displayPossibleError:[source openCurrentImageInApp:app]];
 }
 
 

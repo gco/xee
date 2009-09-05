@@ -13,7 +13,7 @@
 -(void)dealloc;
 
 -(NSString *)representedFilename;
--(int)capabilities;
+-(BOOL)canBrowse;
 
 @end
 

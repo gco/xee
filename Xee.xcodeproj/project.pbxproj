@@ -686,7 +686,6 @@
 		1BFB0E4E0B139D420088CDB4 /* XeeArchiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeArchiveSource.m; sourceTree = "<group>"; };
 		1BFB0E500B139D4C0088CDB4 /* XeeClipboardSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeClipboardSource.h; sourceTree = "<group>"; };
 		1BFB0E510B139D4C0088CDB4 /* XeeClipboardSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeClipboardSource.m; sourceTree = "<group>"; };
-		1BFB11DD0B179CF90088CDB4 /* xadmaster.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = xadmaster.h; sourceTree = "<group>"; };
 		1BFB11DE0B179CF90088CDB4 /* XADArchive.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XADArchive.h; sourceTree = "<group>"; };
 		1BFD2CC60982EA80000798A7 /* remove_disabled.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = remove_disabled.tiff; sourceTree = "<group>"; };
 		1BFD2CF9098325D0000798A7 /* add_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_pressed.png; sourceTree = "<group>"; };
@@ -1062,7 +1061,6 @@
 				1BE4B80B08D7655400859EE2 /* KFTypeSelectTableView.h */,
 				1BE4B80C08D7655400859EE2 /* KFTypeSelectTableView.m */,
 				1BFB11DE0B179CF90088CDB4 /* XADArchive.h */,
-				1BFB11DD0B179CF90088CDB4 /* xadmaster.h */,
 				1BF1420E0B094080003A8D57 /* exiftags */,
 				1BE5E0680A7EE50700967AD2 /* libjpeg */,
 				1BE4C10E08E22FB500859EE2 /* libpng */,

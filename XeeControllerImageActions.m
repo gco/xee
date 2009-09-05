@@ -95,8 +95,10 @@ NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,2*1024)]);
 {
 	if(![self validateAction:_cmd]) { NSBeep(); return; }
 
+	[source beginSavingImage:currimage];
+
 	[self detachBackgroundTaskWithMessage:NSLocalizedString(@"Saving...",@"Message when saving an image")
-	selector:@selector(saveTask:) target:self object:currimage];
+	selector:@selector(saveTask:) target:self object:[currimage retain]];
 }
 
 -(void)saveTask:(XeeImage *)saveimage
@@ -110,6 +112,9 @@ NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,2*1024)]);
 		@"Content of the file saving failure dialog"),[filename lastPathComponent]]];
 		[alert addButtonWithTitle:NSLocalizedString(@"OK",@"OK button")];
 		[alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
+
+		[source performSelectorOnMainThread:@selector(endSavingImage:) withObject:saveimage waitUntilDone:YES];
+		[saveimage release];
 	}
 	else
 	{
@@ -120,6 +125,9 @@ NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,2*1024)]);
 -(void)finishSave:(XeeImage *)saveimage
 {
 	if(currimage==saveimage) [undo removeAllActions];
+
+	[source endSavingImage:saveimage];
+	[saveimage release];
 }
 
 -(IBAction)saveAs:(id)sender
