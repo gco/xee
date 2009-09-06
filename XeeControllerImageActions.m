@@ -4,6 +4,7 @@
 #import "XeeView.h"
 #import "XeeMoveTool.h"
 #import "XeeCropTool.h"
+#import "XeeImageSource.h"
 
 
 

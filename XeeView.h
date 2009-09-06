@@ -15,7 +15,7 @@
 	int imgwidth,imgheight;
 	BOOL invalidated;
 
-	BOOL drawresize,lowquality,inside,clicking;
+	BOOL drawresize,hidecursor,lowquality,inside,clicking;
 
 	NSTimer *scrolltimer;
 	BOOL up,down,left,right;
@@ -73,7 +73,9 @@
 -(void)setTool:(XeeTool *)newtool;
 -(void)setImageSize:(NSSize)size;
 -(void)setDrawResizeCorner:(BOOL)draw;
+-(void)setCursorShouldHide:(BOOL)shouldhide;
 
+-(void)hideCursor;
 -(void)copyGLtoQuartz;
 
 @end

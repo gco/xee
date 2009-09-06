@@ -987,6 +987,7 @@ static BOOL HasAppleMouse()
 		fullscreenwindow=[[XeeFullScreenWindow alloc] initWithContentRect:[[window screen] frame]
 		styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
 		[fullscreenwindow setDelegate:self];
+		[fullscreenwindow setAcceptsMouseMovedEvents:YES];
 
 		[window orderOut:nil];
 
@@ -1009,6 +1010,8 @@ static BOOL HasAppleMouse()
 		[self setStandardImageSize];
 [imageview update];
 		[fullscreenwindow makeKeyAndOrderFront:nil];
+
+		[imageview setCursorShouldHide:YES];
 	}
 	else
 	{
@@ -1030,6 +1033,8 @@ static BOOL HasAppleMouse()
 
 		[self setStandardImageSize];
 		[window makeKeyAndOrderFront:nil];
+
+		[imageview setCursorShouldHide:NO];
 	}
 	autofullscreen=NO;
 }

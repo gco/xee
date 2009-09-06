@@ -269,6 +269,12 @@ GLuint make_resize_texture();
 
 	if(inside) [[tool cursor] set];
 	else if(wasinside) [[NSCursor arrowCursor] set];
+
+	if(hidecursor)
+	{
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideCursor) object:nil];
+		[self performSelector:@selector(hideCursor) withObject:nil afterDelay:2];
+	}
 }
 
 -(void)mouseDragged:(NSEvent *)event
@@ -503,7 +509,18 @@ GLuint make_resize_texture();
 
 -(void)setDrawResizeCorner:(BOOL)draw { drawresize=draw; }
 
+-(void)setCursorShouldHide:(BOOL)shouldhide
+{
+	[NSCursor setHiddenUntilMouseMoves:shouldhide];
+	hidecursor=shouldhide;
+	if(!hidecursor) [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideCursor) object:nil];
+}
 
+
+-(void)hideCursor
+{
+	[NSCursor setHiddenUntilMouseMoves:YES];
+}
 
 static const void *XeeCopyGLGetBytePointer(void *bitmap) { return bitmap; }
 
