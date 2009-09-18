@@ -84,7 +84,7 @@
 				type,@"type",
 				description,@"description",
 				extensions,@"extensions",
-			0]];
+			nil]];
 		}
 	}
 

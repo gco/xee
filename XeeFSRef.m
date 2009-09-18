@@ -112,28 +112,28 @@
 -(off_t)dataSize
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	return catinfo.dataLogicalSize;
 }
 
 -(off_t)dataPhysicalSize
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	return catinfo.dataPhysicalSize;
 }
 
 -(off_t)resourceSize
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	return catinfo.rsrcLogicalSize;
 }
 
 -(off_t)resourcePhysicalSize
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoDataSizes,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	return catinfo.rsrcPhysicalSize;
 }
 
@@ -142,7 +142,7 @@
 -(CFAbsoluteTime)creationTime
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoCreateDate,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoCreateDate,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	CFAbsoluteTime res;
 	UCConvertUTCDateTimeToCFAbsoluteTime(&catinfo.createDate,&res);
 	return res;
@@ -151,7 +151,7 @@
 -(CFAbsoluteTime)modificationTime
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoAllDates,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoAllDates,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	CFAbsoluteTime res;
 	UCConvertUTCDateTimeToCFAbsoluteTime(&catinfo.contentModDate,&res);
 	return res;
@@ -160,7 +160,7 @@
 -(CFAbsoluteTime)attributeModificationTime
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoAllDates,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoAllDates,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	CFAbsoluteTime res;
 	UCConvertUTCDateTimeToCFAbsoluteTime(&catinfo.attributeModDate,&res);
 	return res;
@@ -169,7 +169,7 @@
 -(CFAbsoluteTime)accessTime
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoAccessDate,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoAccessDate,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	CFAbsoluteTime res;
 	UCConvertUTCDateTimeToCFAbsoluteTime(&catinfo.accessDate,&res);
 	return res;
@@ -178,7 +178,7 @@
 -(CFAbsoluteTime)backupTime
 {
 	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoBackupDate,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoBackupDate,&catinfo,NULL,NULL,NULL)!=noErr) return 0;
 	CFAbsoluteTime res;
 	UCConvertUTCDateTimeToCFAbsoluteTime(&catinfo.backupDate,&res);
 	return res;

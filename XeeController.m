@@ -776,7 +776,7 @@ static BOOL HasAppleMouse()
 
 
 
--(BOOL)validateMenuItem:(id <NSMenuItem>)item
+-(BOOL)validateMenuItem:(NSMenuItem *)item
 {
 	return [self validateAction:[item action]];
 }

@@ -51,7 +51,7 @@ GLuint make_resize_texture();
 		[[self openGLContext] makeCurrentContext];
 		resizetex=make_resize_texture();
 
-		long val=1;
+		GLint val=1;
 		[[self openGLContext] setValues:&val forParameter:NSOpenGLCPSwapInterval];
 
 		[self registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];

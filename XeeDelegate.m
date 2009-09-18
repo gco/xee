@@ -155,7 +155,7 @@ BOOL finderlaunch;
 		[CSAction actionWithTitle:NSLocalizedString(@"Scroll Down",@"Action name for the scroll down key") identifier:@"scrollDown"],
 		[CSAction actionWithTitle:NSLocalizedString(@"Scroll Left",@"Action name for the scroll left key") identifier:@"scrollLeft"],
 		[CSAction actionWithTitle:NSLocalizedString(@"Scroll Right",@"Action name for the scroll right key") identifier:@"scrollRight"],
-	0]];
+	nil]];
 
 	[shortcuts addShortcuts:[NSDictionary dictionaryWithObjectsAndKeys:
 		[NSArray arrayWithObjects:[CSKeyStroke keyForCharCode:27 modifiers:0],nil],
@@ -221,65 +221,65 @@ BOOL finderlaunch;
 			[CSKeyStroke keyForCharacter:@" " modifiers:0],
 			[CSKeyStroke keyForCharacter:@"." modifiers:0],
 			[CSKeyStroke keyForCharacter:@":" modifiers:0],
-		0],@"skipNext:",
+		nil],@"skipNext:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSPageUpFunctionKey modifiers:0],
 			[CSKeyStroke keyForCharacter:@" " modifiers:CSShift],
 			[CSKeyStroke keyForCharacter:@"," modifiers:0],
 			[CSKeyStroke keyForCharacter:@";" modifiers:0],
-		0],@"skipPrev:",
+		nil],@"skipPrev:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSHomeFunctionKey modifiers:0],
-		0],@"skipFirst:",
+		nil],@"skipFirst:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSEndFunctionKey modifiers:0],
-		0],@"skipLast:",
+		nil],@"skipLast:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSPageDownFunctionKey modifiers:CSShift],
-		0],@"skip10Forward:",
+		nil],@"skip10Forward:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSPageDownFunctionKey modifiers:CSAlt],
-		0],@"skip100Forward:",
+		nil],@"skip100Forward:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSPageUpFunctionKey modifiers:CSShift],
-		0],@"skip10Back:",
+		nil],@"skip10Back:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSPageUpFunctionKey modifiers:CSAlt],
-		0],@"skip100Back:",
+		nil],@"skip100Back:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"r" modifiers:0],
-		0],@"skipRandom:",
+		nil],@"skipRandom:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"R" modifiers:0],
-		0],@"skipRandomPrev:",
+		nil],@"skipRandomPrev:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"2" modifiers:0],
-		0],@"frameSkipNext:",
+		nil],@"frameSkipNext:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"1" modifiers:0],
-		0],@"frameSkipPrev:",
+		nil],@"frameSkipPrev:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@" " modifiers:0],
-		0],@"toggleAnimation:",
+		nil],@"toggleAnimation:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"+" modifiers:0],
 			[CSKeyStroke keyForCharacter:@"=" modifiers:CSCmd],
 			[CSKeyStroke keyForCharacter:@"=" modifiers:0],
-		0],@"zoomIn:",
+		nil],@"zoomIn:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"-" modifiers:0],
-		0],@"zoomOut:",
+		nil],@"zoomOut:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"*" modifiers:0],
-		0],@"zoomFit:",
+		nil],@"zoomFit:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"/" modifiers:0],
-		0],@"zoomActual:",
+		nil],@"zoomActual:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"f" modifiers:0],
 			[CSKeyStroke keyForCharCode:13 modifiers:CSAlt],
-		0],@"fullScreen:",
-	0]];
+		nil],@"fullScreen:",
+	nil]];
 
 	[CSKeyboardShortcuts installWindowClass];
 }
@@ -597,7 +597,7 @@ BOOL finderlaunch;
 }
 
 
--(BOOL)validateMenuItem:(id <NSMenuItem>)item
+-(BOOL)validateMenuItem:(NSMenuItem *)item
 {
 	if([item action]==@selector(paste:)) return [XeeClipboardSource canInitWithGeneralPasteboard];
 	return YES;

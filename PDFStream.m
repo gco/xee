@@ -173,9 +173,9 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	id colourspace=[dict objectForKey:@"ColorSpace"];
 	if(!colourspace) return 0;
 
-	if(![colourspace isKindOfClass:[NSArray class]]) return nil;
-	if([colourspace count]!=4) return nil;
-	if(![[colourspace objectAtIndex:0] isEqual:@"Indexed"]) return nil;
+	if(![colourspace isKindOfClass:[NSArray class]]) return 0;
+	if([colourspace count]!=4) return 0;
+	if(![[colourspace objectAtIndex:0] isEqual:@"Indexed"]) return 0;
 
 	return [[colourspace objectAtIndex:2] intValue]+1;
 }

@@ -65,7 +65,7 @@
 -(void)updateSortMenu:(NSMenu *)menu;
 -(void)updateSlideshowMenu:(NSMenu *)menu;
 
--(BOOL)validateMenuItem:(id <NSMenuItem>)item;
+-(BOOL)validateMenuItem:(NSMenuItem *)item;
 
 -(IBAction)preferences:(id)sender;
 -(IBAction)paste:(id)sender;

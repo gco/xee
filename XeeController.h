@@ -115,7 +115,7 @@
 -(void)setupToolbarItems;
 -(NSArray *)makeToolbarItems;
 
--(BOOL)validateMenuItem:(id <NSMenuItem>)item;
+-(BOOL)validateMenuItem:(NSMenuItem *)item;
 -(BOOL)validateAction:(SEL)action;
 
 -(void)updateStatusBar;

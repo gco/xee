@@ -521,7 +521,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		chr,@"character",
 		[NSNumber numberWithUnsignedInt:mod],@"modifiers",
-	0];
+	nil];
 }
 
 -(NSImage *)image
