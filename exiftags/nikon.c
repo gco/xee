@@ -582,7 +582,7 @@ nikon_prop1(struct exifprop *prop, struct exiftags *t)
 
 	case 0x0094:
 		c1 = NULL;
-		switch (prop->value) {
+		switch ((int32_t)prop->value) {
 		case -3:
 			c1 = "Black & White";
 			exifstralloc(&prop->str, strlen(c1) + 1);

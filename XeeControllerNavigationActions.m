@@ -135,6 +135,9 @@
 
 -(void)slideshowStep:(NSTimer *)timer
 {
+	// Prevent sleeping
+	UpdateSystemActivity(UsrActivity);
+
 	int slideshowdelay=[[NSUserDefaults standardUserDefaults] integerForKey:@"slideshowDelay"];
 	if(++slideshowcount>=slideshowdelay)
 	{
