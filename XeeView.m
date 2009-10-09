@@ -484,8 +484,15 @@ GLuint make_resize_texture();
 -(void)setTool:(XeeTool *)newtool
 {
 	if(newtool==tool) return;
-	[tool release];
+	XeeTool *oldtool=tool;
+
 	tool=[newtool retain];
+
+	[oldtool end];
+	[oldtool release];
+
+	[newtool begin];
+
 	[self invalidateImageAndTool];
 }
 

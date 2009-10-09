@@ -117,8 +117,8 @@
 -(XeeMatrix)transformationMatrixInRect:(NSRect)rect;
 
 -(NSArray *)properties;
--(NSArray *)fullProperties;
 
+-(NSDictionary *)attributes;
 -(uint64_t)fileSize;
 -(NSDate *)date;
 -(NSString *)descriptiveFilename;

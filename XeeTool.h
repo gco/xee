@@ -13,6 +13,9 @@
 -(id)initWithView:(XeeView *)view;
 -(void)dealloc;
 
+-(void)begin;
+-(void)end;
+
 -(void)mouseDownAt:(NSPoint)position;
 -(void)mouseUpAt:(NSPoint)position;
 -(void)mouseDoubleClickedAt:(NSPoint)position;

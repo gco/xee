@@ -85,6 +85,7 @@
 -(NSDrawer *)drawer;
 -(XeeFSRef *)currentRef;
 -(NSString *)currentFilename;
+-(NSArray *)currentProperties;
 -(BOOL)isFullscreen;
 
 -(void)setImageSource:(XeeImageSource *)newsource;

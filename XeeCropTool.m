@@ -37,6 +37,11 @@ static void XeeGLRect(float x1,float y1,float x2,float y2);
 	[super dealloc];
 }
 
+-(void)end
+{
+	[[view image] triggerPropertyChangeAction]; 
+}
+
 -(void)mouseDownAt:(NSPoint)position
 {
 	[super mouseDownAt:position];
@@ -132,6 +137,8 @@ static void XeeGLRect(float x1,float y1,float x2,float y2);
 			mode=XeeMoveCropMode;
 		break;
 	}
+
+	[[view image] triggerPropertyChangeAction]; 
 }
 
 -(void)mouseUpAt:(NSPoint)position
@@ -142,6 +149,7 @@ static void XeeGLRect(float x1,float y1,float x2,float y2);
 
 	[self findAreaForPosition:position];
 	[view invalidate];
+	[[view image] triggerPropertyChangeAction]; 
 }
 
 -(void)mouseMovedTo:(NSPoint)position relative:(NSPoint)relative
@@ -154,6 +162,8 @@ static void XeeGLRect(float x1,float y1,float x2,float y2);
 -(void)mouseDoubleClickedAt:(NSPoint)position
 {
 	[[view delegate] confirm:nil];
+
+	[[view image] triggerPropertyChangeAction]; 
 }
 
 -(void)mouseDraggedTo:(NSPoint)position relative:(NSPoint)relative
@@ -234,6 +244,8 @@ static void XeeGLRect(float x1,float y1,float x2,float y2);
 			[view invalidate];
 		break;
 	}
+
+	[[view image] triggerPropertyChangeAction]; 
 }
 
 -(void)findAreaForPosition:(NSPoint)position

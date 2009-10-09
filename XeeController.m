@@ -145,7 +145,7 @@ static NSMutableArray *controllers=nil;
 
 -(void)windowDidBecomeMain:(NSNotification *)notification
 {
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:currimage];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:self];
 	[statusbar setNeedsDisplay:YES];
 }
 
@@ -316,7 +316,7 @@ static BOOL HasAppleMouse()
 -(void)xeeView:(XeeView *)view imagePropertiesDidChange:(XeeImage *)image
 {
 	if([[NSApplication sharedApplication] mainWindow]==window)
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:currimage];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:self];
 
 	NSString *filename=[source representedFilename];
 	if(filename) [window setTitleWithRepresentedFilename:filename];
@@ -342,6 +342,133 @@ static BOOL HasAppleMouse()
 -(NSString *)currentFilename // should probably be removed
 {
 	return [currimage filename];
+}
+
+-(NSArray *)currentProperties
+{
+	if(!currimage) return nil;
+
+	NSMutableArray *proparray=[NSMutableArray array];
+
+	[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
+	NSLocalizedString(@"Image properties",@"Image properties section title")
+	identifier:@"common.image"
+	labelsAndValues:
+		NSLocalizedString(@"Image width",@"Image width property label"),
+		[NSNumber numberWithInt:[currimage width]],
+		NSLocalizedString(@"Image height",@"Image height property label"),
+		[NSNumber numberWithInt:[currimage height]],
+		NSLocalizedString(@"File format",@"File format property label"),
+		[currimage format],
+		NSLocalizedString(@"Colour format",@"Colour format property label"),
+		[currimage depth],
+	nil]];
+
+	NSRect crop=[currimage croppingRect];
+	if([self isCropping])
+	{
+		NSRect currcrop=[croptool croppingRect];
+
+		[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
+		NSLocalizedString(@"Cropping properties",@"Cropping properties section title")
+		identifier:@"common.cropping"
+		labelsAndValues:
+			NSLocalizedString(@"Full image width",@"Full image width property label"),
+			[NSNumber numberWithInt:[currimage fullWidth]],
+			NSLocalizedString(@"Full image height",@"Full image height property label"),
+			[NSNumber numberWithInt:[currimage fullHeight]],
+			NSLocalizedString(@"Current crop width",@"Current crop width property label"),
+			[NSNumber numberWithInt:currcrop.size.width],
+			NSLocalizedString(@"Current crop height",@"Current crop height property label"),
+			[NSNumber numberWithInt:currcrop.size.height],
+			NSLocalizedString(@"Cropping left",@"Cropping left property label"),
+			[NSNumber numberWithInt:crop.origin.x+currcrop.origin.x],
+			NSLocalizedString(@"Cropping right",@"Cropping right property label"),
+			[NSNumber numberWithInt:[currimage fullWidth]-currcrop.size.width-crop.origin.x-currcrop.origin.x],
+			NSLocalizedString(@"Cropping top",@"Cropping top property label"),
+			[NSNumber numberWithInt:crop.origin.y+currcrop.origin.y],
+			NSLocalizedString(@"Cropping bottom",@"Cropping bottom property label"),
+			[NSNumber numberWithInt:[currimage fullHeight]-currcrop.size.height-crop.origin.y-currcrop.origin.y],
+		nil]];
+	}
+	else if(crop.size.width!=[currimage fullWidth]||crop.size.height!=[currimage fullHeight])
+	{
+		[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
+		NSLocalizedString(@"Cropping properties",@"Cropping properties section title")
+		identifier:@"common.cropping"
+		labelsAndValues:
+			NSLocalizedString(@"Full image width",@"Full image width property label"),
+			[NSNumber numberWithInt:[currimage fullWidth]],
+			NSLocalizedString(@"Full image height",@"Full image height property label"),
+			[NSNumber numberWithInt:[currimage fullHeight]],
+			NSLocalizedString(@"Cropping left",@"Cropping left property label"),
+			[NSNumber numberWithInt:crop.origin.x],
+			NSLocalizedString(@"Cropping right",@"Cropping right property label"),
+			[NSNumber numberWithInt:[currimage fullWidth]-crop.size.width-crop.origin.x],
+			NSLocalizedString(@"Cropping top",@"Cropping top property label"),
+			[NSNumber numberWithInt:crop.origin.y],
+			NSLocalizedString(@"Cropping bottom",@"Cropping bottom property label"),
+			[NSNumber numberWithInt:[currimage fullHeight]-crop.size.height-crop.origin.y],
+		nil]];
+	}
+
+	XeeFSRef *ref=[currimage ref];
+	NSDictionary *attrs=[currimage attributes];
+	if(ref&&attrs)
+	{
+		NSString *filename=[currimage filename];
+		XeePropertyItem *item;
+
+		[proparray addObject:item=[XeePropertyItem subSectionItemWithLabel:
+		NSLocalizedString(@"File properties",@"File properties section title")
+		identifier:@"common.file"
+		labelsAndValues:
+			NSLocalizedString(@"File name",@"File name property label"),
+			[filename lastPathComponent],
+			NSLocalizedString(@"Full path",@"Full path property label"),
+			filename,
+			NSLocalizedString(@"File size",@"File size property label"),//	55.92 kB (57264 bytes)
+			[NSString stringWithFormat:
+			NSLocalizedString(@"%@ (%qu bytes)",@"File size property value (%@ is shortened filesize, %qu is exact)"),
+			XeeDescribeSize([currimage fileSize]),[currimage fileSize]],
+			NSLocalizedString(@"Modification date",@"Modification date property label"),
+			[attrs fileModificationDate],
+			NSLocalizedString(@"Creation date",@"Creation date property label"),
+			[attrs fileCreationDate],
+		nil]];
+
+		NSMutableArray *fileprops=[item value];
+
+		// Check for futaba timestamp name
+		NSString *namepart=[[filename lastPathComponent] stringByDeletingPathExtension];
+		int len=[namepart length];
+
+		if(len==10||len==13||len==17)
+		{
+			BOOL matches=YES;
+			for(int i=0;i<len;i++)
+			{
+				unichar c=[namepart characterAtIndex:i];
+				if(i<13&&!(c>='0'||c<='9')) matches=NO;
+				if(i>=13&&!((c>='0'&&c<='9')||(c>='a'||c<='f')||(c>='A'||c<='F'))) matches=NO;
+			}
+
+			if(matches)
+			{
+				int seconds=[[namepart substringToIndex:10] intValue];
+				if(seconds>1000000000)
+				{
+					[fileprops addObject:[XeePropertyItem itemWithLabel:
+					NSLocalizedString(@"Futaba timestamp",@"Futaba timestamp property label")
+					value:[NSDate dateWithTimeIntervalSince1970:seconds]]];
+				}
+			}
+		}
+	}
+
+	[proparray addObjectsFromArray:[currimage properties]];
+
+	return proparray;
 }
 
 -(BOOL)isFullscreen { return fullscreenwindow?YES:NO; }
@@ -385,7 +512,7 @@ static BOOL HasAppleMouse()
 
 	NSWindow *keywin=[[NSApplication sharedApplication] mainWindow];
 	if(keywin==window||keywin==fullscreenwindow)
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:currimage];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:self];
 
 	[self updateStatusBar];
 
@@ -896,6 +1023,19 @@ static BOOL HasAppleMouse()
 		[statusbar addEntry:[NSString stringWithFormat:
 		NSLocalizedString(@"Loading \"%@\"...",@"Statusbar message while loading"),
 		[source descriptiveNameOfCurrentImage]] imageNamed:@"message"];
+	}
+	else if([self isCropping])
+	{
+		NSRect crop=[currimage croppingRect];
+		NSRect currcrop=[croptool croppingRect];
+		int left=crop.origin.x+currcrop.origin.x;
+		int width=currcrop.size.width;
+		int right=[currimage fullWidth]-currcrop.size.width-crop.origin.x-currcrop.origin.x;
+		int top=crop.origin.y+currcrop.origin.y;
+		int height=currcrop.size.height;
+		int bottom=[currimage fullWidth]-currcrop.size.height-crop.origin.y-currcrop.origin.y;
+		[statusbar addEntry:[NSString stringWithFormat:@"%C%d %C%d %C%d,%d %C%d,%d",
+		0x2194,width,0x2195,height,0x21f1,left,top,0x21f2,right,bottom]];
 	}
 	else
 	{

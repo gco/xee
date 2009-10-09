@@ -32,6 +32,10 @@
 	[super dealloc];
 }
 
+-(void)begin {}
+
+-(void)end {}
+
 -(void)mouseDownAt:(NSPoint)position
 {
 	clicking=YES;

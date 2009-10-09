@@ -38,11 +38,7 @@
 	[outlineview setTarget:self];
 
 	XeeController *delegate=[maindelegate focusedController];
-	if(delegate)
-	{
-		XeeImage *image=[delegate image];
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:image];
-	}
+	if(delegate) [[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:delegate];
 }
 
 
@@ -87,7 +83,7 @@
 -(void)frontImageDidChange:(NSNotification *)notification
 {
 	[dataarray release];
-	dataarray=[[[notification object] fullProperties] retain];
+	dataarray=[[[notification object] currentProperties] retain];
 
 	[outlineview reloadData];
 	[self restoreCollapsedStatusForArray:dataarray];
