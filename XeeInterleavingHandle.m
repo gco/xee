@@ -1,9 +1,9 @@
 #import "XeeInterleavingHandle.h"
 #import "XeeTypes.h"
 
-static void transpose8(uint8 *buf,int n1,int n2);
-static void transpose16(uint16 *buf,int n1,int n2);
-static void transpose32(uint32 *buf,int n1,int n2);
+static void transpose8(uint8_t *buf,int n1,int n2);
+static void transpose16(uint16_t *buf,int n1,int n2);
+static void transpose32(uint32_t *buf,int n1,int n2);
 static int factor(int n,int *ifact,int *ipower,int *nexp);
 
 #ifndef TEST
@@ -38,7 +38,7 @@ static int factor(int n,int *ifact,int *ipower,int *nexp);
 	if(num%pixelbytes!=0) [self _raiseNotSupported:_cmd];
 	int n1=num/pixelbytes;
 
-	uint8 *buf=(uint8 *)buffer;
+	uint8_t *buf=(uint8_t *)buffer;
 	int minbytes=channelbytes;
 
 	for(int i=0;i<n2;i++)
@@ -69,7 +69,7 @@ static int factor(int n,int *ifact,int *ipower,int *nexp);
 
 void test(int n1,int n2)
 {
-	uint8 m[n1*n2];
+	uint8_t m[n1*n2];
 
 	for(int i=0;i<n1*n2;i++) m[i]=i;
 
@@ -77,7 +77,7 @@ void test(int n1,int n2)
 
 	for(int i=0;i<n1*n2-1;i++)
 	{
-		if(m[(i*n2)%(n1*n2-1)]!=(uint8)i) { printf("Error\n"); exit(1); }
+		if(m[(i*n2)%(n1*n2-1)]!=(uint8_t)i) { printf("Error\n"); exit(1); }
 	}
 
 	printf("Ok!\n");
@@ -98,7 +98,7 @@ int main()
 #endif
 
 
-static void transpose8(uint8 *buf,int n1,int n2)
+static void transpose8(uint8_t *buf,int n1,int n2)
 {
 	int n=n1,m=n1*n2-1;
 	int ifact[10],ipower[10],nexp[10];
@@ -127,7 +127,7 @@ static void transpose8(uint8 *buf,int n1,int n2)
 			} while(itest>istart&&itest<mmist);
 		}
 
-		uint32 atemp=buf[istart],btemp=buf[mmist];
+		uint32_t atemp=buf[istart],btemp=buf[mmist];
 		int ia1=istart;
 		for(;;)
 		{
@@ -159,7 +159,7 @@ static void transpose8(uint8 *buf,int n1,int n2)
 	}
 }
 
-static void transpose16(uint16 *buf,int n1,int n2)
+static void transpose16(uint16_t *buf,int n1,int n2)
 {
 	int n=n1,m=n1*n2-1;
 	int ifact[10],ipower[10],nexp[10];
@@ -188,7 +188,7 @@ static void transpose16(uint16 *buf,int n1,int n2)
 			} while(itest>istart&&itest<mmist);
 		}
 
-		uint32 atemp=buf[istart],btemp=buf[mmist];
+		uint32_t atemp=buf[istart],btemp=buf[mmist];
 		int ia1=istart;
 		for(;;)
 		{
@@ -220,7 +220,7 @@ static void transpose16(uint16 *buf,int n1,int n2)
 	}
 }
 
-static void transpose32(uint32 *buf,int n1,int n2)
+static void transpose32(uint32_t *buf,int n1,int n2)
 {
 	int n=n1,m=n1*n2-1;
 	int ifact[10],ipower[10],nexp[10];
@@ -249,7 +249,7 @@ static void transpose32(uint32 *buf,int n1,int n2)
 			} while(itest>istart&&itest<mmist);
 		}
 
-		uint32 atemp=buf[istart],btemp=buf[mmist];
+		uint32_t atemp=buf[istart],btemp=buf[mmist];
 		int ia1=istart;
 		for(;;)
 		{
@@ -337,7 +337,7 @@ static int factor(int n,int *ifact,int *ipower,int *nexp)
 }
 
 /*
-static void transpose(uint8 *buf,int n1,int n2)
+static void transpose(uint8_t *buf,int n1,int n2)
 {
 	int n=n1;
 	int m=n1*n2-1;

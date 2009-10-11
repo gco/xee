@@ -6,7 +6,7 @@
 	NSMutableArray *props;
 }
 
--(id)initWithBuffer:(uint8 *)duckydata length:(int)len;
+-(id)initWithBuffer:(uint8_t *)duckydata length:(int)len;
 -(void)dealloc;
 
 -(NSArray *)propertyArray;

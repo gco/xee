@@ -40,23 +40,23 @@
 
 
 #ifdef __BIG_ENDIAN__
-static inline uint32 XeeMakeARGB8(uint8 a,uint8 r,uint8 g,uint8 b)
+static inline uint32_t XeeMakeARGB8(uint8_t a,uint8_t r,uint8_t g,uint8_t b)
 { return (a<<24)|(r<<16)|(g<<8)|b; }
-static inline uint32 XeeMakeNRGB8(uint8 r,uint8 g,uint8 b)
+static inline uint32_t XeeMakeNRGB8(uint8_t r,uint8_t g,uint8_t b)
 { return (0xff<<24)|(r<<16)|(g<<8)|b; }
-static inline int XeeGetAFromARGB8(uint32 argb) { return (argb>>24)&0xff; }
-static inline int XeeGetRFromARGB8(uint32 argb) { return (argb>>16)&0xff; }
-static inline int XeeGetGFromARGB8(uint32 argb) { return (argb>>8)&0xff; }
-static inline int XeeGetBFromARGB8(uint32 argb) { return argb&0xff; }
+static inline int XeeGetAFromARGB8(uint32_t argb) { return (argb>>24)&0xff; }
+static inline int XeeGetRFromARGB8(uint32_t argb) { return (argb>>16)&0xff; }
+static inline int XeeGetGFromARGB8(uint32_t argb) { return (argb>>8)&0xff; }
+static inline int XeeGetBFromARGB8(uint32_t argb) { return argb&0xff; }
 #else
-static inline uint32 XeeMakeARGB8(uint8 a,uint8 r,uint8 g,uint8 b)
+static inline uint32_t XeeMakeARGB8(uint8_t a,uint8_t r,uint8_t g,uint8_t b)
 { return a|(r<<8)|(g<<16)|(b<<24); }
-static inline uint32 XeeMakeNRGB8(uint8 r,uint8 g,uint8 b)
+static inline uint32_t XeeMakeNRGB8(uint8_t r,uint8_t g,uint8_t b)
 { return 0xff|(r<<8)|(g<<16)|(b<<24); }
-static inline int XeeGetAFromARGB8(uint32 argb) { return argb&0xff; }
-static inline int XeeGetRFromARGB8(uint32 argb) { return (argb>>8)&0xff; }
-static inline int XeeGetGFromARGB8(uint32 argb) { return (argb>>16)&0xff; }
-static inline int XeeGetBFromARGB8(uint32 argb) { return (argb>>24)&0xff; }
+static inline int XeeGetAFromARGB8(uint32_t argb) { return argb&0xff; }
+static inline int XeeGetRFromARGB8(uint32_t argb) { return (argb>>8)&0xff; }
+static inline int XeeGetGFromARGB8(uint32_t argb) { return (argb>>16)&0xff; }
+static inline int XeeGetBFromARGB8(uint32_t argb) { return (argb>>24)&0xff; }
 #endif
 
 #define XeeGetRFromNRGB8 XeeGetRFromARGB8
@@ -78,7 +78,7 @@ static inline int XeeGetBFromARGB8(uint32 argb) { return (argb>>24)&0xff; }
 -(id)initWithType:(int)pixeltype width:(int)framewidth height:(int)frameheight;
 -(void)dealloc;
 
--(BOOL)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
+-(BOOL)setData:(uint8_t *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
 bitsPerPixel:(int)bppixel bitsPerComponent:(int)bpcomponent bytesPerRow:(int)bprow
 mode:(int)mode alphaType:(int)alpha flags:(int)flags;
 

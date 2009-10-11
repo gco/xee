@@ -2,7 +2,7 @@
 
 
 
-static void XeeYUVImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest);
+static void XeeYUVImageReadPixel(uint8_t *row,int x,int pixelsize,uint8_t *dest);
 static void XeeBuildYUVConversionTables();
 
 
@@ -22,7 +22,7 @@ static void XeeBuildYUVConversionTables();
 
 
 
--(void)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight bytesPerRow:(int)bprow
+-(void)setData:(uint8_t *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight bytesPerRow:(int)bprow
 {
 	#ifdef __BIG_ENDIAN__
 	[super setData:pixeldata freeData:willfree width:pixelwidth height:pixelheight
@@ -42,7 +42,7 @@ static void XeeBuildYUVConversionTables();
 
 	if(newdata)
 	{
-		uint32 *ptr=(uint32 *)newdata;
+		uint32_t *ptr=(uint32_t *)newdata;
 		#ifdef __BIG_ENDIAN__
 		for(int i=0;i<pixelheight*bprow/4;i++) *ptr++=0x7f007f00;
 		#else
@@ -118,7 +118,7 @@ static int cr_r_tab[256];
 static int cb_b_tab[256];
 static int cr_g_tab[256];
 static int cb_g_tab[256];
-static uint8 range_table[256*3],*range_limit;
+static uint8_t range_table[256*3],*range_limit;
 
 #define ONE_HALF (1<<15)
 #define FIX(x) ((int)((x)*(1<<16)+0.5))
@@ -141,11 +141,11 @@ static void XeeBuildYUVConversionTables()
 	range_limit=range_table+256;
 }
 
-static void XeeYUVImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest)
+static void XeeYUVImageReadPixel(uint8_t *row,int x,int pixelsize,uint8_t *dest)
 {
-	uint8 y=row[2*x|1];
-	uint8 cb=row[2*x&~2];
-	uint8 cr=row[2*x|2];
+	uint8_t y=row[2*x|1];
+	uint8_t cb=row[2*x&~2];
+	uint8_t cr=row[2*x|2];
 
 	dest[0]=range_limit[y+cr_r_tab[cr]];
 	dest[1]=range_limit[y+((cb_g_tab[cb]+cr_g_tab[cr])>>16)];

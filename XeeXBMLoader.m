@@ -68,7 +68,7 @@
 
 	for(int y=0;y<height;y++)
 	{
-		uint8 *row=data+y*bytesperrow;
+		uint8_t *row=data+y*bytesperrow;
 		int x=0;
 
 		for(int i=0;i<intsperrow;i++)

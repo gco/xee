@@ -551,7 +551,7 @@ BOOL finderlaunch;
 	int num=[sortmenu numberOfItems];
 	for(int i=0;i<num;i++)
 	{
-		id item=[sortmenu itemAtIndex:i];
+		NSMenuItem *item=[sortmenu itemAtIndex:i];
 		if([item tag]==sortorder) [item setState:NSOnState];
 		else [item setState:NSOffState];
 	}
@@ -567,7 +567,7 @@ BOOL finderlaunch;
 	int num=[slideshowmenu numberOfItems];
 	for(int i=0;i<num;i++)
 	{
-		id item=[slideshowmenu itemAtIndex:i];
+		NSMenuItem *item=[slideshowmenu itemAtIndex:i];
 		if([item action]==@selector(setSlideshowDelay:))
 		if([item tag]==slidedelay)
 		{
@@ -701,7 +701,7 @@ BOOL finderlaunch;
 
 -(IBAction)setAntialiasing:(id)sender
 {
-	[[NSUserDefaults standardUserDefaults] setInteger:[sender tag] forKey:@"antialiasQuality"];
+	[[NSUserDefaults standardUserDefaults] setInteger:[(NSMenuItem *)sender tag] forKey:@"antialiasQuality"];
 
 	NSMenu *menu=[sender menu];
 	int num=[menu numberOfItems];

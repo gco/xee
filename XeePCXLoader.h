@@ -4,7 +4,7 @@
 @interface XeePCXImage:XeeBitmapImage
 {
 	int current_line;
-	uint8 palette[3*256];
+	uint8_t palette[3*256];
 	NSData *header;
 }
 

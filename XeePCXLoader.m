@@ -4,8 +4,8 @@
 
 struct pcx_header
 {
-	uint8 manufacturer; // Constant Flag, 10 = ZSoft .pcx 
-	uint8 version; // Version information 
+	uint8_t manufacturer; // Constant Flag, 10 = ZSoft .pcx 
+	uint8_t version; // Version information 
 	               // 0 = Version 2.5 of PC Paintbrush 
 	               // 2 = Version 2.8 w/palette information 
 	               // 3 = Version 2.8 w/o palette information 
@@ -15,8 +15,8 @@ struct pcx_header
 	               //     and PC Paintbrush +, includes
 	               //     Publisher's Paintbrush . Includes
 	               //     24-bit .PCX files 
-	uint8 encoding; // 1 = .PCX run length encoding 
-	uint8 bitsperpixel; // Number of bits to represent a pixel
+	uint8_t encoding; // 1 = .PCX run length encoding 
+	uint8_t bitsperpixel; // Number of bits to represent a pixel
 	                   // (per Plane) - 1, 2, 4, or 8 
 	eint16 xmin; // Image Dimensions: Xmin,Ymin,Xmax,Ymax 
 	eint16 ymin;
@@ -24,9 +24,9 @@ struct pcx_header
 	eint16 ymax;
 	eint16 hdpi; // Horizontal Resolution of image in DPI
 	eint16 vdpi; // Vertical Resolution of image in DPI
-	uint8 colormap[48]; // Color palette setting, see text 
-	uint8 reserved; // Should be set to 0. 
-	uint8 nplanes; // Number of color planes 
+	uint8_t colormap[48]; // Color palette setting, see text 
+	uint8_t reserved; // Should be set to 0. 
+	uint8_t nplanes; // Number of color planes 
 	eint16 bytesperline; // Number of bytes to allocate for a scanline
 	                     // plane.  MUST be an EVEN number.  Do NOT
 	                     // calculate from Xmax-Xmin. 
@@ -36,7 +36,7 @@ struct pcx_header
 	                    // found only in PB IV/IV Plus 
 	eint16 vscreensize; // Vertical screen size in pixels. New field
 	                    // found only in PB IV/IV Plus 
-	uint8 filler[54]; // Blank to fill out 128 uint8 header.  Set all
+	uint8_t filler[54]; // Blank to fill out 128 uint8_t header.  Set all
 	                  // bytes to 0 
 };
 
@@ -113,7 +113,7 @@ struct pcx_header
 	}
 	else if(pcx->version==3) // no palette
 	{
-		uint8 defaultpalette[48]={0,0,0,0,0,170,0,170,0,0,170,170,170,0,0,170,0,170,170,85,0,
+		uint8_t defaultpalette[48]={0,0,0,0,0,170,0,170,0,0,170,170,170,0,0,170,0,170,170,85,0,
 		170,85,85,85,85,85,0,0,255,0,255,0,0,255,255,255,0,0,255,0,255,255,255,0,255,255,255};
 		memcpy(defaultpalette,pcx->colormap,48);
 	}
@@ -132,23 +132,23 @@ struct pcx_header
 
 	int bytesperline=XeeLEUInt16(pcx->bytesperline);
 	int totalbytes=pcx->nplanes*bytesperline;
-	uint8 line[totalbytes];
+	uint8_t line[totalbytes];
 	int bytesread=0;
 
 	while(bytesread<totalbytes)
 	{
-		uint8 b=[fh readUInt8];
+		uint8_t b=[fh readUInt8];
 		if(b<192) line[bytesread++]=b;
 		else
 		{
-			uint8 c=[fh readUInt8];
+			uint8_t c=[fh readUInt8];
 			int count=b-192;
 			if(bytesread+count>totalbytes) count=totalbytes-bytesread;
 			while(count--) line[bytesread++]=c;
 		}
 	}
 
-	uint8 *imagerow=data+current_line*bytesperrow;
+	uint8_t *imagerow=data+current_line*bytesperrow;
 
 	if(pcx->nplanes==3&&pcx->bitsperpixel==8)
 	{
@@ -163,7 +163,7 @@ struct pcx_header
 	{
 		for(int i=0;i<width;i++)
 		{
-			uint8 *paletteentry=palette+line[i]*3;
+			uint8_t *paletteentry=palette+line[i]*3;
 			*imagerow++=*paletteentry++;
 			*imagerow++=*paletteentry++;
 			*imagerow++=*paletteentry++;
@@ -179,7 +179,7 @@ struct pcx_header
 			col|=((line[(i>>3)+bytesperline*1]>>((i&7)^7))&1)<<1;
 			col|=((line[(i>>3)+bytesperline*2]>>((i&7)^7))&1)<<2;
 			col|=((line[(i>>3)+bytesperline*3]>>((i&7)^7))&1)<<3;
-			uint8 *paletteentry=palette+col*3;
+			uint8_t *paletteentry=palette+col*3;
 			*imagerow++=*paletteentry++;
 			*imagerow++=*paletteentry++;
 			*imagerow++=*paletteentry++;
@@ -190,7 +190,7 @@ struct pcx_header
 		for(int i=0;i<width;i++)
 		{
 			int col=(line[i>>3]>>((i&7)^7))&1;
-			uint8 *paletteentry=palette+col*3;
+			uint8_t *paletteentry=palette+col*3;
 			*imagerow++=*paletteentry++;
 			*imagerow++=*paletteentry++;
 			*imagerow++=*paletteentry++;

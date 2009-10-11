@@ -22,7 +22,7 @@ static int CalculateMipmapSize(int width,int height)
 	return sum+1;
 }
 
-static uint32 InterleavedCoords(uint32 x,uint32 y)
+static uint32_t InterleavedCoords(uint32_t x,uint32_t y)
 {
 	x=(x|(x<<8))&0x00ff00ff;
 	x=(x|(x<<4))&0x0f0f0f0f;
@@ -37,7 +37,7 @@ static uint32 InterleavedCoords(uint32 x,uint32 y)
 	return (x<<1)|y;
 }
 
-static uint32 UnInterleavedXCoord(uint32 n)
+static uint32_t UnInterleavedXCoord(uint32_t n)
 {
 	n=(n>>1)&0x55555555;
 	n=(n|(n>>1))&0x33333333;
@@ -47,7 +47,7 @@ static uint32 UnInterleavedXCoord(uint32 n)
 	return n;
 }
 
-static uint32 UnInterleavedYCoord(uint32 n)
+static uint32_t UnInterleavedYCoord(uint32_t n)
 {
 	n=n&0x55555555;
 	n=(n|(n>>1))&0x33333333;
@@ -57,7 +57,7 @@ static uint32 UnInterleavedYCoord(uint32 n)
 	return n;
 }
 
-static uint32 ExpandColour(int col,int pixelformat)
+static uint32_t ExpandColour(int col,int pixelformat)
 {
 	switch(pixelformat)
 	{
@@ -92,7 +92,7 @@ static uint32 ExpandColour(int col,int pixelformat)
 #define FIX(x) ((int)((x)*(1<<16)+0.5))
 #define LIMIT(x) ((x)<0?0:(x)>255?255:(x))
 
-static uint32 ConvertYUV(int y,int u,int v)
+static uint32_t ConvertYUV(int y,int u,int v)
 {
 	int r=y+((FIX(1.40200)*(v-128)+ONE_HALF)>>16);
 	int g=y+((-FIX(0.34414)*(u-128)-FIX(0.71414)*(v-128)+ONE_HALF)>>16);
@@ -102,9 +102,9 @@ static uint32 ConvertYUV(int y,int u,int v)
 
 @implementation XeeDreamcastImage
 
-static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
+static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32_t col)
 {
-	if(x<self->width&&y<self->height) ((uint32 *)&self->data[y*self->bytesperrow])[x]=col;
+	if(x<self->width&&y<self->height) ((uint32_t *)&self->data[y*self->bytesperrow])[x]=col;
 }
 
 
@@ -117,7 +117,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	if([block length]>16)
 	{
-		uint32 magic=XeeBEUInt32([block bytes]);
+		uint32_t magic=XeeBEUInt32([block bytes]);
 		if(magic=='GBIX') return YES;
 		if(magic=='PVRT') return YES;
 	}
@@ -130,17 +130,17 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	CSHandle *fh=[self handle];
 
-	uint32 magic=[fh readID];
+	uint32_t magic=[fh readID];
 	if(magic=='GBIX')
 	{
-		uint32 size=[fh readUInt32LE];
+		uint32_t size=[fh readUInt32LE];
 		[fh skipBytes:size];
 		magic=[fh readID];
 	}
 
 	if(magic!='PVRT') return;
 
-	/*uint32 length=*/[fh readUInt32LE];
+	/*uint32_t length=*/[fh readUInt32LE];
 	int pixelformat=[fh readUInt8];
 	int packingtype=[fh readUInt8];
 	[fh skipBytes:2];
@@ -298,10 +298,10 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 
 	for(int n=0;n<height*width;n+=4)
 	{
-		uint16 val11=[fh readUInt16LE];
-		uint16 val21=[fh readUInt16LE];
-		uint16 val12=[fh readUInt16LE];
-		uint16 val22=[fh readUInt16LE];
+		uint16_t val11=[fh readUInt16LE];
+		uint16_t val21=[fh readUInt16LE];
+		uint16_t val12=[fh readUInt16LE];
+		uint16_t val22=[fh readUInt16LE];
 		int y11=val11>>8,y21=val21>>8,y12=val12>>8,y22=val22>>8;
 		int u1=val11&0xff,u2=val21&0xff,v1=val12&0xff,v2=val22&0xff;
 
@@ -322,7 +322,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	CSHandle *fh=[self handle];
 
-	uint32 palette[256];
+	uint32_t palette[256];
 	if(haspalette)
 	{
 		for(int i=0;i<256;i++) palette[i]=ExpandColour([fh readUInt16LE],pixelformat);
@@ -353,7 +353,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	CSHandle *fh=[self handle];
 
-	uint32 palette[16];
+	uint32_t palette[16];
 	if(haspalette)
 	{
 		for(int i=0;i<16;i++) palette[i]=ExpandColour([fh readUInt16LE],pixelformat);
@@ -381,7 +381,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 
 	for(int n=0;n<height*width;n+=2)
 	{
-		uint8 val=[fh readUInt8];
+		uint8_t val=[fh readUInt8];
 
 		int n_square=n%size;
 		int offs=n/size;
@@ -401,7 +401,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	CSHandle *fh=[self handle];
 
-	uint32 vqtab[entries][4];
+	uint32_t vqtab[entries][4];
 	for(int i=0;i<entries;i++)
 	for(int j=0;j<4;j++)
 	vqtab[i][j]=ExpandColour([fh readUInt16LE],pixelformat);
@@ -413,7 +413,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 		int x=UnInterleavedXCoord(n)*2;
 		int y=UnInterleavedYCoord(n)*2;
 
-		uint32 *vq=vqtab[[fh readUInt8]];
+		uint32_t *vq=vqtab[[fh readUInt8]];
 		WritePixel(self,x,y,vq[0]);
 		WritePixel(self,x,y+1,vq[1]);
 		WritePixel(self,x+1,y,vq[2]);
@@ -429,12 +429,12 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 
 	[fh skipBytes:offset];
 
-	uint8 rowbuf[width*2];
+	uint8_t rowbuf[width*2];
 	for(int row=0;row<height;row++)
 	{
 		[fh readBytes:width*2 toBuffer:rowbuf];
 
-		uint32 *dest=(uint32 *)(data+row*bytesperrow);
+		uint32_t *dest=(uint32_t *)(data+row*bytesperrow);
 		for(int col=0;col<width;col++) dest[col]=ExpandColour(XeeLEUInt16(&rowbuf[2*col]),pixelformat);
 
 		[self setCompletedRowCount:row+1];
@@ -464,7 +464,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	if([block length]>16)
 	{
-		uint32 magic=XeeBEUInt32([block bytes]);
+		uint32_t magic=XeeBEUInt32([block bytes]);
 		if(magic=='GBIX') return YES;
 		if(magic=='PVMH') return YES;
 	}
@@ -477,16 +477,16 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32 col)
 {
 	CSHandle *fh=[self handle];
 
-	uint32 magic=[fh readID];
+	uint32_t magic=[fh readID];
 	if(magic=='GBIX')
 	{
-		uint32 size=[fh readUInt32LE];
+		uint32_t size=[fh readUInt32LE];
 		[fh skipBytes:size];
 		magic=[fh readID];
 	}
 	
 	if(magic!='PVMH') return;
-	uint32 headsize=[fh readUInt32LE];
+	uint32_t headsize=[fh readUInt32LE];
 	[fh skipBytes:headsize];
 
 	int numimages=(headsize-4)/38;

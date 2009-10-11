@@ -7,7 +7,7 @@
 
 // Tags and tag sets
 
-typedef int16 XeeEXIFTag;
+typedef int16_t XeeEXIFTag;
 
 #define XeeOrientationTag 0x0112
 #define XeeThumbnailOffsetTag 0x0201
@@ -39,12 +39,12 @@ static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
 @interface XeeEXIFParser:NSObject
 {
 	struct exiftags *exiftags;
-	uint8 *data;
+	uint8_t *data;
 	NSData *dataobj;
 }
 
--(id)initWithBuffer:(const uint8 *)exifdata length:(int)len;
--(id)initWithBuffer:(uint8 *)exifdata length:(int)len mutable:(BOOL)mutable;
+-(id)initWithBuffer:(const uint8_t *)exifdata length:(int)len;
+-(id)initWithBuffer:(uint8_t *)exifdata length:(int)len mutable:(BOOL)mutable;
 -(id)initWithData:(NSData *)data;
 -(void)dealloc;
 

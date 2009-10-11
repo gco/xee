@@ -5,13 +5,13 @@
 #import <OpenGL/GL.h>
 #import <OpenGL/GLu.h>
 
-typedef void (*XeeReadPixelFunction)(uint8 *row,int x,int pixelsize,uint8 *dest);
+typedef void (*XeeReadPixelFunction)(uint8_t *row,int x,int pixelsize,uint8_t *dest);
 
 
 @interface XeeTileImage:XeeImage
 {
 	@public
-	uint8 *data;
+	uint8_t *data;
 	int bytesperpixel,bytesperrow;
 	@protected
 	BOOL freedata,premultiplied;
@@ -28,7 +28,7 @@ typedef void (*XeeReadPixelFunction)(uint8 *row,int x,int pixelsize,uint8 *dest)
 -(id)init;
 -(void)dealloc;
 
--(void)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
+-(void)setData:(uint8_t *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
 bytesPerPixel:(int)bppixel bytesPerRow:(int)bprow premultiplied:(BOOL)premult
 glInternalFormat:(int)intformat glFormat:(int)format glType:(int)type;
 
@@ -53,7 +53,7 @@ glInternalFormat:(int)intformat glFormat:(int)format glType:(int)type;
 -(GLuint)magFilter;
 
 -(int)bytesPerRow;
--(uint8 *)data;
+-(uint8_t *)data;
 
 -(CGImageRef)createCGImage;
 -(int)bitsPerComponentForCGImage;
@@ -64,4 +64,4 @@ glInternalFormat:(int)intformat glFormat:(int)format glType:(int)type;
 
 @end
 
-static inline uint8 *XeeImageDataRow(XeeTileImage *image,int row) { return image->data+row*image->bytesperrow; }
+static inline uint8_t *XeeImageDataRow(XeeTileImage *image,int row) { return image->data+row*image->bytesperrow; }

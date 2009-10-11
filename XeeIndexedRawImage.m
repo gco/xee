@@ -58,7 +58,7 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 		[handle readBytes:buffersize toBuffer:buffer];
 		if(inbpr&&inbpr!=buffersize) [handle skipBytes:inbpr-buffersize];
 
-		uint8 *rowptr=XeeImageDataRow(self,row);
+		uint8_t *rowptr=XeeImageDataRow(self,row);
 		if(transparent) [pal convertIndexes:buffer count:width depth:bitdepth toARGB8:rowptr];
 		else [pal convertIndexes:buffer count:width depth:bitdepth toRGB8:rowptr];
 
@@ -92,18 +92,18 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 
 -(int)numberOfColours { return numcolours; }
 
--(uint32)colourAtIndex:(int)index { if(index>=0&&index<256) return pal[index]; else return 0; }
+-(uint32_t)colourAtIndex:(int)index { if(index>=0&&index<256) return pal[index]; else return 0; }
 
 -(BOOL)isTransparent { return istrans; }
 
--(uint32 *)colours { return pal; }
+-(uint32_t *)colours { return pal; }
 
--(void)setColourAtIndex:(int)index red:(uint8)red green:(uint8)green blue:(uint8)blue
+-(void)setColourAtIndex:(int)index red:(uint8_t)red green:(uint8_t)green blue:(uint8_t)blue
 {
 	[self setColourAtIndex:index red:red green:green blue:blue alpha:0xff];
 }
 
--(void)setColourAtIndex:(int)index red:(uint8)red green:(uint8)green blue:(uint8)blue alpha:(uint8)alpha
+-(void)setColourAtIndex:(int)index red:(uint8_t)red green:(uint8_t)green blue:(uint8_t)blue alpha:(uint8_t)alpha
 {
 	if(index<0||index>=256) return;
 	pal[index]=XeeMakeARGB8(alpha,red,green,blue);
@@ -116,14 +116,14 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 	[self setColourAtIndex:index red:0 green:0 blue:0 alpha:0];
 }
 
--(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toRGB8:(uint8 *)dest
+-(void)convertIndexes:(uint8_t *)indexes count:(int)count depth:(int)depth toRGB8:(uint8_t *)dest
 {
 	switch(depth)
 	{
 		case 1:
 			for(int i=0;i<count;i++)
 			{
- 				uint32 col=pal[(indexes[i>>3]>>((i&7)^7))&0x01];
+ 				uint32_t col=pal[(indexes[i>>3]>>((i&7)^7))&0x01];
 				*dest++=XeeGetRFromARGB8(col);
 				*dest++=XeeGetGFromARGB8(col);
 				*dest++=XeeGetBFromARGB8(col);
@@ -133,7 +133,7 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 		case 2:
 			for(int i=0;i<count;i++)
 			{
- 				uint32 col=pal[(indexes[i>>2]>>(((i&3)^3)<<1))&0x03];
+ 				uint32_t col=pal[(indexes[i>>2]>>(((i&3)^3)<<1))&0x03];
 				*dest++=XeeGetRFromARGB8(col);
 				*dest++=XeeGetGFromARGB8(col);
 				*dest++=XeeGetBFromARGB8(col);
@@ -143,7 +143,7 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 		case 4:
 			for(int i=0;i<count;i++)
 			{
- 				uint32 col=pal[(indexes[i>>1]>>(((i&1)^1)<<2))&0x0f];
+ 				uint32_t col=pal[(indexes[i>>1]>>(((i&1)^1)<<2))&0x0f];
 				*dest++=XeeGetRFromARGB8(col);
 				*dest++=XeeGetGFromARGB8(col);
 				*dest++=XeeGetBFromARGB8(col);
@@ -153,7 +153,7 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 		case 8:
 			for(int i=0;i<count;i++)
 			{
- 				uint32 col=pal[indexes[i]];
+ 				uint32_t col=pal[indexes[i]];
 				*dest++=XeeGetRFromARGB8(col);
 				*dest++=XeeGetGFromARGB8(col);
 				*dest++=XeeGetBFromARGB8(col);
@@ -162,9 +162,9 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 	}
 }
 
--(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toARGB8:(uint8 *)dest
+-(void)convertIndexes:(uint8_t *)indexes count:(int)count depth:(int)depth toARGB8:(uint8_t *)dest
 {
-	uint32 *destptr=(uint32 *)dest;
+	uint32_t *destptr=(uint32_t *)dest;
 
 	switch(depth)
 	{

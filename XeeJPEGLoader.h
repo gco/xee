@@ -16,15 +16,15 @@
 
 	int mcu_width,mcu_height;
 
-	uint8 *ycbcr_buffers;
+	uint8_t *ycbcr_buffers;
 	JSAMPLE *y_buf,*cb_buf,*cr_buf;
 	JSAMPROW y_lines[16],cb_lines[16],cr_lines[16];
 	JSAMPARRAY image[3];
 
-	uint8 *cmyk_buffer;
+	uint8_t *cmyk_buffer;
 	BOOL invert_cmyk;
 
-	uint8 *thumb_ptr;
+	uint8_t *thumb_ptr;
 	int thumb_len;
 	CSHandle *thumbhandle;
 

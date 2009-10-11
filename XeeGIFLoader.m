@@ -332,9 +332,9 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 
 -(void)clearImage
 {
-	unsigned long *ptr=(unsigned long *)data;
+	uint32_t *ptr=(uint32_t *)data;
 	int n=(bytesperrow/4)*height;
-	unsigned long val;
+	uint32_t val;
 
 	if(background==transindex) val=0x00000000;
 	else val=[globalpal table][background];
@@ -344,7 +344,7 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 
 -(int)background { return background; }
 
--(unsigned long *)backup { return backup; }
+-(uint32_t *)backup { return backup; }
 
 
 @end
@@ -391,23 +391,23 @@ palette:(XeeGIFPalette *)pal
 {
 	if(left<0||top<0||left+width>[image width]||top+height>[image height]) return;
 
-	unsigned long *destdata=(unsigned long *)[image data];
-	unsigned long *backup=(unsigned long *)[image backup];
-	unsigned long *ptable=[palette table];
-	unsigned char *src=data;
+	uint32_t *destdata=(uint32_t *)[image data];
+	uint32_t *backup=(uint32_t *)[image backup];
+	uint32_t *ptable=[palette table];
+	uint8_t *src=data;
 	int destwidth=[image bytesPerRow]/4;
 
 	if(disposal==3&&backup)
 	for(int y=0;y<height;y++)
 	{
-		unsigned long *orig=destdata+(top+y)*destwidth+left;
+		uint32_t *orig=destdata+(top+y)*destwidth+left;
 		int n=width;
 		while(n--) *backup++=*orig++;
 	}
 
 	for(int y=0;y<height;y++)
 	{
-		unsigned long *dest=destdata+(top+y)*destwidth+left;
+		uint32_t*dest=destdata+(top+y)*destwidth+left;
 		int n=width;
 		while(n--)
 		{
@@ -422,32 +422,32 @@ palette:(XeeGIFPalette *)pal
 {
 	if(left<0||top<0||left+width>[image width]||top+height>[image height]) return;
 
-	unsigned long *destdata=(unsigned long *)[image data];
+	uint32_t *destdata=(uint32_t *)[image data];
 	int destwidth=[image width];
 
 	if(disposal==2)
 	{
 		int background=[image background];
-		unsigned long colour;
+		uint32_t colour;
 
 		if(background==transparent) colour=0x00000000;
 		else background=[palette table][background];
 
 		for(int y=0;y<height;y++)
 		{
-			unsigned long *dest=destdata+(top+y)*destwidth+left;
+			uint32_t *dest=destdata+(top+y)*destwidth+left;
 			int n=width;
 			while(n--) *dest++=colour;
 		}
 	}
 	else if(disposal==3)
 	{
-		unsigned long *backup=(unsigned long *)[image backup];
+		uint32_t *backup=(uint32_t *)[image backup];
 
 		if(backup)
 		for(int y=0;y<height;y++)
 		{
-			unsigned long *dest=destdata+(top+y)*destwidth+left;
+			uint32_t *dest=destdata+(top+y)*destwidth+left;
 			int n=width;
 			while(n--) *dest++=*backup++;
 		}
@@ -492,6 +492,6 @@ palette:(XeeGIFPalette *)pal
 	return self;
 }
 
--(unsigned long *)table { return table; }
+-(uint32_t *)table { return table; }
 
 @end

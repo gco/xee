@@ -122,7 +122,7 @@
 			if(j==0) label=[NSString stringWithFormat:
 			NSLocalizedString(@"Quantization table %d",@"Quantization table property title"),i];
 
-			uint16 *tbl=&cinfo->quant_tbl_ptrs[i]->quantval[j*8];
+			uint16_t *tbl=&cinfo->quant_tbl_ptrs[i]->quantval[j*8];
 
 			#define PAD(i) (tbl[i]<10?"  ":"")
 			[props addObject:[XeePropertyItem itemWithLabel:label

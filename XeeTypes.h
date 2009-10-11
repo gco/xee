@@ -1,48 +1,34 @@
-//
-// Basic integer types
-//
-
-typedef signed char int8;
-typedef signed short int16;
-typedef signed int int32;
-typedef signed long long int64;
-
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-typedef unsigned long long uint64;
-
 
 
 //
 // Endian integer types
 //
 
-typedef uint8 eint16[2];
-typedef uint8 eint32[4];
-typedef uint8 eint64[8];
+typedef uint8_t eint16[2];
+typedef uint8_t eint32[4];
+typedef uint8_t eint64[8];
 
-static inline int16 XeeBEInt16(const uint8 *b) { return ((int16)b[0]<<8)|(int16)b[1]; }
-static inline int32 XeeBEInt32(const uint8 *b) { return ((int32)b[0]<<24)|((int32)b[1]<<16)|((int32)b[2]<<8)|(int32)b[3]; }
-static inline int64 XeeBEInt64(const uint8 *b) { return ((int64)b[0]<<56)|((int64)b[1]<<48)|((int64)b[2]<<40)|((int64)b[3]<<32)|((int64)b[4]<<24)||((int64)b[5]<<16)|((int64)b[6]<<8)|(int64)b[7]; }
-static inline uint16 XeeBEUInt16(const uint8 *b) { return ((uint16)b[0]<<8)|(uint16)b[1]; }
-static inline uint32 XeeBEUInt32(const uint8 *b) { return ((uint32)b[0]<<24)|((uint32)b[1]<<16)|((uint32)b[2]<<8)|(uint32)b[3]; }
-static inline uint64 XeeBEUInt64(const uint8 *b) { return ((uint64)b[0]<<56)|((uint64)b[1]<<48)|((uint64)b[2]<<40)|((uint64)b[3]<<32)|((uint64)b[4]<<24)||((uint64)b[5]<<16)|((uint64)b[6]<<8)|(uint64)b[7]; }
-static inline int16 XeeLEInt16(const uint8 *b) { return ((int16)b[1]<<8)|(int16)b[0]; }
-static inline int32 XeeLEInt32(const uint8 *b) { return ((int32)b[3]<<24)|((int32)b[2]<<16)|((int32)b[1]<<8)|(int32)b[0]; }
-static inline int64 XeeLEInt64(const uint8 *b) { return ((int64)b[7]<<56)|((int64)b[6]<<48)|((int64)b[5]<<40)|((int64)b[4]<<32)|((int64)b[3]<<24)||((int64)b[2]<<16)|((int64)b[1]<<8)|(int64)b[0]; }
-static inline uint16 XeeLEUInt16(const uint8 *b) { return ((uint16)b[1]<<8)|(uint16)b[0]; }
-static inline uint32 XeeLEUInt32(const uint8 *b) { return ((uint32)b[3]<<24)|((uint32)b[2]<<16)|((uint32)b[1]<<8)|(uint32)b[0]; }
-static inline uint64 XeeLEUInt64(const uint8 *b) { return ((uint64)b[7]<<56)|((uint64)b[6]<<48)|((uint64)b[5]<<40)|((uint64)b[4]<<32)|((uint64)b[3]<<24)||((uint64)b[2]<<16)|((uint64)b[1]<<8)|(uint64)b[0]; }
+static inline int16_t XeeBEInt16(const uint8_t *b) { return ((int16_t)b[0]<<8)|(int16_t)b[1]; }
+static inline int32_t XeeBEInt32(const uint8_t *b) { return ((int32_t)b[0]<<24)|((int32_t)b[1]<<16)|((int32_t)b[2]<<8)|(int32_t)b[3]; }
+static inline int64_t XeeBEInt64(const uint8_t *b) { return ((int64_t)b[0]<<56)|((int64_t)b[1]<<48)|((int64_t)b[2]<<40)|((int64_t)b[3]<<32)|((int64_t)b[4]<<24)||((int64_t)b[5]<<16)|((int64_t)b[6]<<8)|(int64_t)b[7]; }
+static inline uint16_t XeeBEUInt16(const uint8_t *b) { return ((uint16_t)b[0]<<8)|(uint16_t)b[1]; }
+static inline uint32_t XeeBEUInt32(const uint8_t *b) { return ((uint32_t)b[0]<<24)|((uint32_t)b[1]<<16)|((uint32_t)b[2]<<8)|(uint32_t)b[3]; }
+static inline uint64_t XeeBEUInt64(const uint8_t *b) { return ((uint64_t)b[0]<<56)|((uint64_t)b[1]<<48)|((uint64_t)b[2]<<40)|((uint64_t)b[3]<<32)|((uint64_t)b[4]<<24)||((uint64_t)b[5]<<16)|((uint64_t)b[6]<<8)|(uint64_t)b[7]; }
+static inline int16_t XeeLEInt16(const uint8_t *b) { return ((int16_t)b[1]<<8)|(int16_t)b[0]; }
+static inline int32_t XeeLEInt32(const uint8_t *b) { return ((int32_t)b[3]<<24)|((int32_t)b[2]<<16)|((int32_t)b[1]<<8)|(int32_t)b[0]; }
+static inline int64_t XeeLEInt64(const uint8_t *b) { return ((int64_t)b[7]<<56)|((int64_t)b[6]<<48)|((int64_t)b[5]<<40)|((int64_t)b[4]<<32)|((int64_t)b[3]<<24)||((int64_t)b[2]<<16)|((int64_t)b[1]<<8)|(int64_t)b[0]; }
+static inline uint16_t XeeLEUInt16(const uint8_t *b) { return ((uint16_t)b[1]<<8)|(uint16_t)b[0]; }
+static inline uint32_t XeeLEUInt32(const uint8_t *b) { return ((uint32_t)b[3]<<24)|((uint32_t)b[2]<<16)|((uint32_t)b[1]<<8)|(uint32_t)b[0]; }
+static inline uint64_t XeeLEUInt64(const uint8_t *b) { return ((uint64_t)b[7]<<56)|((uint64_t)b[6]<<48)|((uint64_t)b[5]<<40)|((uint64_t)b[4]<<32)|((uint64_t)b[3]<<24)||((uint64_t)b[2]<<16)|((uint64_t)b[1]<<8)|(uint64_t)b[0]; }
 
-static inline void XeeSetBEInt16(uint8 *b,int16 n) { b[0]=(n>>8)&0xff; b[1]=n&0xff; }
-static inline void XeeSetBEInt32(uint8 *b,int32 n) { b[0]=(n>>24)&0xff; b[1]=(n>>16)&0xff; b[2]=(n>>8)&0xff; b[3]=n&0xff; }
-static inline void XeeSetBEUInt16(uint8 *b,uint16 n) { b[0]=(n>>8)&0xff; b[1]=n&0xff; }
-static inline void XeeSetBEUInt32(uint8 *b,uint32 n) { b[0]=(n>>24)&0xff; b[1]=(n>>16)&0xff; b[2]=(n>>8)&0xff; b[3]=n&0xff; }
-static inline void XeeSetLEInt16(uint8 *b,int16 n) { b[1]=(n>>8)&0xff; b[0]=n&0xff; }
-static inline void XeeSetLEInt32(uint8 *b,int32 n) { b[3]=(n>>24)&0xff; b[2]=(n>>16)&0xff; b[1]=(n>>8)&0xff; b[0]=n&0xff; }
-static inline void XeeSetLEUInt16(uint8 *b,uint16 n) { b[1]=(n>>8)&0xff; b[0]=n&0xff; }
-static inline void XeeSetLEUInt32(uint8 *b,uint32 n) { b[3]=(n>>24)&0xff; b[2]=(n>>16)&0xff; b[1]=(n>>8)&0xff; b[0]=n&0xff; }
+static inline void XeeSetBEInt16(uint8_t *b,int16_t n) { b[0]=(n>>8)&0xff; b[1]=n&0xff; }
+static inline void XeeSetBEInt32(uint8_t *b,int32_t n) { b[0]=(n>>24)&0xff; b[1]=(n>>16)&0xff; b[2]=(n>>8)&0xff; b[3]=n&0xff; }
+static inline void XeeSetBEUInt16(uint8_t *b,uint16_t n) { b[0]=(n>>8)&0xff; b[1]=n&0xff; }
+static inline void XeeSetBEUInt32(uint8_t *b,uint32_t n) { b[0]=(n>>24)&0xff; b[1]=(n>>16)&0xff; b[2]=(n>>8)&0xff; b[3]=n&0xff; }
+static inline void XeeSetLEInt16(uint8_t *b,int16_t n) { b[1]=(n>>8)&0xff; b[0]=n&0xff; }
+static inline void XeeSetLEInt32(uint8_t *b,int32_t n) { b[3]=(n>>24)&0xff; b[2]=(n>>16)&0xff; b[1]=(n>>8)&0xff; b[0]=n&0xff; }
+static inline void XeeSetLEUInt16(uint8_t *b,uint16_t n) { b[1]=(n>>8)&0xff; b[0]=n&0xff; }
+static inline void XeeSetLEUInt32(uint8_t *b,uint32_t n) { b[3]=(n>>24)&0xff; b[2]=(n>>16)&0xff; b[1]=(n>>8)&0xff; b[0]=n&0xff; }
 
 
 
@@ -146,4 +132,4 @@ double XeeGetTime();
 // Hex Data
 //
 
-NSString *XeeHexDump(const uint8 *data,int length,int maxlen);
+NSString *XeeHexDump(const uint8_t *data,int length,int maxlen);

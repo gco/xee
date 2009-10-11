@@ -4,12 +4,12 @@
 
 @implementation XeeEXIFParser
 
--(id)initWithBuffer:(const uint8 *)exifdata length:(int)len
+-(id)initWithBuffer:(const uint8_t *)exifdata length:(int)len
 {
-	return [self initWithBuffer:(uint8 *)exifdata length:len mutable:NO];
+	return [self initWithBuffer:(uint8_t *)exifdata length:len mutable:NO];
 }
 
--(id)initWithBuffer:(uint8 *)exifdata length:(int)len mutable:(BOOL)mutable
+-(id)initWithBuffer:(uint8_t *)exifdata length:(int)len mutable:(BOOL)mutable
 {
 	if(self=[super init])
 	{

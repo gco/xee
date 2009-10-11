@@ -36,7 +36,7 @@
 	if(!imagerep) return NO;
 	if([imagerep isPlanar]) return NO;
 
-	uint8 *pixeldata=[imagerep bitmapData];
+	uint8_t *pixeldata=[imagerep bitmapData];
 	int pixelwidth=[imagerep pixelsWide];
 	int pixelheight=[imagerep pixelsHigh];
 	int bppixel=[imagerep bitsPerPixel];

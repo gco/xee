@@ -3,58 +3,58 @@
 
 @interface XeeIFFHandle:CSFileHandle
 {
-	uint32 file_id,file_end,file_type;
-	uint32 next_chunk;
-	uint32 curr_id,curr_start,curr_size;
+	uint32_t file_id,file_end,file_type;
+	uint32_t next_chunk;
+	uint32_t curr_id,curr_start,curr_size;
 	int align_mask;
 	BOOL big_endian;
 }
 
--(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc description:(NSString *)description fileType:(uint32)type;
+-(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc description:(NSString *)description fileType:(uint32_t)type;
 
 -(BOOL)isShort;
 
--(uint32)fileID;
--(uint32)fileType;
+-(uint32_t)fileID;
+-(uint32_t)fileType;
 
--(uint32)nextChunk;
+-(uint32_t)nextChunk;
 
--(uint32)offsetInChunk;
--(uint32)chunkSize;
--(uint32)chunkID;
--(uint32)bytesLeft;
+-(uint32_t)offsetInChunk;
+-(uint32_t)chunkSize;
+-(uint32_t)chunkID;
+-(uint32_t)bytesLeft;
 
 -(void)seekToChunkOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(void)seekToFileOffset:(off_t)offs;
 
--(int16)readInt16;
--(int32)readInt32;
--(int64)readInt64;
--(uint16)readUInt16;
--(uint32)readUInt32;
--(uint64)readUInt64;
+-(int16_t)readInt16;
+-(int32_t)readInt32;
+-(int64_t)readInt64;
+-(uint16_t)readUInt16;
+-(uint32_t)readUInt32;
+-(uint64_t)readUInt64;
 
--(uint32)_readHeaderUint32;
+-(uint32_t)_readHeaderUint32;
 
--(int8)readInt8;
--(uint8)readUInt8;
+-(int8_t)readInt8;
+-(uint8_t)readUInt8;
 
--(int16)readInt16BE;
--(int32)readInt32BE;
--(int64)readInt64BE;
--(uint16)readUInt16BE;
--(uint32)readUInt32BE;
--(uint64)readUInt64BE;
+-(int16_t)readInt16BE;
+-(int32_t)readInt32BE;
+-(int64_t)readInt64BE;
+-(uint16_t)readUInt16BE;
+-(uint32_t)readUInt32BE;
+-(uint64_t)readUInt64BE;
 
--(int16)readInt16LE;
--(int32)readInt32LE;
--(int64)readInt64LE;
--(uint16)readUInt16LE;
--(uint32)readUInt32LE;
--(uint64)readUInt64LE;
+-(int16_t)readInt16LE;
+-(int32_t)readInt32LE;
+-(int64_t)readInt64LE;
+-(uint16_t)readUInt16LE;
+-(uint32_t)readUInt32LE;
+-(uint64_t)readUInt64LE;
 
--(uint32)readID;
+-(uint32_t)readID;
 
 -(void)pushBackByte:(int)byte;
 
@@ -73,6 +73,6 @@
 -(NSString *)description;
 
 +(id)IFFHandleWithPath:(NSString *)path;
-+(id)IFFHandleWithPath:(NSString *)path fileType:(uint32)type;
++(id)IFFHandleWithPath:(NSString *)path fileType:(uint32_t)type;
 
 @end

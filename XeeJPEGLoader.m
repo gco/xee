@@ -290,7 +290,7 @@
 
 	for(int i=0;i<16;i++)
 	{
-		uint8 *row=maindata+cinfo.output_scanline*bprow;
+		uint8_t *row=maindata+cinfo.output_scanline*bprow;
 		jpeg_read_scanlines(&cinfo,&row,1);
 		[mainimage setCompletedRowCount:cinfo.output_scanline];
 
@@ -311,18 +311,18 @@
 
 	for(int i=0;i<16;i++)
 	{
-		uint8 *cmyk=cmyk_buffer;
-		uint8 *rgb=maindata+cinfo.output_scanline*bprow;
+		uint8_t *cmyk=cmyk_buffer;
+		uint8_t *rgb=maindata+cinfo.output_scanline*bprow;
 
 		jpeg_read_scanlines(&cinfo,&cmyk_buffer,1);
 
 		// super-lame CMYK conversion
 		for(int x=0;x<width;x++)
 		{
-			uint8 c=*cmyk++;
-			uint8 m=*cmyk++;
-			uint8 y=*cmyk++;
-			uint8 k=*cmyk++;
+			uint8_t c=*cmyk++;
+			uint8_t m=*cmyk++;
+			uint8_t y=*cmyk++;
+			uint8_t k=*cmyk++;
 
 		    if(invert_cmyk)
 			{
@@ -632,9 +632,9 @@
 			int y_width=(width+7)&~7;
 			int y_rows=8*cinfo.comp_info[0].v_samp_factor;
 			int cbcr_width=((width+1)/2+7)&~7;
-			uint8 y_buf[y_rows*y_width];
-			uint8 cb_buf[8*cbcr_width];
-			uint8 cr_buf[8*cbcr_width];
+			uint8_t y_buf[y_rows*y_width];
+			uint8_t cb_buf[8*cbcr_width];
+			uint8_t cr_buf[8*cbcr_width];
 			JSAMPROW y_lines[y_rows],cb_lines[8],cr_lines[8];
 			JSAMPARRAY image[3]={y_lines,cb_lines,cr_lines};
 
@@ -652,7 +652,7 @@
 				for(int y=0;y<num_lines;y++)
 				{
 					if(start_line+y>=height) break;
-					uint8 *row=XeeImageDataRow(mainimage,start_line+y);
+					uint8_t *row=XeeImageDataRow(mainimage,start_line+y);
 
 					JSAMPLE *y_row=y_lines[y];
 					JSAMPLE *cb_row=cb_lines[y/cinfo.comp_info[0].v_samp_factor];
@@ -670,24 +670,24 @@
 			if(!mainimage) XeeImageLoaderDone(NO);
 			[self addSubImage:mainimage];
 
-			uint8 cmyk_buffer[width*4];
+			uint8_t cmyk_buffer[width*4];
 			//JSAMPARRAY ...
 
 			jpeg_start_decompress(&cinfo);
 			while(cinfo.output_scanline<cinfo.output_height)
 			{
-				uint8 *cmyk=cmyk_buffer;
-				uint8 *rgb=XeeImageDataRow(mainimage,cinfo.output_scanline);
+				uint8_t *cmyk=cmyk_buffer;
+				uint8_t *rgb=XeeImageDataRow(mainimage,cinfo.output_scanline);
 
 				jpeg_read_scanlines(&cinfo,&cmyk,1);
 
 				// super-lame CMYK conversion
 				for(int x=0;x<width;x++)
 				{
-					uint8 c=*cmyk++;
-					uint8 m=*cmyk++;
-					uint8 y=*cmyk++;
-					uint8 k=*cmyk++;
+					uint8_t c=*cmyk++;
+					uint8_t m=*cmyk++;
+					uint8_t y=*cmyk++;
+					uint8_t k=*cmyk++;
 
 					if(invert_cmyk)
 					{
@@ -716,7 +716,7 @@
 			jpeg_start_decompress(&cinfo);
 			while(cinfo.output_scanline<cinfo.output_height)
 			{
-				uint8 *row=XeeImageDataRow(mainimage,cinfo.output_scanline);
+				uint8_t *row=XeeImageDataRow(mainimage,cinfo.output_scanline);
 				jpeg_read_scanlines(&cinfo,&row,1);
 				[mainimage setCompletedRowCount:cinfo.output_scanline];
 				XeeImageLoaderYield();

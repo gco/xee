@@ -48,7 +48,7 @@
 	{
 		[handle readBytes:bytesperfilerow toBuffer:buffer];
 
-		uint8 *rowptr=XeeImageDataRow(self,row);
+		uint8_t *rowptr=XeeImageDataRow(self,row);
 		for(int x=0;x<width;x++)
 		{
 			if(buffer[x>>3]&(0x80>>(x&7))) *rowptr++=one;

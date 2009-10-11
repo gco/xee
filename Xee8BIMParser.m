@@ -25,7 +25,7 @@
 		{
 			while(![handle atEndOfFile])
 			{
-				uint32 type=[handle readID];
+				uint32_t type=[handle readID];
 				if(type!='8BIM') break;
 				int chunkid=[handle readUInt16BE];
 				int namelen=[handle readInt8];

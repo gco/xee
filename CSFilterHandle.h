@@ -128,12 +128,12 @@ static inline int CSFilterNextBitString(CSFilterHandle *self,int bits)
 
 static uint8_t inline __CSFilterGet(int (*readatmost_ptr)(id,SEL,int,void *),CSHandle *parent,CSCoroutine *coro)
 {
-	uint8 b;
+	uint8_t b;
 	if(readatmost_ptr(parent,@selector(readAtMost:toBuffer:),1,&b)!=1) [coro returnFrom];
 	return b;
 }
 
-static void inline __CSFilterPut(uint8 b,off_t *pos,int *left,uint8 **ptr,CSCoroutine *coro)
+static void inline __CSFilterPut(uint8_t b,off_t *pos,int *left,uint8_t **ptr,CSCoroutine *coro)
 {
 	*(*ptr)++=b;
 	(*left)--;

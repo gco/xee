@@ -48,7 +48,7 @@ static int ConvertHex(int x)
 		[regex beginMatchingString:string];
 		while([regex matchNext])
 		{
-			uint32 col=XeeMakeNRGB8([[regex stringForMatch:1] intValue],[[regex stringForMatch:2] intValue],[[regex stringForMatch:3] intValue]);
+			uint32_t col=XeeMakeNRGB8([[regex stringForMatch:1] intValue],[[regex stringForMatch:2] intValue],[[regex stringForMatch:3] intValue]);
 			[newdict setObject:[NSNumber numberWithUnsignedInt:col] forKey:[[regex stringForMatch:4] lowercaseString]];
 		}
 
@@ -171,7 +171,7 @@ static int ConvertHex(int x)
 	{
 		NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-		uint32 *dest=(uint32 *)(data+y*bytesperrow);
+		uint32_t *dest=(uint32_t *)(data+y*bytesperrow);
 		NSString *row=[self nextLine];
 
 		int len=[row length]/numchars;

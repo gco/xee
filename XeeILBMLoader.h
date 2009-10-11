@@ -13,10 +13,10 @@
 
 	BOOL ham,ham8,ehb,ocscol,transparency;
 
-	uint8 *image;
-	uint8 *mask;
+	uint8_t *image;
+	uint8_t *mask;
 
-	unsigned long palette[256];
+	uint32_t palette[256];
 
 	NSMutableArray *ranges;
 	NSMutableArray *comments;
@@ -40,11 +40,11 @@
 -(SEL)loadPaletteImage;
 -(SEL)loadRGBImage;
 
--(void)readRow:(uint8 *)row;
+-(void)readRow:(uint8_t *)row;
 -(void)renderImage;
 -(void)addCommentWithLabel:(NSString *)label data:(NSData *)commentdata;
 
--(unsigned long *)palette;
+-(uint32_t *)palette;
 
 -(BOOL)animated;
 -(void)setAnimating:(BOOL)animating;
@@ -58,7 +58,7 @@
 @interface XeeILBMRange:NSObject
 {
 	int num;
-	unsigned long *colours;
+	uint32_t *colours;
 	int *indexes;
 
 	float interval;

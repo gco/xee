@@ -14,7 +14,7 @@
 	int background,currframe;
 	int frametime,transindex,disposal;
 	BOOL backupneeded;
-	unsigned long *backup;
+	uint32_t *backup;
 	XeeGIFPalette *globalpal;
 
 	int animticks;
@@ -46,7 +46,7 @@
 
 -(void)clearImage;
 -(int)background;
--(unsigned long *)backup;
+-(uint32_t *)backup;
 
 @end
 
@@ -76,10 +76,10 @@
 
 @interface XeeGIFPalette:NSObject
 {
-	unsigned long table[256];
+	uint32_t table[256];
 }
 
 -(id)initWithColorMap:(ColorMapObject *)cmap;
--(unsigned long *)table;
+-(uint32_t *)table;
 
 @end

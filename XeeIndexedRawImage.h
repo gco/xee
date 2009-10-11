@@ -5,7 +5,7 @@
 @interface XeeIndexedRawImage:XeeBitmapImage
 {
 	XeePalette *pal;
-	uint8 *buffer;
+	uint8_t *buffer;
 	int bitdepth,inbpr;
 }
 
@@ -25,7 +25,7 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 
 @interface XeePalette:NSObject
 {
-	uint32 pal[256];
+	uint32_t pal[256];
 	int numcolours;
 	BOOL istrans;
 }
@@ -33,15 +33,15 @@ depth:(int)framedepth palette:(XeePalette *)palette bytesPerRow:(int)bytesperinp
 +(XeePalette *)palette;
 
 -(int)numberOfColours;
--(uint32)colourAtIndex:(int)index;
+-(uint32_t)colourAtIndex:(int)index;
 -(BOOL)isTransparent;
--(uint32 *)colours;
+-(uint32_t *)colours;
 
--(void)setColourAtIndex:(int)index red:(uint8)red green:(uint8)green blue:(uint8)blue;
--(void)setColourAtIndex:(int)index red:(uint8)red green:(uint8)green blue:(uint8)blue alpha:(uint8)alpha;
+-(void)setColourAtIndex:(int)index red:(uint8_t)red green:(uint8_t)green blue:(uint8_t)blue;
+-(void)setColourAtIndex:(int)index red:(uint8_t)red green:(uint8_t)green blue:(uint8_t)blue alpha:(uint8_t)alpha;
 -(void)setTransparent:(int)index;
 
--(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toRGB8:(uint8 *)dest;
--(void)convertIndexes:(uint8 *)indexes count:(int)count depth:(int)depth toARGB8:(uint8 *)dest;
+-(void)convertIndexes:(uint8_t *)indexes count:(int)count depth:(int)depth toRGB8:(uint8_t *)dest;
+-(void)convertIndexes:(uint8_t *)indexes count:(int)count depth:(int)depth toARGB8:(uint8_t *)dest;
 
 @end

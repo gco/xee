@@ -231,7 +231,7 @@
 					if(thumbdata)
 					{
 						int newlen=[thumbdata length];
-						const uint8 *newdata=[thumbdata bytes];
+						const uint8_t *newdata=[thumbdata bytes];
 
 						[exif setLong:newlen forTag:XeeThumbnailLengthTag set:XeeStandardTagSet];
 

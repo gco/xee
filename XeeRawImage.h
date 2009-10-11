@@ -18,7 +18,7 @@
 @interface XeeRawImage:XeeBitmapImage
 {
 	int bitdepth,inbpr,channels,uncomposition,transformation,type;
-	uint8 *buffer;
+	uint8_t *buffer;
 	BOOL flipendian,needsbuffer,adjustranges;
 	float range[5][2];
 }

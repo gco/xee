@@ -610,7 +610,7 @@ static const void *XeeCopyGLGetBytePointer(void *bitmap) { return bitmap; }
 #define C2 0x8a222222
 #define C3 0x8bd5d5d5
 
-static unsigned long resize_data[256]=
+static uint32_t resize_data[256]=
 {
 	C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,
 	C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,

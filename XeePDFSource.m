@@ -274,7 +274,7 @@ static int XeePDFSortPages(id first,id second,void *context)
 
 			if(palettedata)
 			{
-				const uint8 *palettebytes=[palettedata bytes];
+				const uint8_t *palettebytes=[palettedata bytes];
 				int count=[palettedata length]/3;
 				if(count>256) count=256;
 

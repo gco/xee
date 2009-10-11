@@ -25,7 +25,7 @@
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
 {
-	uint8 *header=(uint8 *)[block bytes];
+	uint8_t *header=(uint8_t *)[block bytes];
 	if([block length]>12&&XeeBEUInt32(header)=='FORM'&&XeeBEUInt32(header+8)=='ILBM') return YES;
 	return NO;
 }
@@ -125,9 +125,9 @@
 
 			for(int i=0;i<num;i++)
 			{
-				uint8 r=[iff readUInt8];
-				uint8 g=[iff readUInt8];
-				uint8 b=[iff readUInt8];
+				uint8_t r=[iff readUInt8];
+				uint8_t g=[iff readUInt8];
+				uint8_t b=[iff readUInt8];
 				palette[i]=XeeMakeARGB8(0xff,r,g,b);
 				if(i<32) col|=palette[i];
 			}
@@ -251,8 +251,8 @@
 
 -(SEL)loadPaletteImage
 {
-	uint8 *imageline=image+current_line*realwidth;
-	uint8 row[rowbytes];
+	uint8_t *imageline=image+current_line*realwidth;
+	uint8_t row[rowbytes];
 
 	@try
 	{
@@ -293,7 +293,7 @@
 -(SEL)loadRGBImage
 {
 	int *imageline=(int *)(data+current_line*bytesperrow);
-	uint8 row[rowbytes];
+	uint8_t row[rowbytes];
 
 	for(int i=0;i<width;i++) imageline[i]=0xff000000;
 
@@ -348,7 +348,7 @@
 	return @selector(loadRGBImage);
 }
 
--(void)readRow:(uint8 *)row
+-(void)readRow:(uint8_t *)row
 {
 	if(compression==0)
 	{
@@ -373,7 +373,7 @@
 			}
 			else if(num>128)
 			{
-				uint8 b=[iff readUInt8];
+				uint8_t b=[iff readUInt8];
 
 				num=257-num;
 
@@ -393,9 +393,9 @@
 		for(int y=0;y<realheight;y++)
 		for(int sub_y=0;sub_y<yscale;sub_y++)
 		{
-			uint8 *srcline=image+y*realwidth;
+			uint8_t *srcline=image+y*realwidth;
 			int *destline=(int *)(data+(y*yscale+sub_y)*bytesperrow);
-			unsigned long hold=palette[0];
+			uint32_t hold=palette[0];
 
 			for(int x=0;x<realwidth;x++)
 			{
@@ -421,9 +421,9 @@
 		for(int y=0;y<realheight;y++)
 		for(int sub_y=0;sub_y<yscale;sub_y++)
 		{
-			uint8 *srcline=image+y*realwidth;
+			uint8_t *srcline=image+y*realwidth;
 			int *destline=(int *)(data+(y*yscale+sub_y)*bytesperrow);
-			unsigned long hold=palette[0];
+			uint32_t hold=palette[0];
 
 			for(int x=0;x<realwidth;x++)
 			{
@@ -449,12 +449,12 @@
 		for(int y=0;y<realheight;y++)
 		for(int sub_y=0;sub_y<yscale;sub_y++)
 		{
-			uint8 *srcline=image+y*realwidth;
+			uint8_t *srcline=image+y*realwidth;
 			int *destline=(int *)(data+(y*yscale+sub_y)*bytesperrow);
 
 			for(int x=0;x<realwidth;x++)
 			{
-				unsigned long col=palette[*srcline++];
+				uint32_t col=palette[*srcline++];
 				for(int sub_x=0;sub_x<xscale;sub_x++) *destline++=col;
 			}
 		}
@@ -465,7 +465,7 @@
 		for(int y=0;y<realheight;y++)
 		for(int sub_y=0;sub_y<yscale;sub_y++)
 		{
-			uint8 *maskline=mask+y*rowbytes;
+			uint8_t *maskline=mask+y*rowbytes;
 			int *destline=(int *)(data+(y*yscale+sub_y)*bytesperrow);
 
 			for(int x=0;x<realwidth;x++)
@@ -497,7 +497,7 @@
 	[self triggerPropertyChangeAction];
 }
 
--(unsigned long *)palette { return palette; }
+-(uint32_t *)palette { return palette; }
 
 
 
@@ -629,18 +629,18 @@
 					{
 						for(int i=0;i<ntrue;i++)
 						{
-							uint8 cell=[iff readUInt8];
-							uint8 r=[iff readUInt8];
-							uint8 g=[iff readUInt8];
-							uint8 b=[iff readUInt8];
+							uint8_t cell=[iff readUInt8];
+							uint8_t r=[iff readUInt8];
+							uint8_t g=[iff readUInt8];
+							uint8_t b=[iff readUInt8];
 
 							if(cell>=min&&cell<=max) colours[cell-min]=XeeMakeARGB8(0xff,r,g,b);
 						}
 
 						for(int i=0;i<nregs;i++)
 						{
-							uint8 cell=[iff readUInt8];
-							uint8 index=[iff readUInt8];
+							uint8_t cell=[iff readUInt8];
+							uint8_t index=[iff readUInt8];
 
 							if(cell>=min&&cell<=max) indexes[cell-min]=index;
 						}
@@ -672,7 +672,7 @@
 	if(colours) free(colours);
 	if(indexes) free(indexes);
 
-	colours=malloc(sizeof(unsigned long)*length);
+	colours=malloc(sizeof(uint32_t)*length);
 	indexes=malloc(sizeof(int)*length);
 
 	if(colours&&indexes)
@@ -704,7 +704,7 @@
 
 -(void)setup
 {
-	unsigned long *palette=[image palette];
+	uint32_t *palette=[image palette];
 
 	for(int i=0;i<num;i++)
 	{
@@ -715,7 +715,7 @@
 	{
 		if(colours[i]==EMPTY_COLOUR)
 		{
-			unsigned long startindex,endindex;
+			uint32_t startindex,endindex;
 			int startcol,endcol;
 
 			if(i!=0) startcol=colours[i-1];
@@ -777,8 +777,8 @@
 
 -(void)cycle
 {
-	unsigned long *palette=[image palette];
-	unsigned long tmp=colours[0];
+	uint32_t *palette=[image palette];
+	uint32_t tmp=colours[0];
 
 	for(int i=1;i<num;i++) colours[i-1]=colours[i];
 

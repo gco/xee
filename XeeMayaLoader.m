@@ -22,7 +22,7 @@
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
 {
-	uint8 *header=(uint8 *)[block bytes];
+	uint8_t *header=(uint8_t *)[block bytes];
 	if([block length]>12
 	&&(XeeBEUInt32(header)=='FORM'||XeeBEUInt32(header)=='FOR4'||XeeBEUInt32(header)=='FOR8')
 	&&XeeBEUInt32(header+8)=='CIMG') return YES;
@@ -188,20 +188,20 @@
 
 -(void)readUncompressedAtX:(int)x y:(int)y width:(int)w height:(int)h
 {
-/*	uint8 *data=[mainimage data];
+/*	uint8_t *data=[mainimage data];
 	int bprow=[mainimage bytesPerRow];
 	for(int i=0;i<h;i++)
 	{
-		uint8 *ptr=data+(height-y-i-1)*bprow+x*numchannels;
+		uint8_t *ptr=data+(height-y-i-1)*bprow+x*numchannels;
 		[subiff readBytes:w*numchannels toBuffer:ptr];
 
 		if(numchannels==3)
 		{
 			for(int j=0;j<w;j++)
 			{
-				uint8 b=ptr[0];
-				uint8 g=ptr[1];
-				uint8 r=ptr[2];
+				uint8_t b=ptr[0];
+				uint8_t g=ptr[1];
+				uint8_t r=ptr[2];
 				ptr[0]=r;
 				ptr[1]=g;
 				ptr[2]=b;
@@ -212,10 +212,10 @@
 		{
 			for(int j=0;j<w;j++)
 			{
-				uint8 a=ptr[0];
-				uint8 b=ptr[1];
-				uint8 g=ptr[2];
-				uint8 r=ptr[3];
+				uint8_t a=ptr[0];
+				uint8_t b=ptr[1];
+				uint8_t g=ptr[2];
+				uint8_t r=ptr[3];
 				ptr[0]=r;
 				ptr[1]=g;
 				ptr[2]=b;
@@ -225,14 +225,14 @@
 		}
 	}*/
 
-	uint8 *data=[mainimage data];
+	uint8_t *data=[mainimage data];
 	int bprow=[mainimage bytesPerRow];
 
 	int bytesperpixel=numchannels*bytedepth;
 
 	for(int dy=0;dy<h;dy++)
 	{
-		uint8 *ptr=data+(height-y-dy-1)*bprow+x*bytesperpixel;
+		uint8_t *ptr=data+(height-y-dy-1)*bprow+x*bytesperpixel;
 		for(int dx=0;dx<w;dx++)
 		{
 			for(int i=0;i<numchannels;i++)
@@ -251,7 +251,7 @@
 
 -(void)readRLECompressedAtX:(int)x y:(int)y width:(int)w height:(int)h
 {
-	uint8 *data=[mainimage data];
+	uint8_t *data=[mainimage data];
 	int bprow=[mainimage bytesPerRow];
 
 	int bytesperpixel=numchannels*bytedepth;
@@ -269,19 +269,19 @@
 	}
 }
 
--(void)readRLECompressedTo:(uint8 *)buf num:(int)num stride:(int)stride width:(int)w bytesPerRow:(int)bprow
+-(void)readRLECompressedTo:(uint8_t *)buf num:(int)num stride:(int)stride width:(int)w bytesPerRow:(int)bprow
 {
 	int x=0;
-	uint8 *row=buf;
+	uint8_t *row=buf;
 
 	for(;;)
 	{
-		uint8 marker=[subiff readUInt8];
+		uint8_t marker=[subiff readUInt8];
 		int count=(marker&0x7f)+1;
 
 		if(marker&0x80)
 		{
-			uint8 b=[subiff readUInt8];
+			uint8_t b=[subiff readUInt8];
 			for(int i=0;i<count;i++)
 			{
 				if(x>=w)

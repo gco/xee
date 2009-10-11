@@ -12,6 +12,8 @@
 -(id)initWithArchive:(NSString *)archivename;
 -(void)dealloc;
 
+-(void)start;
+
 -(NSString *)representedFilename;
 
 -(BOOL)canBrowse;
@@ -37,8 +39,6 @@
 -(id)initWithArchive:(XADArchive *)parentarchive entry:(int)num realPath:(NSString *)realpath;
 -(id)initAsCopyOf:(XeeArchiveEntry *)other;
 -(void)dealloc;
-
--(void)start;
 
 -(NSString *)descriptiveName;
 -(XeeFSRef *)ref;

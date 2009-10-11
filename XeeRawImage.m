@@ -21,8 +21,8 @@
 #define XeeRawUncomposeAlphaLab16 6
 
 static inline float cube(float a) { return a*a*a; }
-static inline uint8 clamp8(int a) { if(a<0) return 0; else if(a>255) return 255; else return a; }
-static inline uint16 clamp16(int a) { if(a<0) return 0; else if(a>65535) return 65535; else return a; }
+static inline uint8_t clamp8(int a) { if(a<0) return 0; else if(a>255) return 255; else return a; }
+static inline uint16_t clamp16(int a) { if(a<0) return 0; else if(a>65535) return 65535; else return a; }
 
 @implementation XeeRawImage
 
@@ -208,7 +208,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 	for(int row=0;row<height;row++)
 	{
-		uint8 *datarow;
+		uint8_t *datarow;
 		if(buffer) datarow=buffer;
 		else datarow=XeeImageDataRow(self,row);
 
@@ -220,16 +220,16 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 		{
 			if(bitdepth==16)
 			{
-				uint32 *ptr=(uint32 *)datarow;
+				uint32_t *ptr=(uint32_t *)datarow;
 				int n=width*channels;
-				for(;n>1;n-=2) { uint32 a=*ptr; *ptr++=((a&0xff00ff00)>>8)|((a&0x00ff00ff)<<8); }
-				if(n) { uint16 *p16=(uint16 *)ptr; uint16 a=*p16; *p16=(a>>8)||(a<<8); }
+				for(;n>1;n-=2) { uint32_t a=*ptr; *ptr++=((a&0xff00ff00)>>8)|((a&0x00ff00ff)<<8); }
+				if(n) { uint16_t *p16=(uint16_t *)ptr; uint16_t a=*p16; *p16=(a>>8)||(a<<8); }
 			}
 			else if(bitdepth==32)
 			{
-				uint32 *rowptr=(uint32 *)datarow;
+				uint32_t *rowptr=(uint32_t *)datarow;
 				int n=width*channels;
-				while(n--) { uint32 a=rowptr[0]; *rowptr++=((a&0xff000000)>>24)|((a&0x00ff0000)>>8)|((a&0x0000ff00)<<8)|((a&0x000000ff)<<24); }
+				while(n--) { uint32_t a=rowptr[0]; *rowptr++=((a&0xff000000)>>24)|((a&0x00ff0000)>>8)|((a&0x0000ff00)<<8)|((a&0x000000ff)<<24); }
 			}
 		}
 
@@ -237,7 +237,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 		{
 			case XeeRawUncomposeAlphaLast8:
 			{
-				uint8 *ptr=datarow;
+				uint8_t *ptr=datarow;
 				for(int x=0;x<width;x++)
 				{
 					if(ptr[channels-1]) for(int i=0;i<channels-1;i++) ptr[i]=((ptr[i]-255+ptr[channels-1])*255)/ptr[channels-1];
@@ -248,7 +248,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawUncomposeAlphaFirst8:
 			{
-				uint8 *ptr=datarow;
+				uint8_t *ptr=datarow;
 				for(int x=0;x<width;x++)
 				{
 					if(ptr[0]) for(int i=1;i<channels;i++) ptr[i]=((ptr[i]-255+ptr[0])*255)/ptr[0];
@@ -259,7 +259,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawUncomposeAlphaLab8:
 			{
-				uint8 *ptr=datarow;
+				uint8_t *ptr=datarow;
 				for(int x=0;x<width;x++)
 				{
 					if(ptr[3]) ptr[0]=((ptr[0]-255+ptr[3])*255)/ptr[3];
@@ -270,10 +270,10 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawUncomposeAlphaLast16:
 			{
-				uint16 *ptr=(uint16 *)datarow;
+				uint16_t *ptr=(uint16_t *)datarow;
 				for(int x=0;x<width;x++)
 				{
-					if(ptr[channels-1]) for(int i=0;i<channels-1;i++) ptr[i]=((uint32)(ptr[i]-65535+ptr[channels-1])*65535)/ptr[channels-1];
+					if(ptr[channels-1]) for(int i=0;i<channels-1;i++) ptr[i]=((uint32_t)(ptr[i]-65535+ptr[channels-1])*65535)/ptr[channels-1];
 					ptr+=channels;
 				}
 			}
@@ -281,10 +281,10 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawUncomposeAlphaFirst16:
 			{
-				uint16 *ptr=(uint16 *)datarow;
+				uint16_t *ptr=(uint16_t *)datarow;
 				for(int x=0;x<width;x++)
 				{
-					if(ptr[0]) for(int i=0;i<channels-1;i++) ptr[i]=((uint32)(ptr[i]-65535+ptr[0])*65535)/ptr[0];
+					if(ptr[0]) for(int i=0;i<channels-1;i++) ptr[i]=((uint32_t)(ptr[i]-65535+ptr[0])*65535)/ptr[0];
 					ptr+=channels;
 				}
 			}
@@ -292,10 +292,10 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawUncomposeAlphaLab16:
 			{
-				uint16 *ptr=(uint16 *)datarow;
+				uint16_t *ptr=(uint16_t *)datarow;
 				for(int x=0;x<width;x++)
 				{
-					if(ptr[3]) ptr[0]=((uint32)(ptr[0]-65535+ptr[3])*65535)/ptr[3];
+					if(ptr[3]) ptr[0]=((uint32_t)(ptr[0]-65535+ptr[3])*65535)/ptr[3];
 					ptr+=4;
 				}
 			}
@@ -313,7 +313,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 				case 16:
 				{
-					uint16 *datarow16=(uint16 *)datarow;
+					uint16_t *datarow16=(uint16_t *)datarow;
 					for(int i=0;i<width*channels;i++)
 					datarow16[i]=datarow16[i]*range[i%channels][1]+(65535-datarow16[i])*range[i%channels][0];
 				}
@@ -325,61 +325,61 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 		{
 			case XeeRawFlipGreyAlpha8:
 			{
-				uint16 *ptr=(uint16 *)XeeImageDataRow(self,row);
-				for(int x=0;x<width;x++) { uint16 a=ptr[0]; *ptr++=(a<<8)|(a>>8); }
+				uint16_t *ptr=(uint16_t *)XeeImageDataRow(self,row);
+				for(int x=0;x<width;x++) { uint16_t a=ptr[0]; *ptr++=(a<<8)|(a>>8); }
 			}
 			break;
 
 			case XeeRawFlipGreyAlpha16:
 			{
-				uint32 *ptr=(uint32 *)XeeImageDataRow(self,row);
-				for(int x=0;x<width;x++) { uint32 a=ptr[0]; *ptr++=(a<<16)|(a>>16); }
+				uint32_t *ptr=(uint32_t *)XeeImageDataRow(self,row);
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0]; *ptr++=(a<<16)|(a>>16); }
 			}
 			break;
 
 			case XeeRawFlipGreyAlpha32:
 			{
-				uint32 *ptr=(uint32 *)XeeImageDataRow(self,row);
-				for(int x=0;x<width;x++) { uint32 a=ptr[0],b=ptr[1]; *ptr++=b; *ptr++=a; }
+				uint32_t *ptr=(uint32_t *)XeeImageDataRow(self,row);
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0],b=ptr[1]; *ptr++=b; *ptr++=a; }
 			}
 			break;
 
 			case XeeRawReverseFlipRGBAlpha8:
 			{
-				uint32 *ptr=(uint32 *)XeeImageDataRow(self,row);
+				uint32_t *ptr=(uint32_t *)XeeImageDataRow(self,row);
 				#ifdef __BIG_ENDIAN__
-				for(int x=0;x<width;x++) { uint32 a=ptr[0]; *ptr++=(a<<24)|(a>>8); }
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0]; *ptr++=(a<<24)|(a>>8); }
 				#else
-				for(int x=0;x<width;x++) { uint32 a=ptr[0]; *ptr++=(a>>24)|(a<<8); }
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0]; *ptr++=(a>>24)|(a<<8); }
 				#endif
 			}
 			break;
 
 			case XeeRawFlipRGBAlpha16:
 			{
-				uint32 *ptr=(uint32 *)XeeImageDataRow(self,row);
+				uint32_t *ptr=(uint32_t *)XeeImageDataRow(self,row);
 				#ifdef __BIG_ENDIAN__
-				for(int x=0;x<width;x++) { uint32 a=ptr[0],b=ptr[1]; *ptr++=(a<<16)|(b>>16); *ptr++=(b<<16)|(a>>16); }
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0],b=ptr[1]; *ptr++=(a<<16)|(b>>16); *ptr++=(b<<16)|(a>>16); }
 				#else
-				for(int x=0;x<width;x++) { uint32 a=ptr[0],b=ptr[1]; *ptr++=(a>>16)|(b<<16); *ptr++=(b>>16)|(a<<16); }
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0],b=ptr[1]; *ptr++=(a>>16)|(b<<16); *ptr++=(b>>16)|(a<<16); }
 				#endif
 			}
 			break;
 
 			case XeeRawFlipRGBAlpha32:
 			{
-				uint32 *ptr=(uint32 *)XeeImageDataRow(self,row);
-				for(int x=0;x<width;x++) { uint32 a=ptr[0],b=ptr[1],c=ptr[2],d=ptr[3]; *ptr++=b; *ptr++=c; *ptr++=d; *ptr++=a; }
+				uint32_t *ptr=(uint32_t *)XeeImageDataRow(self,row);
+				for(int x=0;x<width;x++) { uint32_t a=ptr[0],b=ptr[1],c=ptr[2],d=ptr[3]; *ptr++=b; *ptr++=c; *ptr++=d; *ptr++=a; }
 			}
 			break;
 
 			case XeeRawCMYKConversion8:
 			{
-				uint8 *rgb=XeeImageDataRow(self,row);
-				uint8 *cmyk=buffer;
+				uint8_t *rgb=XeeImageDataRow(self,row);
+				uint8_t *cmyk=buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint8 c=255-*cmyk++,m=255-*cmyk++,y=255-*cmyk++,k=255-*cmyk++;
+					uint8_t c=255-*cmyk++,m=255-*cmyk++,y=255-*cmyk++,k=255-*cmyk++;
 					*rgb++=(k*c)/255; *rgb++=(k*m)/255; *rgb++=(k*y)/255;
 				}
 			}
@@ -387,11 +387,11 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawCMYKAConversion8:
 			{
-				uint8 *rgb=XeeImageDataRow(self,row);
-				uint8 *cmyk=buffer;
+				uint8_t *rgb=XeeImageDataRow(self,row);
+				uint8_t *cmyk=buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint8 c=255-*cmyk++,m=255-*cmyk++,y=255-*cmyk++,k=255-*cmyk++,a=*cmyk++;
+					uint8_t c=255-*cmyk++,m=255-*cmyk++,y=255-*cmyk++,k=255-*cmyk++,a=*cmyk++;
 					*rgb++=a;
 					*rgb++=(k*c)/255; *rgb++=(k*m)/255; *rgb++=(k*y)/255;
 				}
@@ -400,24 +400,24 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawCMYKConversion16:
 			{
-				uint16 *rgb=(uint16 *)XeeImageDataRow(self,row);
-				uint16 *cmyk=(uint16 *)buffer;
+				uint16_t *rgb=(uint16_t *)XeeImageDataRow(self,row);
+				uint16_t *cmyk=(uint16_t *)buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint16 c=65535-*cmyk++,m=65535-*cmyk++,y=65535-*cmyk++,k=65535-*cmyk++;
-					*rgb++=(uint32)(k*c)/65535; *rgb++=(uint32)(k*m)/65535; *rgb++=(uint32)(k*y)/65535;
+					uint16_t c=65535-*cmyk++,m=65535-*cmyk++,y=65535-*cmyk++,k=65535-*cmyk++;
+					*rgb++=(uint32_t)(k*c)/65535; *rgb++=(uint32_t)(k*m)/65535; *rgb++=(uint32_t)(k*y)/65535;
 				}
 			}
 			break;
 
 			case XeeRawCMYKAConversion16:
 			{
-				uint16 *rgb=(uint16 *)XeeImageDataRow(self,row);
-				uint16 *cmyk=(uint16 *)buffer;
+				uint16_t *rgb=(uint16_t *)XeeImageDataRow(self,row);
+				uint16_t *cmyk=(uint16_t *)buffer;
 				for(int x=0;x<width;x++)
 				{
-					uint16 c=65535-*cmyk++,m=65535-*cmyk++,y=65535-*cmyk++,k=65535-*cmyk++,a=*cmyk++;
-					*rgb++=(uint32)(k*c)/65535; *rgb++=(uint32)(k*m)/65535; *rgb++=(uint32)(k*y)/65535;
+					uint16_t c=65535-*cmyk++,m=65535-*cmyk++,y=65535-*cmyk++,k=65535-*cmyk++,a=*cmyk++;
+					*rgb++=(uint32_t)(k*c)/65535; *rgb++=(uint32_t)(k*m)/65535; *rgb++=(uint32_t)(k*y)/65535;
 					*rgb++=a;
 				}
 			}
@@ -425,7 +425,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawLabConversion8: // not sure what RGB space this ends up in, needs fixing when colourspace support is added
 			{
-				uint8 *ptr=XeeImageDataRow(self,row);
+				uint8_t *ptr=XeeImageDataRow(self,row);
 				for(int i=0;i<width;i++)
 				{
 					float L=ptr[0]/2.55f,a=ptr[1]-128.0f,b=ptr[2]-128.0f;
@@ -451,7 +451,7 @@ depth:(int)framedepth colourSpace:(int)space flags:(int)flags bytesPerRow:(int)b
 
 			case XeeRawLabConversion16:
 			{
-				uint16 *ptr=(uint16 *)XeeImageDataRow(self,row);
+				uint16_t *ptr=(uint16_t *)XeeImageDataRow(self,row);
 				for(int i=0;i<width;i++)
 				{
 					float L=ptr[0]/2.55f/256.0f,a=ptr[1]/256.0f-128.0f,b=ptr[2]/256.0f-128.0f;

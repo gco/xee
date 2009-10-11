@@ -15,7 +15,7 @@
 	{
 		if([block length]>offs+18)
 		{
-			const uint8 *bytes=(const uint8 *)[block bytes]+offs;
+			const uint8_t *bytes=(const uint8_t *)[block bytes]+offs;
 			if(bytes[10]==0x00&&bytes[11]==0x11&&bytes[12]==0x02
 			&&bytes[13]==0xff&&bytes[14]==0x0c&&bytes[15]==0x00
 			&&bytes[16]==0xff&&bytes[17]==0xfe) return YES;
@@ -77,7 +77,7 @@
 
 	for(int y=0;y<height;y++)
 	{
-		uint32 *data=(uint32 *)XeeImageDataRow(image,y);
+		uint32_t *data=(uint32_t *)XeeImageDataRow(image,y);
 		for(int x=0;x<width;x++) *data++=XeeMakeARGB8(0xff,0,0,0);
 		XeeImageLoaderYield();
 	}
@@ -106,7 +106,7 @@
 
 			case 0x8201: // uncompressed quicktime
 			{
-				uint32 datasize=[fh readUInt32BE];
+				uint32_t datasize=[fh readUInt32BE];
 				off_t nextop=[fh offsetInFile]+datasize;
 
 				[fh skipBytes:50];
@@ -115,12 +115,12 @@
 				if(headsize<86) [self fallback];
 				off_t datastart=[fh offsetInFile]+headsize-4;
 
-				uint32 codec=[fh readUInt32BE];
+				uint32_t codec=[fh readUInt32BE];
 				if(codec!='rle ') [self fallback];
 
 				[fh skipBytes:12];
 
-				uint32 vendor=[fh readUInt32BE];
+				uint32_t vendor=[fh readUInt32BE];
 				if(vendor!='appl') [self fallback];
 
 				[fh skipBytes:8];
@@ -156,13 +156,13 @@
 NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 						if(skip==0) goto end;
 
-						uint32 *data=(uint32 *)XeeImageDataRow(image,row+startrow+last_alpha_y);
+						uint32_t *data=(uint32_t *)XeeImageDataRow(image,row+startrow+last_alpha_y);
 						data+=skip-1;
 
 //NSLog(@"row %d",row);
 						for(;;)
 						{
-							uint8 pixels[4];
+							uint8_t pixels[4];
 							int code=[fh readInt8];
 //NSLog(@"code %d",code);
 							if(code==-1) break;
@@ -217,7 +217,7 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 
 				if(packtype!=0||bits!=8||comps!=1||compsize!=8) [self fallback];
 
-				uint8 palette[3*256];
+				uint8_t palette[3*256];
 				[fh skipBytes:4];
 				int numcols=[fh readUInt16BE]+1;
 				if(numcols>256) [self fallback];
@@ -250,7 +250,7 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 
 				for(int y=0;y<rectheight;y++)
 				{
-					uint32 *data=(uint32 *)XeeImageDataRow(image,y+top);
+					uint32_t *data=(uint32_t *)XeeImageDataRow(image,y+top);
 					data+=left;
 
 					int bytes;
@@ -268,8 +268,8 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 							if(len>bytesleft) len=bytesleft;
 							for(int i=0;i<len;i++)
 							{
-								uint8 val=[fh readUInt8];
-								uint8 r=palette[3*val+0],g=palette[3*val+1],b=palette[3*val+2];
+								uint8_t val=[fh readUInt8];
+								uint8_t r=palette[3*val+0],g=palette[3*val+1],b=palette[3*val+2];
 								*data++=XeeMakeARGB8(XeeGetAFromARGB8(*data),r,g,b);
 							}
 							bytesleft-=len;
@@ -278,8 +278,8 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 						{
 							int len=-code+1;
 							if(len>bytesleft) len=bytesleft;
-							uint8 val=[fh readUInt8];
-							uint8 r=palette[3*val+0],g=palette[3*val+1],b=palette[3*val+2];
+							uint8_t val=[fh readUInt8];
+							uint8_t r=palette[3*val+0],g=palette[3*val+1],b=palette[3*val+2];
 							for(int i=0;i<len;i++)
 							{
 								*data++=XeeMakeARGB8(XeeGetAFromARGB8(*data),r,g,b);
@@ -327,8 +327,8 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 
 				for(int y=0;y<rectheight;y++)
 				{
-					uint8 buffer[rectwidth*3];
-					uint8 *ptr=buffer;
+					uint8_t buffer[rectwidth*3];
+					uint8_t *ptr=buffer;
 
 					int bytes;
 					if(0) bytes=[fh readUInt8];
@@ -350,13 +350,13 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 						{
 							int len=-code+1;
 							if(len>bytesleft) len=bytesleft;
-							uint8 val=[fh readUInt8];
+							uint8_t val=[fh readUInt8];
 							for(int i=0;i<len;i++) *ptr++=val;
 							bytesleft-=len;
 						}
 					}
 
-					uint32 *data=(uint32 *)XeeImageDataRow(image,y+top);
+					uint32_t *data=(uint32_t *)XeeImageDataRow(image,y+top);
 					data+=left;
 
 					for(int x=0;x<rectwidth;x++)

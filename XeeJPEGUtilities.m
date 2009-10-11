@@ -32,7 +32,7 @@ static void XeeMemoryJPEGInitSource(j_decompress_ptr cinfo) {}
 
 static boolean XeeMemoryJPEGFillInputBuffer(j_decompress_ptr cinfo)
 {
-	static uint8 eoi[2]={0xff,0xd9};
+	static uint8_t eoi[2]={0xff,0xd9};
 	cinfo->src->next_input_byte=eoi;
 	cinfo->src->bytes_in_buffer=2;
 	return TRUE;
@@ -121,7 +121,7 @@ struct jpeg_source_mgr *XeeJPEGSourceManager(struct XeeJPEGSource *src,CSHandle 
 
 
 
-void XeeJPEGPlanarToChunky(uint8 *row,uint8 *y_row,uint8 *cb_row,uint8 *cr_row,int width)
+void XeeJPEGPlanarToChunky(uint8_t *row,uint8_t *y_row,uint8_t *cb_row,uint8_t *cr_row,int width)
 {
 	#ifdef __BIG_ENDIAN__
 	#define MOVE(val,from,to) ( ( ((to)>(from)) ? ((val)>>(((to)-(from))*8)) : (((val)<<((from)-(to))*8)) ) & (0xff<<(24-(to)*8)) )
@@ -130,11 +130,11 @@ void XeeJPEGPlanarToChunky(uint8 *row,uint8 *y_row,uint8 *cb_row,uint8 *cr_row,i
 	#endif
 
 	int n=(width+1)/4;
-	uint32 *row_l=(uint32 *)row;
-	uint32 *y_l=(uint32 *)y_row;
-	uint32 *cb_l=(uint32 *)cb_row;
-	uint32 *cr_l=(uint32 *)cr_row;
-	uint32 y,cb,cr;
+	uint32_t *row_l=(uint32_t *)row;
+	uint32_t *y_l=(uint32_t *)y_row;
+	uint32_t *cb_l=(uint32_t *)cb_row;
+	uint32_t *cr_l=(uint32_t *)cr_row;
+	uint32_t y,cb,cr;
 
 	for(;;)
 	{
@@ -155,10 +155,10 @@ void XeeJPEGPlanarToChunky(uint8 *row,uint8 *y_row,uint8 *cb_row,uint8 *cr_row,i
 
 	if((width+1)&2)
 	{
-		uint8 *row_b=(uint8 *)row_l;
-		uint8 *y_b=(uint8 *)y_l;
-		uint8 *cb_b=cb_row+(width-1)/2;
-		uint8 *cr_b=cr_row+(width-1)/2;
+		uint8_t *row_b=(uint8_t *)row_l;
+		uint8_t *y_b=(uint8_t *)y_l;
+		uint8_t *cb_b=cb_row+(width-1)/2;
+		uint8_t *cr_b=cr_row+(width-1)/2;
 		*row_b++=*cb_b;
 		*row_b++=*y_b++;
 		*row_b++=*cr_b;

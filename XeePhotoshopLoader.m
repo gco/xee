@@ -19,7 +19,7 @@
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
 {
-	uint8 *header=(uint8 *)[block bytes];
+	uint8_t *header=(uint8_t *)[block bytes];
 	if([block length]>6&&XeeBEUInt32(header)=='8BPS'&&XeeBEUInt16(header+4)==1) return YES;
 	return NO;
 }
@@ -50,14 +50,14 @@
 	mode=[fh readUInt16BE];
 
 	// Colour data section
-	uint32 colourlen=[fh readUInt32BE];
+	uint32_t colourlen=[fh readUInt32BE];
 	off_t resourceoffs=[fh offsetInFile]+colourlen;
 
 	XeePalette *pal=nil;
 	if(mode==XeePhotoshopIndexedMode&&colourlen>=768)
 	{
 		pal=[XeePalette palette];
-		uint8 palbuf[768];
+		uint8_t palbuf[768];
 		[fh readBytes:768 toBuffer:palbuf];
 		for(int i=0;i<256;i++)
 		[pal setColourAtIndex:i red:palbuf[i] green:palbuf[i+256] blue:palbuf[i+512]];
@@ -66,7 +66,7 @@
 
 	// Resources section
 	[fh seekToFileOffset:resourceoffs];
-	uint32 resourcelen=[fh readUInt32BE];
+	uint32_t resourcelen=[fh readUInt32BE];
 	off_t layermaskoffs=[fh offsetInFile]+resourcelen;
 
 	Xee8BIMParser *parser=[[Xee8BIMParser alloc] initWithHandle:fh];
@@ -83,26 +83,26 @@
 
 	// Layers section
 	[fh seekToFileOffset:layermaskoffs];
-	uint32 layermasklen=[fh readUInt32BE];
+	uint32_t layermasklen=[fh readUInt32BE];
 	off_t imageoffs=[fh offsetInFile]+layermasklen;
 
 	NSArray *layers=nil;
 	BOOL hasalpha=NO;
 
-	uint32 layerlen=[fh readUInt32BE];
+	uint32_t layerlen=[fh readUInt32BE];
 	off_t maskoffs=[fh offsetInFile]+layerlen;
 
 	if(layerlen>0) layers=[XeePhotoshopLayerParser parseLayersFromHandle:fh parentImage:self alphaFlag:&hasalpha];
 
 	[fh seekToFileOffset:maskoffs];
-	uint32 masklen=[fh readUInt32BE];
+	uint32_t masklen=[fh readUInt32BE];
 	[fh skipBytes:masklen];
 
 	while([fh offsetInFile]+12<=imageoffs)
 	{
-		uint32 sign=[fh readUInt32BE];
-		uint32 marker=[fh readUInt32BE];
-		uint32 chunklen=[fh readUInt32BE];
+		uint32_t sign=[fh readUInt32BE];
+		uint32_t marker=[fh readUInt32BE];
+		uint32_t chunklen=[fh readUInt32BE];
 		off_t nextchunk=[fh offsetInFile]+((chunklen+3)&~3);
 		// At this point, I'd like to take a moment to speak to you about the Adobe PSD format.
 		// PSD is not a good format. PSD is not even a bad format. Calling it such would be an
@@ -156,7 +156,7 @@
 
 				for(int i=0;i<numanno;i++)
 				{
-					uint32 annolen=[fh readUInt32BE];
+					uint32_t annolen=[fh readUInt32BE];
 					off_t nextanno=[fh offsetInFile]+annolen-4;
 					if([fh readUInt32BE]=='txtA')
 					{
@@ -191,7 +191,7 @@
 						{
 							len=[fh readUInt32BE];
 							NSData *annodata=[fh readDataOfLength:len];
-							const uint8 *annobytes=[annodata bytes];
+							const uint8_t *annobytes=[annodata bytes];
 
 							NSString *str;
 							if(len>2&&annobytes[0]==0xfe&&annobytes[1]==0xff)
@@ -420,7 +420,7 @@
 	[super dealloc];
 }
 
--(uint8)produceByteAtOffset:(off_t)pos
+-(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if(pos%bytesperrow==0)
 	{
@@ -430,7 +430,7 @@
 
 	if(!spanleft)
 	{
-		uint8 b=CSFilterNextByte(self);
+		uint8_t b=CSFilterNextByte(self);
 
 		if(b&0x80)
 		{
@@ -469,13 +469,13 @@
 	return self;
 }
 
--(uint8)produceByteAtOffset:(off_t)pos
+-(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if(depth==16)
 	{
 		if((pos&1)==0)
 		{
-			uint16 val=(CSFilterNextByte(self)<<8)|CSFilterNextByte(self);
+			uint16_t val=(CSFilterNextByte(self)<<8)|CSFilterNextByte(self);
 
 			if((pos/2)%cols==0) curr=val;
 			else curr+=val;

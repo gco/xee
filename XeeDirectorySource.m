@@ -269,7 +269,7 @@
 		NSData *lsvo=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvo"];
 		if(lsvo&&[lsvo length]>=11)
 		{
-			switch(XeeBEUInt32((uint8 *)[lsvo bytes]+7))
+			switch(XeeBEUInt32((uint8_t *)[lsvo bytes]+7))
 			{
 				case 'phys': sortorder=XeeSizeSortOrder; break;
 				case 'modd': sortorder=XeeDateSortOrder; break; // !5JrU4QOlH6

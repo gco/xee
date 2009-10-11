@@ -3,8 +3,8 @@
 @interface XeeBitmapRawImage:XeeBitmapImage
 {
 	int bytesperfilerow;
-	uint8 zero,one;
-	uint8 *buffer;
+	uint8_t zero,one;
+	uint8_t *buffer;
 }
 
 -(id)initWithHandle:(CSHandle *)fh width:(int)w height:(int)h;

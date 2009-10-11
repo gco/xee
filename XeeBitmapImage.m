@@ -2,7 +2,7 @@
 
 
 static GLuint XeePickTexType(int bitspercomponent,int flags);
-static void XeeBitmapImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest);
+static void XeeBitmapImageReadPixel(uint8_t *row,int x,int pixelsize,uint8_t *dest);
 
 @implementation XeeBitmapImage
 
@@ -38,7 +38,7 @@ static void XeeBitmapImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest);
 
 
 
--(BOOL)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
+-(BOOL)setData:(uint8_t *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
 bitsPerPixel:(int)bppixel bitsPerComponent:(int)bpcomponent bytesPerRow:(int)bprow
 mode:(int)mode alphaType:(int)alpha flags:(int)flags 
 {
@@ -262,7 +262,7 @@ static GLuint XeePickTexType(int bitspercomponent,int flags)
 	}
 }
 
-static void XeeBitmapImageReadPixel(uint8 *row,int x,int pixelsize,uint8 *dest)
+static void XeeBitmapImageReadPixel(uint8_t *row,int x,int pixelsize,uint8_t *dest)
 {
 	memcpy(dest,row+x*pixelsize,pixelsize);
 }

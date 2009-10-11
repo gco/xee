@@ -57,10 +57,10 @@ static int fi(int x,int y);
 					[fh writeInt32BE:pixelwidth];
 					[fh writeInt32BE:pixelheight];
 
-					uint8 *data=[bmimage data];
+					uint8_t *data=[bmimage data];
 					int bpr=[bmimage bytesPerRow];
 					int left,n,x,y;
-					uint8 prev;
+					uint8_t prev;
 
 					left=pixelwidth*pixelheight;
 					n=0;
@@ -70,9 +70,9 @@ static int fi(int x,int y);
 						f(n++,&x,&y);
 						if(x<pixelwidth&y<pixelheight)
 						{
-							uint32 *row=(uint32 *)(data+y*bpr);
-							uint8 val=XeeGetRFromNRGB8(row[x]);
-							[fh writeUInt8:(uint8)(val-prev)];
+							uint32_t *row=(uint32_t *)(data+y*bpr);
+							uint8_t val=XeeGetRFromNRGB8(row[x]);
+							[fh writeUInt8:(uint8_t)(val-prev)];
 							prev=val;
 							left--;
 						}
@@ -86,9 +86,9 @@ static int fi(int x,int y);
 						f(n++,&x,&y);
 						if(x<pixelwidth&y<pixelheight)
 						{
-							uint32 *row=(uint32 *)(data+y*bpr);
-							uint8 val=XeeGetGFromNRGB8(row[x]);
-							[fh writeUInt8:(uint8)(val-prev)];
+							uint32_t *row=(uint32_t *)(data+y*bpr);
+							uint8_t val=XeeGetGFromNRGB8(row[x]);
+							[fh writeUInt8:(uint8_t)(val-prev)];
 							prev=val;
 							left--;
 						}
@@ -102,9 +102,9 @@ static int fi(int x,int y);
 						f(n++,&x,&y);
 						if(x<pixelwidth&y<pixelheight)
 						{
-							uint32 *row=(uint32 *)(data+y*bpr);
-							uint8 val=XeeGetBFromNRGB8(row[x]);
-							[fh writeUInt8:(uint8)(val-prev)];
+							uint32_t *row=(uint32_t *)(data+y*bpr);
+							uint8_t val=XeeGetBFromNRGB8(row[x]);
+							[fh writeUInt8:(uint8_t)(val-prev)];
 							prev=val;
 							left--;
 						}

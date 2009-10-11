@@ -86,20 +86,20 @@
 		for(int j=0;j<channels;j++)
 		{
 			int channelid=[fh readInt16BE];
-			uint32 channellength=[fh readUInt32BE];
+			uint32_t channellength=[fh readUInt32BE];
 
 			[channeloffs setObject:[NSNumber numberWithLongLong:totalsize] forKey:[NSNumber numberWithInt:channelid]];
 			totalsize+=channellength;
 		}
 
 		[fh skipBytes:4]; // '8BIM'
-		uint32 blendmode=[fh readUInt32BE];
+		uint32_t blendmode=[fh readUInt32BE];
 		int opacity=[fh readUInt8];
 		/*int clipping=*/[fh readUInt8];
 		/*int flags=*/[fh readUInt8];
 		[fh skipBytes:1];
 
-		uint32 extralen=[fh readUInt32BE];
+		uint32_t extralen=[fh readUInt32BE];
 		off_t nextoffs=[fh offsetInFile]+extralen;
 
 		int bytesleft=extralen;
@@ -107,12 +107,12 @@
 		NSString *layername=nil;
 
 		if(bytesleft<4) goto outofbytes;
-		uint32 masksize=[fh readUInt32BE]; bytesleft-=4;
+		uint32_t masksize=[fh readUInt32BE]; bytesleft-=4;
 		if(bytesleft<masksize) goto outofbytes;
 		[fh skipBytes:masksize]; bytesleft-=masksize;
 
 		if(bytesleft<4) goto outofbytes;
-		uint32 blendsize=[fh readUInt32BE]; bytesleft-=4;
+		uint32_t blendsize=[fh readUInt32BE]; bytesleft-=4;
 		if(bytesleft<blendsize) goto outofbytes;
 		[fh skipBytes:blendsize]; bytesleft-=blendsize;
 
@@ -129,10 +129,10 @@
 
 		while(bytesleft>=12)
 		{
-			uint32 signature=[fh readUInt32BE];
+			uint32_t signature=[fh readUInt32BE];
 			if(signature!='8BIM') break;
-			uint32 key=[fh readUInt32BE];
-			uint32 chunklen=[fh readUInt32BE];
+			uint32_t key=[fh readUInt32BE];
+			uint32_t chunklen=[fh readUInt32BE];
 			off_t nextchunk=[fh offsetInFile]+chunklen;
 			bytesleft-=12;
 			if(chunklen>bytesleft) break;
@@ -300,7 +300,7 @@
 					textValue:str];
 
 /*					NSData *rest=[fh readDataOfLength:nextchunk-[fh offsetInFile]];
-					const uint8 *restbytes=[rest bytes];
+					const uint8_t *restbytes=[rest bytes];
 					int restlen=[rest length];
 					int offs=XeeOffsetOfStringInMemory("EngineDatatdta",restbytes,restlen);
 					if(offs>=0)
@@ -309,7 +309,7 @@
 						if(offs+18+blocklen>restlen) break;
 //						NSData *block=[rest subdataWithRange:NSMakeRange(offs+18,blocklen)];
 						NSMutableData *block=[NSMutableData dataWithData:[rest subdataWithRange:NSMakeRange(offs+18,blocklen)]];
-						uint8 *bytes=[block mutableBytes];
+						uint8_t *bytes=[block mutableBytes];
 						for(int i=0;i<[block length];i++) if(!isspace(bytes[i])&&bytes[i]<=0x20) bytes[i]='.';
 						NSLog(@"%@",[[[NSString alloc] initWithData:block encoding:NSISOLatin1StringEncoding] autorelease]);
 					}*/

@@ -13,7 +13,7 @@ struct XeeTileImageProviderInfo
 	XeeReadPixelFunction readpixel;
 	size_t pos;
 
-	uint8 *data;
+	uint8_t *data;
 	int bytesperrow;
 	int pixelsize,width;
 
@@ -60,7 +60,7 @@ struct XeeTileImageProviderInfo
 }
 
 
--(void)setData:(uint8 *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
+-(void)setData:(uint8_t *)pixeldata freeData:(BOOL)willfree width:(int)pixelwidth height:(int)pixelheight
 bytesPerPixel:(int)bppixel bytesPerRow:(int)bprow premultiplied:(BOOL)premult
 glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 {
@@ -493,7 +493,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 
 -(int)bytesPerRow { return bytesperrow; }
 
--(uint8 *)data { return data; }
+-(uint8_t *)data { return data; }
 
 
 
@@ -563,8 +563,8 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 size_t XeeTileImageGetBytes(void *infoptr,void *buffer,size_t count)
 {
 	struct XeeTileImageProviderInfo *info=(struct XeeTileImageProviderInfo *)infoptr;
-	uint8 pixel[info->pixelsize];
-	uint8 *dest=buffer;
+	uint8_t pixel[info->pixelsize];
+	uint8_t *dest=buffer;
 	size_t end=info->pos+count;
 
 	int pixelnum=info->pos/info->pixelsize;
@@ -576,7 +576,7 @@ size_t XeeTileImageGetBytes(void *infoptr,void *buffer,size_t count)
 		int dy=pixelnum/info->width;
 		int sx=info->a00*dx+info->a01*dy+info->a02;
 		int sy=info->a10*dx+info->a11*dy+info->a12;
-		uint8 *row=info->data+sy*info->bytesperrow;
+		uint8_t *row=info->data+sy*info->bytesperrow;
 		int left=end-info->pos;
 
 		if(offs==0&&left>=info->pixelsize) // read full pixel directly
@@ -632,9 +632,9 @@ GLuint XeeMakeGridTexture(float r,float g,float b)
 	float r_high=r_low+0.1,g_high=g_low+0.1,b_high=b_low+0.1;
 	int r1=(int)(255.0*r_low),g1=(int)(255.0*g_low),b1=(int)(255.0*b_low);
 	int r2=(int)(255.0*r_high),g2=(int)(255.0*g_high),b2=(int)(255.0*b_high);
-	unsigned long col1=0xff000000|(r1<<16)|(g1<<8)|b1;
-	unsigned long col2=0xff000000|(r2<<16)|(g2<<8)|b2;
-	unsigned long data[]={col1,col2,col2,col1};
+	uint32_t col1=0xff000000|(r1<<16)|(g1<<8)|b1;
+	uint32_t col2=0xff000000|(r2<<16)|(g2<<8)|b2;
+	uint32_t data[]={col1,col2,col2,col1};
 
 	GLuint tex;
 	glGenTextures(1,&tex),

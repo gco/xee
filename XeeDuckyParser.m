@@ -4,7 +4,7 @@
 
 @implementation XeeDuckyParser
 
--(id)initWithBuffer:(uint8 *)duckydata length:(int)len
+-(id)initWithBuffer:(uint8_t *)duckydata length:(int)len
 {
 	if(self=[super init])
 	{
