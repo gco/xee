@@ -2,9 +2,10 @@
 #import "SWFParser.h"
 #import "CSMemoryHandle.h"
 
-@interface XeeSWFSource:XeeFileSource
+@interface XeeSWFSource:XeeListSource
 {
 	NSString *filename;
+	SWFParser *parser;
 }
 
 +(NSArray *)fileTypes;
@@ -12,7 +13,7 @@
 -(id)initWithFile:(NSString *)swfname;
 -(void)dealloc;
 
--(void)loadWithParser:(SWFParser *)parser;
+-(void)start;
 
 -(NSString *)representedFilename;
 -(BOOL)canBrowse;

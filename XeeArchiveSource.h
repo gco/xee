@@ -38,6 +38,8 @@
 -(id)initAsCopyOf:(XeeArchiveEntry *)other;
 -(void)dealloc;
 
+-(void)start;
+
 -(NSString *)descriptiveName;
 -(XeeFSRef *)ref;
 -(NSString *)path;

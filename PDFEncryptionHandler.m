@@ -67,8 +67,8 @@ static const char PDFPasswordPadding[32]=
 		}
 
 		needspassword=![self setPassword:@""];
-if(needspassword) NSLog(@"macfan: %d",needspassword=![self setPassword:@"MacFan_Special"]);
-if(needspassword) NSLog(@"password: %d",needspassword=![self setPassword:@"password"]);
+		//if(needspassword) NSLog(@"macfan: %d",needspassword=![self setPassword:@"MacFan_Special"]);
+		//if(needspassword) NSLog(@"password: %d",needspassword=![self setPassword:@"password"]);
 	}
 	return self;
 }

@@ -482,9 +482,11 @@ static BOOL HasAppleMouse()
 	[source setDelegate:nil];
 	[source stop];
 	[source release];
+
 	source=[newsource retain];
 	[source setDelegate:self];
-	[source pickCurrentImage];
+	[source start];
+	//[source pickCurrentImage];
 
 	[self setDrawerEnableState];
 }

@@ -30,99 +30,112 @@ static int XeePDFSortPages(id first,id second,void *context)
 	if(self=[super init])
 	{
 		filename=[pdfname retain];
+		parser=nil;
+
+		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:filename]];
+		[icon setSize:NSMakeSize(16,16)];
+
 		@try
 		{
 			parser=[[PDFParser parserForPath:filename] retain];
-
-			//if([parser needsPassword]) @throw @"PDF file needs password";
-
-			// Find image objects in object list
-			NSMutableArray *images=[NSMutableArray array];
-			NSEnumerator *enumerator=[[parser objectDictionary] objectEnumerator];
-			id object;
-			while(object=[enumerator nextObject])
-			{
-				if([object isKindOfClass:[PDFStream class]]&&[object isImage])
-				[images addObject:object];
-			}
-
-			// Traverse page tree to find which images are referenced from which pages
-			NSMutableDictionary *order=[NSMutableDictionary dictionary];
-			NSDictionary *root=[parser pagesRoot];
-			NSMutableArray *stack=[NSMutableArray arrayWithObject:[[root arrayForKey:@"Kids"] objectEnumerator]];
-			int page=0;
-			while([stack count])
-			{
-				id curr=[[stack lastObject] nextObject];
-				if(!curr) [stack removeLastObject];
-				else
-				{
-					NSString *type=[curr objectForKey:@"Type"];
-					if([type isEqual:@"Pages"])
-					{
-						[stack addObject:[[curr arrayForKey:@"Kids"] objectEnumerator]];
-					}
-					else if([type isEqual:@"Page"])
-					{
-						page++;
-						NSDictionary *xobjects=[[curr objectForKey:@"Resources"] objectForKey:@"XObject"];
-						NSEnumerator *enumerator=[xobjects objectEnumerator];
-						id object;
-						while(object=[enumerator nextObject])
-						{
-							if([object isKindOfClass:[PDFStream class]]&&[object isImage])
-							[order setObject:[NSNumber numberWithInt:page] forKey:[object reference]];
-						}
-					}
-					else @throw @"Invalid PDF structure";
-				}
-			}
-
-			// Sort image in page order
-			[images sortUsingFunction:XeePDFSortPages context:order];
-
-			[self startListUpdates];
-
-			enumerator=[images objectEnumerator];
-			PDFStream *image;
-			while(image=[enumerator nextObject])
-			{
-				PDFObjectReference *ref=[image reference];
-				NSNumber *page=[order objectForKey:ref];
-				NSString *name;
-				if(page) name=[NSString stringWithFormat:@"Page %@, object %d",page,[ref number]];
-				else name=[NSString stringWithFormat:@"Object %d",[ref number]];
-
-				NSString *imgname=[[image dictionary] objectForKey:@"Name"];
-				if(imgname) name=[NSString stringWithFormat:@"%@ (%@)",imgname,name];
-
-				[self addEntry:[[[XeePDFEntry alloc] initWithPDFStream:image name:name] autorelease]];
-			}
-
-			[self endListUpdates];
-
-			[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:filename]];
-			[icon setSize:NSMakeSize(16,16)];
-
-			[self pickImageAtIndex:0];
 		}
-		@catch(id e)
-		{
-			if(![e isKindOfClass:[NSException class]]||![[e name] isEqual:PDFWrongMagicException])
-			NSLog(@"Error parsing PDF file %@: %@",filename,e);
-			[self release];
-			return nil;
-		}
+		@catch(id e) {}
+
+		if(parser) return self;
 	}
-	return self;
 
+	[self release];
+	return nil;
 }
 
 -(void)dealloc
 {
-	[parser release];
 	[filename release];
+	[parser release];
 	[super dealloc];
+}
+
+-(void)start
+{
+	[self startListUpdates];
+
+	@try
+	{
+		//if([parser needsPassword]) @throw @"PDF file needs password";
+
+		[parser parse];
+
+		// Find image objects in object list
+		NSMutableArray *images=[NSMutableArray array];
+		NSEnumerator *enumerator=[[parser objectDictionary] objectEnumerator];
+		id object;
+		while(object=[enumerator nextObject])
+		{
+			if([object isKindOfClass:[PDFStream class]]&&[object isImage])
+			[images addObject:object];
+		}
+
+		// Traverse page tree to find which images are referenced from which pages
+		NSMutableDictionary *order=[NSMutableDictionary dictionary];
+		NSDictionary *root=[parser pagesRoot];
+		NSMutableArray *stack=[NSMutableArray arrayWithObject:[[root arrayForKey:@"Kids"] objectEnumerator]];
+		int page=0;
+		while([stack count])
+		{
+			id curr=[[stack lastObject] nextObject];
+			if(!curr) [stack removeLastObject];
+			else
+			{
+				NSString *type=[curr objectForKey:@"Type"];
+				if([type isEqual:@"Pages"])
+				{
+					[stack addObject:[[curr arrayForKey:@"Kids"] objectEnumerator]];
+				}
+				else if([type isEqual:@"Page"])
+				{
+					page++;
+					NSDictionary *xobjects=[[curr objectForKey:@"Resources"] objectForKey:@"XObject"];
+					NSEnumerator *enumerator=[xobjects objectEnumerator];
+					id object;
+					while(object=[enumerator nextObject])
+					{
+						if([object isKindOfClass:[PDFStream class]]&&[object isImage])
+						[order setObject:[NSNumber numberWithInt:page] forKey:[object reference]];
+					}
+				}
+				else @throw @"Invalid PDF structure";
+			}
+		}
+
+		// Sort image in page order
+		[images sortUsingFunction:XeePDFSortPages context:order];
+
+		enumerator=[images objectEnumerator];
+		PDFStream *image;
+		while(image=[enumerator nextObject])
+		{
+			PDFObjectReference *ref=[image reference];
+			NSNumber *page=[order objectForKey:ref];
+			NSString *name;
+			if(page) name=[NSString stringWithFormat:@"Page %@, object %d",page,[ref number]];
+			else name=[NSString stringWithFormat:@"Object %d",[ref number]];
+
+			NSString *imgname=[[image dictionary] objectForKey:@"Name"];
+			if(imgname) name=[NSString stringWithFormat:@"%@ (%@)",imgname,name];
+
+			[self addEntry:[[[XeePDFEntry alloc] initWithPDFStream:image name:name] autorelease]];
+		}
+	}
+	@catch(id e)
+	{
+		NSLog(@"Error parsing PDF file %@: %@",filename,e);
+	}
+
+	[self endListUpdates];
+	[self pickImageAtIndex:0];
+
+	[parser release];
+	parser=nil;
 }
 
 -(NSString *)representedFilename { return filename; }

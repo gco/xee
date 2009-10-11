@@ -18,154 +18,162 @@
 	if(self=[super init])
 	{
 		filename=[swfname retain];
+		parser=nil;
+
+		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:filename]];
+		[icon setSize:NSMakeSize(16,16)];
 
 		@try
 		{
-			SWFParser *parser=[SWFParser parserForPath:filename];
-
-			[self startListUpdates];
-			[self loadWithParser:parser];
-			[self endListUpdates];
-
-			[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:filename]];
-			[icon setSize:NSMakeSize(16,16)];
-
-			[self pickImageAtIndex:0];
+			parser=[[SWFParser parserForPath:filename] retain];
 		}
-		@catch(id e)
-		{
-			if(![e isKindOfClass:[NSException class]]||![[e name] isEqual:SWFWrongMagicException])
-			NSLog(@"Error parsing SWF file %@: %@",filename,e);
-			[self release];
-			return nil;
-		}
+		@catch(id e) {}
+
+		if(parser) return self;
 	}
-	return self;
 
+	[self release];
+	return nil;
 }
 
 -(void)dealloc
 {
 	[filename release];
+	[parser release];
 	[super dealloc];
 }
 
--(void)loadWithParser:(SWFParser *)parser
+-(void)start
 {
-	CSMemoryHandle *jpegtables=nil;
-	CSHandle *fh=[parser handle];
+	[self startListUpdates];
 
-	int tag,n=0;
-	while(tag=[parser nextTag])
-	switch(tag)
+	@try
 	{
-		case SWFJPEGTables:
-			jpegtables=[CSMemoryHandle memoryHandleForReadingData:[fh readDataOfLength:[parser tagLength]-2]];
-		break;
+		CSMemoryHandle *jpegtables=nil;
+		CSHandle *fh=[parser handle];
 
-		case SWFDefineBitsJPEGTag:
+		int tag,n=0;
+		while(tag=[parser nextTag])
+		switch(tag)
 		{
-			[fh skipBytes:4];
-			CSHandle *subhandle=[fh subHandleOfLength:[parser tagBytesLeft]];
+			case SWFJPEGTables:
+				jpegtables=[CSMemoryHandle memoryHandleForReadingData:[fh readDataOfLength:[parser tagLength]-2]];
+			break;
 
-			[self addEntry:[[[XeeSWFJPEGEntry alloc] initWithHandle:
-			[CSMultiHandle multiHandleWithHandles:[[jpegtables copy] autorelease],subhandle,nil]
-			name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-		}
-		break;
+			case SWFDefineBitsJPEGTag:
+			{
+				[fh skipBytes:4];
+				CSHandle *subhandle=[fh subHandleOfLength:[parser tagBytesLeft]];
 
-		case SWFDefineBitsJPEG3Tag:
-		case SWFDefineBitsJPEG2Tag:
-		{
-			[fh skipBytes:2];
+				[self addEntry:[[[XeeSWFJPEGEntry alloc] initWithHandle:
+				[CSMultiHandle multiHandleWithHandles:[[jpegtables copy] autorelease],subhandle,nil]
+				name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+			}
+			break;
 
-			int alphaoffs=0;
-			if(tag==SWFDefineBitsJPEG3Tag) alphaoffs=[fh readUInt32LE];
-
-			int first=[fh readUInt16BE];
-			if(first==0xffd9)
+			case SWFDefineBitsJPEG3Tag:
+			case SWFDefineBitsJPEG2Tag:
 			{
 				[fh skipBytes:2];
 
-				[self addEntry:[[[XeeSWFJPEGEntry alloc] initWithHandle:
-				[fh subHandleOfLength:[parser tagBytesLeft]]
-				name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-			}
-			else if(first==0xffd8)
-			{
-				CSMemoryHandle *tables=[CSMemoryHandle memoryHandleForWriting];
-				[tables writeUInt16BE:first];
-				for(;;)
+				int alphaoffs=0;
+				if(tag==SWFDefineBitsJPEG3Tag) alphaoffs=[fh readUInt32LE];
+
+				int first=[fh readUInt16BE];
+				if(first==0xffd9)
 				{
-					int marker=[fh readUInt16BE];
-					if(marker==0xffd9||marker==0xffda)
+					[fh skipBytes:2];
+
+					[self addEntry:[[[XeeSWFJPEGEntry alloc] initWithHandle:
+					[fh subHandleOfLength:[parser tagBytesLeft]]
+					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+				}
+				else if(first==0xffd8)
+				{
+					CSMemoryHandle *tables=[CSMemoryHandle memoryHandleForWriting];
+					[tables writeUInt16BE:first];
+					for(;;)
 					{
-						if(marker==0xffd9) [fh skipBytes:2];
-						else [tables writeUInt16BE:marker];
-						[tables seekToFileOffset:0];
+						int marker=[fh readUInt16BE];
+						if(marker==0xffd9||marker==0xffda)
+						{
+							if(marker==0xffd9) [fh skipBytes:2];
+							else [tables writeUInt16BE:marker];
+							[tables seekToFileOffset:0];
 
-						CSHandle *subhandle=[fh subHandleOfLength:[parser tagBytesLeft]];
+							CSHandle *subhandle=[fh subHandleOfLength:[parser tagBytesLeft]];
 
-						[self addEntry:[[[XeeSWFJPEGEntry alloc] initWithHandle:
-						[CSMultiHandle multiHandleWithHandles:tables,subhandle,nil]
-						name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+							[self addEntry:[[[XeeSWFJPEGEntry alloc] initWithHandle:
+							[CSMultiHandle multiHandleWithHandles:tables,subhandle,nil]
+							name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
 
-						break;
-					}
-					else
-					{
-						int len=[fh readUInt16BE];
-						[tables writeUInt16BE:marker];
-						[tables writeUInt16BE:len];
-						for(int i=0;i<len-2;i++) [tables writeUInt8:[fh readUInt8]];
+							break;
+						}
+						else
+						{
+							int len=[fh readUInt16BE];
+							[tables writeUInt16BE:marker];
+							[tables writeUInt16BE:len];
+							for(int i=0;i<len-2;i++) [tables writeUInt8:[fh readUInt8]];
+						}
 					}
 				}
+				else NSLog(@"Error loading SWF file: invalid JPEG data in tag %d",[parser tag]);
 			}
-			else NSLog(@"Error loading SWF file: invalid JPEG data in tag %d",[parser tag]);
-		}
-		break;
+			break;
 
-		case SWFDefineBitsLosslessTag:
-		case SWFDefineBitsLossless2Tag:
-		{
-			[fh skipBytes:2];
-			int formatnum=[fh readUInt8];
-
-			switch(formatnum)
+			case SWFDefineBitsLosslessTag:
+			case SWFDefineBitsLossless2Tag:
 			{
-				case 3:
-					if(tag==SWFDefineBitsLosslessTag)
-					[self addEntry:[[[XeeSWFLossless3Entry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-					else
-					[self addEntry:[[[XeeSWFLossless3AlphaEntry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-				break;
+				[fh skipBytes:2];
+				int formatnum=[fh readUInt8];
 
-				case 4:
-					NSLog(@"Error loading SWF file: unsupported lossless format 4. Please send the author of this program the file, so he can add support for it.");
-				break;
+				switch(formatnum)
+				{
+					case 3:
+						if(tag==SWFDefineBitsLosslessTag)
+						[self addEntry:[[[XeeSWFLossless3Entry alloc] initWithHandle:
+						[fh subHandleOfLength:[parser tagBytesLeft]]
+						name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+						else
+						[self addEntry:[[[XeeSWFLossless3AlphaEntry alloc] initWithHandle:
+						[fh subHandleOfLength:[parser tagBytesLeft]]
+						name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+					break;
 
-				case 5:
-					if(tag==SWFDefineBitsLosslessTag)
-					[self addEntry:[[[XeeSWFLossless5Entry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-					else
-					[self addEntry:[[[XeeSWFLossless5AlphaEntry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-				break;
+					case 4:
+						NSLog(@"Error loading SWF file: unsupported lossless format 4. Please send the author of this program the file, so he can add support for it.");
+					break;
 
-				default:
-					NSLog(@"Error loading SWF file: unsupported lossless format %d",formatnum);
-				break;
+					case 5:
+						if(tag==SWFDefineBitsLosslessTag)
+						[self addEntry:[[[XeeSWFLossless5Entry alloc] initWithHandle:
+						[fh subHandleOfLength:[parser tagBytesLeft]]
+						name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+						else
+						[self addEntry:[[[XeeSWFLossless5AlphaEntry alloc] initWithHandle:
+						[fh subHandleOfLength:[parser tagBytesLeft]]
+						name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+					break;
+
+					default:
+						NSLog(@"Error loading SWF file: unsupported lossless format %d",formatnum);
+					break;
+				}
 			}
+			break;
 		}
-		break;
 	}
+	@catch(id e)
+	{
+		NSLog(@"Error parsing SWF file %@: %@",filename,e);
+	}
+
+	[self endListUpdates];
+	[self pickImageAtIndex:0];
+
+	[parser release];
+	parser=nil;
 }
 
 -(NSString *)representedFilename { return filename; }

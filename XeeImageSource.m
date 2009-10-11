@@ -32,6 +32,8 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 	[super dealloc];
 }
 
+-(void)start {}
+
 -(void)stop {}
 
 

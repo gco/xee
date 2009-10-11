@@ -15,15 +15,10 @@
 		imgref=dirref=nil;
 		scheduledimagerename=scheduledimagerefresh=scheduleddirrefresh=NO;
 
-		[self startListUpdates];
-		BOOL res=[self scanDirectory:directory];
-		[self endListUpdates];
+		first=nil;
+		dirref=[directory retain];
 
-		if(res)
-		{
-			[self pickImageAtIndex:0];
-			return self;
-		}
+		if(dirref) return self;
 	}
 	[self release];
 	return nil;
@@ -46,19 +41,12 @@
 		imgref=dirref=nil;
 		scheduledimagerename=scheduledimagerefresh=scheduleddirrefresh=NO;
 
-		XeeDirectoryEntry *curr=[XeeDirectoryEntry entryWithRef:ref image:image];
+		first=[[XeeDirectoryEntry entryWithRef:ref image:image] retain];
+		dirref=[[ref parent] retain];
 
-		[self startListUpdates];
-		BOOL res=[self scanDirectory:[ref parent]];
-		[self addEntryUnlessExists:curr];
-		[self setCurrentEntry:curr];
-		[self endListUpdates];
-
-		if(res)
-		{
-			return self;
-		}
+		if(dirref) return self;
 	}
+
 	[self release];
 	return nil;
 }
@@ -69,8 +57,25 @@
 	[[XeeKQueue defaultKQueue] removeObserver:self ref:imgref];
 	[dirref release];
 	[imgref release];
+	[first release];
 
 	[super dealloc];
+}
+
+
+
+-(void)start
+{
+	[self startListUpdates];
+	[self scanDirectory];
+	if(first) [self addEntryUnlessExists:first];
+	[self endListUpdates];
+
+	if(first) [self pickImageAtIndex:[entries indexOfObject:first]];
+	else  [self pickImageAtIndex:0];
+
+	[first release];
+	first=nil;
 }
 
 
@@ -231,7 +236,7 @@
 	if(scheduleddirrefresh)
 	{
 		[self startListUpdates];
-		[self readDirectory:dirref];
+		[self readDirectory];
 		[self endListUpdates];
 	}
 
@@ -256,15 +261,12 @@
 
 
 
--(BOOL)scanDirectory:(XeeFSRef *)ref
+-(void)scanDirectory
 {
-	dirref=[ref retain];
-	if(!dirref) return NO;
-
 	if(sortorder==XeeDefaultSortOrder)
 	{
-		NSDictionary *dsdict=CSParseDSStore([[[ref parent] path] stringByAppendingPathComponent:@".DS_Store"]);
-		NSData *lsvo=[[dsdict objectForKey:[ref name]] objectForKey:@"lsvo"];
+		NSDictionary *dsdict=CSParseDSStore([[[dirref parent] path] stringByAppendingPathComponent:@".DS_Store"]);
+		NSData *lsvo=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvo"];
 		if(lsvo&&[lsvo length]>=11)
 		{
 			switch(XeeBEUInt32((uint8 *)[lsvo bytes]+7))
@@ -275,18 +277,16 @@
 		}
 	}
 
-	[self readDirectory:dirref];
+	[self readDirectory];
 
-	[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:[ref path]]];
+	[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:[dirref path]]];
 	[icon setSize:NSMakeSize(16,16)];
 
 	[[XeeKQueue defaultKQueue] addObserver:self selector:@selector(directoryChanged:)
 	ref:dirref flags:NOTE_WRITE|NOTE_DELETE|NOTE_RENAME];
-
-	return YES;
 }
 
--(void)readDirectory:(XeeFSRef *)ref
+-(void)readDirectory
 {
 	//double starttime=XeeGetTime();
 
@@ -297,12 +297,12 @@
 	XeeFileEntry *entry;
 	while(entry=[enumerator nextObject]) [oldentries setObject:entry forKey:[entry ref]];
 
-	if(![ref startReadingDirectoryWithRecursion:NO]) return;
+	if(![dirref startReadingDirectoryWithRecursion:NO]) return;
 
 	[self removeAllEntries];
 
 	XeeFSRef *subref;
-	while(subref=[ref nextDirectoryEntry])
+	while(subref=[dirref nextDirectoryEntry])
 	{
 		NSString *ext=[[[subref name] pathExtension] lowercaseString];
 		NSString *type=[subref HFSTypeCode];

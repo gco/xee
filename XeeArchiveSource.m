@@ -16,46 +16,19 @@
 {
 	if(self=[super init])
 	{
+		tmpdir=[[NSTemporaryDirectory() stringByAppendingPathComponent:
+		[NSString stringWithFormat:@"Xee-archive-%04x%04x%04x",random()&0xffff,random()&0xffff,random()&0xffff]]
+		retain];
+
+		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:archivename]];
+		[icon setSize:NSMakeSize(16,16)];
+
 		archive=[[self archiveForFile:archivename] retain];
 		if(!archive)
 		{
 			[self release];
 			return nil;
 		}
-
-		tmpdir=[[NSTemporaryDirectory() stringByAppendingPathComponent:
-		[NSString stringWithFormat:@"Xee-archive-%04x%04x%04x",random()&0xffff,random()&0xffff,random()&0xffff]]
-		retain];
-
-		[self startListUpdates];
-
-		NSArray *filetypes=[XeeImage allFileTypes];
-		int count=[archive numberOfEntries];
-		for(int i=0;i<count;i++)
-		{
-			if([archive entryIsDirectory:i]) continue;
-			if([archive entryIsLink:i]) continue;
-
-			NSString *name=[archive nameOfEntry:i];
-			NSDictionary *attrs=[archive attributesOfEntry:i];
-			NSString *type=NSFileTypeForHFSTypeCode([attrs fileHFSTypeCode]);
-			NSString *ext=[[name pathExtension] lowercaseString];
-
-			if([filetypes indexOfObject:ext]!=NSNotFound||[filetypes indexOfObject:type]!=NSNotFound)
-			{
-				NSString *realpath=[tmpdir stringByAppendingPathComponent:name];
-				[self addEntry:[[[XeeArchiveEntry alloc]
-				initWithArchive:archive entry:i realPath:realpath] autorelease]];
-			}
-		}
-
-		[self sortFiles];
-		[self endListUpdates];
-
-		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:archivename]];
-		[icon setSize:NSMakeSize(16,16)];
-
-		[self pickImageAtIndex:0];
 	}
 	return self;
 }
@@ -68,6 +41,38 @@
 	[tmpdir release];
 
 	[super dealloc];
+}
+
+
+
+-(void)start
+{
+	[self startListUpdates];
+
+	NSArray *filetypes=[XeeImage allFileTypes];
+	int count=[archive numberOfEntries];
+	for(int i=0;i<count;i++)
+	{
+		if([archive entryIsDirectory:i]) continue;
+		if([archive entryIsLink:i]) continue;
+
+		NSString *name=[archive nameOfEntry:i];
+		NSDictionary *attrs=[archive attributesOfEntry:i];
+		NSString *type=NSFileTypeForHFSTypeCode([attrs fileHFSTypeCode]);
+		NSString *ext=[[name pathExtension] lowercaseString];
+
+		if([filetypes indexOfObject:ext]!=NSNotFound||[filetypes indexOfObject:type]!=NSNotFound)
+		{
+			NSString *realpath=[tmpdir stringByAppendingPathComponent:name];
+			[self addEntry:[[[XeeArchiveEntry alloc]
+			initWithArchive:archive entry:i realPath:realpath] autorelease]];
+		}
+	}
+
+	[self sortFiles];
+	[self endListUpdates];
+
+	[self pickImageAtIndex:0];
 }
 
 

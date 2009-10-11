@@ -1,10 +1,10 @@
 #import "XeeFileSource.h"
 #import "PDFStream.h"
 
-@interface XeePDFSource:XeeFileSource
+@interface XeePDFSource:XeeListSource
 {
-	PDFParser *parser;
 	NSString *filename;
+	PDFParser *parser;
 }
 
 +(NSArray *)fileTypes;

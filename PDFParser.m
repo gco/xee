@@ -39,7 +39,11 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 		encryption=nil;
 
-		@try { [self parse]; }
+		@try
+		{
+			if([fh readUInt8]!='%'||[fh readUInt8]!='P'||[fh readUInt8]!='D'||[fh readUInt8]!='F'||[fh readUInt8]!='-')
+			[NSException raise:PDFWrongMagicException format:@"Not a PDF file."];
+		}
 		@catch(id e) { [self release]; @throw; }
 	}
 	return self;
@@ -65,6 +69,11 @@ static BOOL IsWhiteSpace(uint8_t c);
 {
 	if(!encryption) return NO;
 	return [encryption needsPassword];
+}
+
+-(BOOL)setPassword:(NSString *)password
+{
+	return [encryption setPassword:password];
 }
 
 
@@ -102,9 +111,6 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(void)parse
 {
-	if([fh readUInt8]!='%'||[fh readUInt8]!='P'||[fh readUInt8]!='D'||[fh readUInt8]!='F'||[fh readUInt8]!='-')
-	[NSException raise:PDFWrongMagicException format:@"Not a PDF file."];
-
 	[fh seekToEndOfFile];
 	[fh skipBytes:-48];
 	NSData *enddata=[fh readDataOfLength:48];
@@ -534,7 +540,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 		if([obj isKindOfClass:[NSDictionary class]])
 		{
 			NSMutableDictionary *dict=obj;
-			NSEnumerator *keyenum=[dict keyEnumerator];
+			NSEnumerator *keyenum=[[dict allKeys] objectEnumerator];
 			NSString *key;
 			while(key=[keyenum nextObject])
 			{

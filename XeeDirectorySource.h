@@ -1,11 +1,14 @@
 #import "XeeFileSource.h"
 #import "XeeKQueue.h"
 
+@class XeeDirectoryEntry;
+
 @interface XeeDirectorySource:XeeFileSource
 {
 	XeeFSRef *dirref,*imgref;
 	int dirfd,filefd;
 	BOOL scheduledimagerename,scheduledimagerefresh,scheduleddirrefresh;
+	XeeDirectoryEntry *first;
 }
 
 -(id)initWithDirectory:(XeeFSRef *)directory;
@@ -44,8 +47,8 @@
 -(void)removeCurrentEntryAndUpdate;
 -(void)removeAllEntriesAndUpdate;
 
--(BOOL)scanDirectory:(XeeFSRef *)ref;
--(void)readDirectory:(XeeFSRef *)ref;
+-(void)scanDirectory;
+-(void)readDirectory;
 
 @end
 

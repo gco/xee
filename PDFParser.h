@@ -26,6 +26,7 @@ extern NSString *PDFParserException;
 
 -(BOOL)isEncrypted;
 -(BOOL)needsPassword;
+-(BOOL)setPassword:(NSString *)password;
 
 -(NSDictionary *)objectDictionary;
 -(NSDictionary *)trailerDictionary;
