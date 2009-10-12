@@ -8,7 +8,8 @@
 #import "XeeRawImage.h"
 
 #import "XeeInterleavingHandle.h"
-#import "CSZlibHandle.h"
+
+#import <XADMaster/CSZlibHandle.h>
 
 /*static int XeeOffsetOfStringInMemory(const char *str,const void *mem,int len)
 {

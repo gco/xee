@@ -51,7 +51,7 @@ static int FillBuffer(uint8_t *buffer,LZWTreeNode *nodes,int symbol)
 	currbyte=numbytes=0;
 }
 
--(void)resetFilter
+-(void)resetByteStream
 {
 	[self clearTable];
 }
@@ -63,12 +63,12 @@ static int FillBuffer(uint8_t *buffer,LZWTreeNode *nodes,int symbol)
 		int symbol;
 		for(;;)
 		{
-			symbol=CSFilterNextBitString(self,symbolsize);
+			symbol=CSInputNextBitString(input,symbolsize);
 			if(symbol==256) [self clearTable];
 			else break;
 		}
 
-		if(symbol==257) CSFilterEOF();
+		if(symbol==257) CSByteStreamEOF(self);
 
 		if(prevsymbol<0)
 		{

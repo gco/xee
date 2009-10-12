@@ -1,6 +1,6 @@
 #import "SWFParser.h"
-#import "CSFileHandle.h"
-#import "CSZlibHandle.h"
+#import <XADMaster/CSFileHandle.h>
+#import <XADMaster/CSZlibHandle.h>
 
 
 NSString *SWFWrongMagicException=@"SWFWrongMagicException";

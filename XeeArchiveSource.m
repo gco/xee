@@ -66,6 +66,8 @@
 		NSLog(@"Error parsing archive file %@: %@",[parser filename],e);
 	}
 
+	[self runSorter];
+
 	[self endListUpdates];
 	[self pickImageAtIndex:0];
 
@@ -215,7 +217,7 @@
 
 		@try
 		{
-			XADHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:NO];
+			CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:NO];
 			if(!srchandle) @throw @"Failed to get handle";
 
 			uint8_t buf[65536];

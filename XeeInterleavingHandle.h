@@ -1,4 +1,4 @@
-#import "CSHandle.h"
+#import <XADMaster/CSHandle.h>
 
 @interface XeeInterleavingHandle:CSHandle
 {

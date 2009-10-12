@@ -502,7 +502,7 @@ static void WritePixel(XeeDreamcastImage *self,int x,int y,uint32_t col)
 		int len=[fh readUInt32LE];
 
 		XeeDreamcastImage *subimage=[[[XeeDreamcastImage alloc]
-		initWithHandle:[fh subHandleWithRange:NSMakeRange(start,len+8)]] autorelease];
+		initWithHandle:[fh subHandleFrom:start length:len+8]] autorelease];
 
 		[self addSubImage:subimage];
 

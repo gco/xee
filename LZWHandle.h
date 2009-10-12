@@ -1,4 +1,4 @@
-#import "CSFilterHandle.h"
+#import <XADMaster/CSByteStreamHandle.h>
 
 extern NSString *LZWInvalidCodeException;
 
@@ -8,7 +8,7 @@ typedef struct LZWTreeNode
 	int16_t parent;
 } LZWTreeNode;
 
-@interface LZWHandle:CSFilterHandle
+@interface LZWHandle:CSByteStreamHandle
 {
 	BOOL early;
 
@@ -25,7 +25,7 @@ typedef struct LZWTreeNode
 
 -(void)clearTable;
 
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

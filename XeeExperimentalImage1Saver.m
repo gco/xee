@@ -1,6 +1,7 @@
 #import "XeeExperimentalImage1Saver.h"
 #import "XeeBitmapImage.h"
-#import "CSFileHandle.h"
+
+#import <XADMaster/CSFileHandle.h>
 
 static void f(int n,int *xp,int *yp);
 static int fi(int x,int y);

@@ -1,8 +1,9 @@
 #import <Foundation/Foundation.h>
 
-#import "CSHandle.h"
-#import "CSFilterHandle.h"
 #import "NSDictionaryNumberExtension.h"
+
+#import <XADMaster/CSHandle.h>
+#import <XADMaster/CSByteStreamHandle.h>
 
 @class PDFParser,PDFObjectReference;
 
@@ -53,18 +54,18 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 
 @end
 
-@interface PDFASCII85Handle:CSFilterHandle
+@interface PDFASCII85Handle:CSByteStreamHandle
 {
 	uint32_t val;
 	BOOL finalbytes;
 }
 
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end
 
-@interface PDFHexHandle:CSFilterHandle
+@interface PDFHexHandle:CSByteStreamHandle
 {
 }
 
@@ -72,21 +73,10 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 
 @end
 
-@interface PDFLZWHandle:CSHandle
-{
-}
-
-@end
-
-@interface PDFCCITTHandle:CSHandle
-{
-}
-
-@end
 
 
 
-@interface PDFTIFFPredictorHandle:CSFilterHandle
+@interface PDFTIFFPredictorHandle:CSByteStreamHandle
 {
 	int cols,comps,bpc;
 	int prev[4];
@@ -98,7 +88,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp;
 
 @end
 
-@interface PDFPNGPredictorHandle:CSFilterHandle
+@interface PDFPNGPredictorHandle:CSByteStreamHandle
 {
 	int cols,comps,bpc;
 	uint8_t *prevbuf;
@@ -107,7 +97,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp;
 
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns
 components:(int)components bitsPerComponent:(int)bitspercomp;
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

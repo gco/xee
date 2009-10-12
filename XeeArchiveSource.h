@@ -2,7 +2,6 @@
 
 #define NSUInteger unsigned long
 #import <XADMaster/XADArchive.h>
-#undef CSHandle
 
 
 @interface XeeArchiveSource:XeeFileSource

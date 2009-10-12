@@ -28,25 +28,25 @@ NSString *CCITTCodeException=@"CCITTCodeException";
 
 @implementation CCITTFaxHandle
 
-static int ReadSymbolWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer table)
+static int ReadSymbolWithCodeTable(CSInputBuffer *input,CCITTCodeTablePointer table)
 {
 	int offset=0;
 	for(;;)
 	{
-		int bit=CSFilterNextBit(self);
+		int bit=CSInputNextBit(input);
 		offset=table[offset][bit];
 		if(!offset) [NSException raise:CCITTCodeException format:@"Invalid Huffman code in bitstream"];
 		if(table[offset][0]==table[offset][1]) return table[offset][0];
 	}
 }
 
-static int ReadLengthWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer table)
+static int ReadLengthWithCodeTable(CSInputBuffer *input,CCITTCodeTablePointer table)
 {
 	int code,len=0;
 
 	do
 	{
-		code=ReadSymbolWithCodeTable(self,table);
+		code=ReadSymbolWithCodeTable(input,table);
 		if(code<0&&len) [NSException raise:CCITTCodeException format:@"Invalid EOL code in bitstream"];
 		len+=code;
 	}
@@ -67,7 +67,7 @@ static int ReadLengthWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer ta
 	return self;
 }
 
--(void)resetFilter
+-(void)resetByteStream
 {
 	bitsleft=0;
 	col=0;
@@ -156,10 +156,10 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 	[super dealloc];
 }
 
--(void)resetFilter
+-(void)resetByteStream
 {
 	numcurrchanges=0;
-	[super resetFilter];
+	[super resetByteStream];
 }
 
 -(void)startNewLine
@@ -191,7 +191,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 		nexthoriz=0;
 //NSLog(@"second horiz: %d to %d",bitsleft,currpos);
 	}
-	else switch(ReadSymbolWithCodeTable(self,T62DCodeTable))
+	else switch(ReadSymbolWithCodeTable(input,T62DCodeTable))
 	{
 		case PASS:
 			FindNextOldChangeOfColorAndLargerThan(self,currcol^1,currpos);
@@ -208,13 +208,13 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 		{
 			if(currcol==0)
 			{
-				bitsleft=ReadLengthWithCodeTable(self,T41DBlackCodeTable);
-				nexthoriz=ReadLengthWithCodeTable(self,T41DWhiteCodeTable);
+				bitsleft=ReadLengthWithCodeTable(input,T41DBlackCodeTable);
+				nexthoriz=ReadLengthWithCodeTable(input,T41DWhiteCodeTable);
 			}
 			else
 			{
-				bitsleft=ReadLengthWithCodeTable(self,T41DWhiteCodeTable);
-				nexthoriz=ReadLengthWithCodeTable(self,T41DBlackCodeTable);
+				bitsleft=ReadLengthWithCodeTable(input,T41DWhiteCodeTable);
+				nexthoriz=ReadLengthWithCodeTable(input,T41DBlackCodeTable);
 			}
 
 			colour=currcol;
@@ -394,7 +394,8 @@ static int T41DBlackCodeTable[][2]=
 	{1984,1984},{2368,2368},{214,0},{215,0},{215,216},{EOL,EOL},
 };
 
-static int T42DCodeTable[][2]=
+// TODO: implement
+/*static int T42DCodeTable[][2]=
 {
 	{2,1},{VERTICAL_0,VERTICAL_0},{5,3},{7,4},{VERTICAL_R1,VERTICAL_R1},
 	{8,6},{HORIZONTAL,HORIZONTAL},{VERTICAL_L1,VERTICAL_L1},{10,9},
@@ -403,7 +404,7 @@ static int T42DCodeTable[][2]=
 	{VERTICAL_R3,VERTICAL_R3},{23,19},{0,20},{0,21},{0,22},
 	{UNCOMPRESSED,UNCOMPRESSED},{24,0},{25,0},{26,0},{27,0},{27,28},
 	{EOL,EOL},
-};
+};*/
 
 static int T62DCodeTable[][2]=
 {

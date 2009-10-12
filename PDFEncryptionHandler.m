@@ -1,7 +1,8 @@
 #import "PDFEncryptionUtils.h"
 #import "PDFParser.h"
 #import "NSDictionaryNumberExtension.h"
-#import "CSMemoryHandle.h"
+
+#import <XADMaster/CSMemoryHandle.h>
 
 NSString *PDFUnsupportedEncryptionException=@"PDFUnsupportedEncryptionException";
 

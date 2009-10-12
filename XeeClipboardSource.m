@@ -1,8 +1,9 @@
 #import "XeeClipboardSource.h"
 //#import "XeeNSImage.h"
-#import "CSMemoryHandle.h"
-#import "CSMultiHandle.h"
 #import "XeeImage.h"
+
+#import <XADMaster/CSMemoryHandle.h>
+#import <XADMaster/CSMultiHandle.h>
 
 
 @implementation XeeClipboardSource

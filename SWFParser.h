@@ -1,7 +1,8 @@
 #import <Foundation/Foundation.h>
 
 #import "SWFGeometry.h"
-#import "CSHandle.h"
+
+#import <XADMaster/CSHandle.h>
 
 #define SWFEndTag 0
 #define SWFShowFrameTag 1

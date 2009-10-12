@@ -2,8 +2,9 @@
 #import "XeeJPEGLoader.h"
 #import "XeeRawImage.h"
 #import "XeeIndexedRawImage.h"
-#import "CSMultiHandle.h"
-#import "CSZlibHandle.h"
+
+#import <XADMaster/CSMultiHandle.h>
+#import <XADMaster/CSZlibHandle.h>
 
 
 @implementation XeeSWFSource

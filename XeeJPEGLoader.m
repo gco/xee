@@ -8,8 +8,9 @@
 #import "XeeIPTCParser.h"
 #import "XeeXMPParser.h"
 #import "XeeDuckyParser.h"
-#import "CSMemoryHandle.h"
-#import "CSMultiHandle.h"
+
+#import <XADMaster/CSMemoryHandle.h>
+#import <XADMaster/CSMultiHandle.h>
 
 
 
@@ -29,7 +30,7 @@
 
 	return NO;
 }
-
+/*
 -(SEL)initLoader
 {
 	jpeg_created=NO;
@@ -397,7 +398,7 @@
 	return NULL;
 }
 
-
+*/
 
 
 
@@ -580,7 +581,7 @@
 			if(offs)
 			{
 				int len=[exif integerForTag:XeeThumbnailLengthTag set:XeeStandardTagSet];
-				thumbhandle=[[exifhandle subHandleWithRange:NSMakeRange(offs,len)] retain];
+				thumbhandle=[[exifhandle subHandleFrom:offs length:len] retain];
 				[thumbhandle seekToFileOffset:0];
 			}
 

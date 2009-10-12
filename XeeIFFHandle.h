@@ -1,5 +1,5 @@
-#import "CSFileHandle.h"
-	#import "XeeTypes.h"
+#import <XADMaster/CSFileHandle.h>
+#import "XeeTypes.h"
 
 @interface XeeIFFHandle:CSFileHandle
 {

@@ -1,6 +1,7 @@
 #import "XeeTypes.h"
-#import "CSHandle.h"
 #import "libjpeg/jpeglib.h"
+
+#import <XADMaster/CSHandle.h>
 
 #define XeeJPEGSourceBufferSize 4096
 

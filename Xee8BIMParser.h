@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "XeeTypes.h"
-#import "CSHandle.h"
+#import <XADMaster/CSHandle.h>
 
 @interface Xee8BIMParser:NSObject
 {

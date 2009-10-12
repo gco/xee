@@ -402,13 +402,14 @@
 
 		totalsize=0;
 		offsets=malloc(sizeof(off_t)*rows);
-		off_t firstrow=[handle offsetInFile]+numchannels*rows*2+prevsize;
+		off_t firstrow=numchannels*rows*2+prevsize;
 
-		[parent skipBytes:2*rows*channel];
+		CSInputSkipBytes(input,2*rows*channel);
+		//[parent skipBytes:2*rows*channel];
 		for(int i=0;i<rows;i++)
 		{
 			offsets[i]=firstrow+totalsize;
-			totalsize+=[parent readUInt16BE];
+			totalsize+=CSInputNextUInt16BE(input);
 		}
 	}
 	return self;
@@ -424,18 +425,18 @@
 {
 	if(pos%bytesperrow==0)
 	{
-		[self seekParentToFileOffset:offsets[pos/bytesperrow]];
+		CSInputSeekToBufferOffset(input,offsets[pos/bytesperrow]);
 		spanleft=0;
 	}
 
 	if(!spanleft)
 	{
-		uint8_t b=CSFilterNextByte(self);
+		uint8_t b=CSInputNextByte(input);
 
 		if(b&0x80)
 		{
 			spanleft=(b^0xff)+2;
-			spanbyte=CSFilterNextByte(self);
+			spanbyte=CSInputNextByte(input);
 			literal=NO;
 		}
 		else
@@ -447,7 +448,7 @@
 
 	spanleft--;
 
-	if(literal) return CSFilterNextByte(self);
+	if(literal) return CSInputNextByte(input);
 	else return spanbyte;
 }
 
@@ -475,7 +476,7 @@
 	{
 		if((pos&1)==0)
 		{
-			uint16_t val=(CSFilterNextByte(self)<<8)|CSFilterNextByte(self);
+			uint16_t val=CSInputNextUInt16BE(input);
 
 			if((pos/2)%cols==0) curr=val;
 			else curr+=val;

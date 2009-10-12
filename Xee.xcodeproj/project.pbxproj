@@ -39,10 +39,6 @@
 		1B2825CB0C67B8FB00AA7D9C /* XeeIPTCParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2825CA0C67B8FB00AA7D9C /* XeeIPTCParser.m */; };
 		1B2825CE0C67B90C00AA7D9C /* XeeXMPParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2825CD0C67B90C00AA7D9C /* XeeXMPParser.m */; };
 		1B2826560C67DD9500AA7D9C /* XeeDuckyParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2826550C67DD9500AA7D9C /* XeeDuckyParser.m */; };
-		1B2826AE0C67E60900AA7D9C /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */; };
-		1B2826AF0C67E60900AA7D9C /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2826A50C67E60900AA7D9C /* CSHandle.m */; };
-		1B2826B00C67E60900AA7D9C /* CSMemoryHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2826A70C67E60900AA7D9C /* CSMemoryHandle.m */; };
-		1B2826B10C67E60900AA7D9C /* CSFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */; };
 		1B2B5B3F0C7510B30057B42F /* XeePhotoshopLayerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2B5B3E0C7510B30057B42F /* XeePhotoshopLayerParser.m */; };
 		1B2B5DAE0C78AEDD0057B42F /* XeeBitmapRawImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2B5DAD0C78AEDD0057B42F /* XeeBitmapRawImage.m */; };
 		1B2B5DB70C78AF140057B42F /* XeeIndexedRawImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2B5DB60C78AF140057B42F /* XeeIndexedRawImage.m */; };
@@ -52,7 +48,6 @@
 		1B33ECAC093A8E2F00297778 /* button_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B33ECA9093A8E2F00297778 /* button_left.png */; };
 		1B3D30D909351D7A00345FD0 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3D30D809351D7A00345FD0 /* Carbon.framework */; };
 		1B3D33620937B89200345FD0 /* CSKeyboardShortcuts.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3D33610937B89200345FD0 /* CSKeyboardShortcuts.m */; };
-		1B3E44450C6CB82700D63BC0 /* CSSubHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */; };
 		1B3E45920C6E1EDD00D63BC0 /* XeeProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E45910C6E1EDD00D63BC0 /* XeeProperties.m */; };
 		1B3EB0BF08FD76FE00CB908E /* depth_rgb.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0AF08FD76FE00CB908E /* depth_rgb.png */; };
 		1B3EB0C008FD76FE00CB908E /* size.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0B008FD76FE00CB908E /* size.png */; };
@@ -72,8 +67,6 @@
 		1B3EB0CE08FD76FE00CB908E /* zoom.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0BE08FD76FE00CB908E /* zoom.png */; };
 		1B3EB0F808FDA57800CB908E /* depth_amiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B3EB0F708FDA57800CB908E /* depth_amiga.png */; };
 		1B4072A80EB40787008D5F17 /* CCITTHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCA0D2B0EABF4B20016D207 /* CCITTHandle.m */; };
-		1B4074FD0EB62C34008D5F17 /* CSStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4074FC0EB62C34008D5F17 /* CSStreamHandle.m */; };
-		1B4075DB0EB758D8008D5F17 /* CSBufferedStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4075DA0EB758D8008D5F17 /* CSBufferedStreamHandle.m */; };
 		1B40762F0EB7C325008D5F17 /* LZWHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B40762E0EB7C325008D5F17 /* LZWHandle.m */; };
 		1B4077300EB8E56B008D5F17 /* XeePNMLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B40772F0EB8E56B008D5F17 /* XeePNMLoader.m */; };
 		1B4077A60EB928AC008D5F17 /* XeeXBMLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4077A50EB928AC008D5F17 /* XeeXBMLoader.m */; };
@@ -85,7 +78,6 @@
 		1B5D4894086B7D57004480AB /* XeeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5D4892086B7D57004480AB /* XeeView.m */; };
 		1B5D4905086DF3F8004480AB /* XeeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5D4903086DF3F8004480AB /* XeeController.m */; };
 		1B5D4919086DFD7F004480AB /* XeeDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5D4918086DFD7F004480AB /* XeeDelegate.m */; };
-		1B5E094A0C88F76100F22867 /* CSFilterHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B9096B20C887180009E5ACE /* CSFilterHandle.m */; };
 		1B5E0A420C8A37DA00F22867 /* CSCoroutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5E0A410C8A37DA00F22867 /* CSCoroutine.m */; };
 		1B68CEC80885F4B1001971C8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B68CE2C0885F42A001971C8 /* OpenGL.framework */; };
 		1B68CEDA0885F5D7001971C8 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B68CED90885F5D7001971C8 /* QuickTime.framework */; };
@@ -108,7 +100,6 @@
 		1B86FDF10B813FE200E302DB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BE4C13108E2303200859EE2 /* libz.dylib */; };
 		1B9094D90C7525F8009E5ACE /* XeePhotoshopLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE5DEB40A7E9B6900967AD2 /* XeePhotoshopLoader.m */; };
 		1B9099D10C91BE1A009E5ACE /* XeeInterleavingHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B9099D00C91BE1A009E5ACE /* XeeInterleavingHandle.m */; };
-		1B909CCA0C9A175B009E5ACE /* CSMultiHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */; };
 		1B996C250928EE9E0026832A /* jpeg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C230928EE9E0026832A /* jpeg.icns */; };
 		1B996C260928EE9E0026832A /* Xee.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C240928EE9E0026832A /* Xee.icns */; };
 		1B996C52092929DA0026832A /* gif.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C4E092929DA0026832A /* gif.icns */; };
@@ -374,16 +365,6 @@
 		1B2825CD0C67B90C00AA7D9C /* XeeXMPParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeXMPParser.m; sourceTree = "<group>"; };
 		1B2826540C67DD9500AA7D9C /* XeeDuckyParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeDuckyParser.h; sourceTree = "<group>"; };
 		1B2826550C67DD9500AA7D9C /* XeeDuckyParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeDuckyParser.m; sourceTree = "<group>"; };
-		1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSZlibHandle.m; sourceTree = "<group>"; };
-		1B2826A50C67E60900AA7D9C /* CSHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSHandle.m; sourceTree = "<group>"; };
-		1B2826A60C67E60900AA7D9C /* CSZlibHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSZlibHandle.h; sourceTree = "<group>"; };
-		1B2826A70C67E60900AA7D9C /* CSMemoryHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSMemoryHandle.m; sourceTree = "<group>"; };
-		1B2826A80C67E60900AA7D9C /* CSFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSFileHandle.h; sourceTree = "<group>"; };
-		1B2826A90C67E60900AA7D9C /* CSMemoryHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSMemoryHandle.h; sourceTree = "<group>"; };
-		1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSFileHandle.m; sourceTree = "<group>"; };
-		1B2826AB0C67E60900AA7D9C /* CSIFFHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSIFFHandle.h; sourceTree = "<group>"; };
-		1B2826AC0C67E60900AA7D9C /* CSIFFHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSIFFHandle.m; sourceTree = "<group>"; };
-		1B2826AD0C67E60900AA7D9C /* CSHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSHandle.h; sourceTree = "<group>"; };
 		1B2B5B3D0C7510B20057B42F /* XeePhotoshopLayerParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePhotoshopLayerParser.h; sourceTree = "<group>"; };
 		1B2B5B3E0C7510B30057B42F /* XeePhotoshopLayerParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeePhotoshopLayerParser.m; sourceTree = "<group>"; };
 		1B2B5DAC0C78AEDD0057B42F /* XeeBitmapRawImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeBitmapRawImage.h; sourceTree = "<group>"; };
@@ -398,8 +379,6 @@
 		1B3D30D809351D7A00345FD0 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1B3D33600937B89100345FD0 /* CSKeyboardShortcuts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSKeyboardShortcuts.h; sourceTree = "<group>"; };
 		1B3D33610937B89200345FD0 /* CSKeyboardShortcuts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSKeyboardShortcuts.m; sourceTree = "<group>"; };
-		1B3E44430C6CB82600D63BC0 /* CSSubHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSubHandle.h; sourceTree = "<group>"; };
-		1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSSubHandle.m; sourceTree = "<group>"; };
 		1B3E45900C6E1EDC00D63BC0 /* XeeProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeProperties.h; sourceTree = "<group>"; };
 		1B3E45910C6E1EDD00D63BC0 /* XeeProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeProperties.m; sourceTree = "<group>"; };
 		1B3EB0AF08FD76FE00CB908E /* depth_rgb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = depth_rgb.png; path = images/depth_rgb.png; sourceTree = "<group>"; };
@@ -419,10 +398,6 @@
 		1B3EB0BD08FD76FE00CB908E /* depth_bitmap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = depth_bitmap.png; path = images/depth_bitmap.png; sourceTree = "<group>"; };
 		1B3EB0BE08FD76FE00CB908E /* zoom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = zoom.png; path = images/zoom.png; sourceTree = "<group>"; };
 		1B3EB0F708FDA57800CB908E /* depth_amiga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = depth_amiga.png; path = images/depth_amiga.png; sourceTree = "<group>"; };
-		1B4074FB0EB62C34008D5F17 /* CSStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSStreamHandle.h; sourceTree = "<group>"; };
-		1B4074FC0EB62C34008D5F17 /* CSStreamHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSStreamHandle.m; sourceTree = "<group>"; };
-		1B4075D90EB758D8008D5F17 /* CSBufferedStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSBufferedStreamHandle.h; sourceTree = "<group>"; };
-		1B4075DA0EB758D8008D5F17 /* CSBufferedStreamHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSBufferedStreamHandle.m; sourceTree = "<group>"; };
 		1B40762D0EB7C325008D5F17 /* LZWHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZWHandle.h; sourceTree = "<group>"; };
 		1B40762E0EB7C325008D5F17 /* LZWHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZWHandle.m; sourceTree = "<group>"; };
 		1B40772E0EB8E56B008D5F17 /* XeePNMLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePNMLoader.h; sourceTree = "<group>"; };
@@ -450,12 +425,8 @@
 		1B68CED90885F5D7001971C8 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		1B86FDBB0B8136B400E302DB /* PNGLoader.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PNGLoader.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B86FDBC0B8136B400E302DB /* PNGLoader-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PNGLoader-Info.plist"; sourceTree = "<group>"; };
-		1B9096B10C887180009E5ACE /* CSFilterHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSFilterHandle.h; sourceTree = "<group>"; };
-		1B9096B20C887180009E5ACE /* CSFilterHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CSFilterHandle.m; sourceTree = "<group>"; };
 		1B9099CF0C91BE1A009E5ACE /* XeeInterleavingHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XeeInterleavingHandle.h; sourceTree = "<group>"; };
 		1B9099D00C91BE1A009E5ACE /* XeeInterleavingHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XeeInterleavingHandle.m; sourceTree = "<group>"; };
-		1B909CC80C9A175B009E5ACE /* CSMultiHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSMultiHandle.h; sourceTree = "<group>"; };
-		1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSMultiHandle.m; sourceTree = "<group>"; };
 		1B996C230928EE9E0026832A /* jpeg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = jpeg.icns; path = icons/jpeg.icns; sourceTree = "<group>"; };
 		1B996C240928EE9E0026832A /* Xee.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Xee.icns; path = icons/Xee.icns; sourceTree = "<group>"; };
 		1B996C4E092929DA0026832A /* gif.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = gif.icns; path = icons/gif.icns; sourceTree = "<group>"; };
@@ -838,33 +809,6 @@
 			name = "Image Metadata";
 			sourceTree = "<group>";
 		};
-		1B909CC70C9A172E009E5ACE /* CSHandle */ = {
-			isa = PBXGroup;
-			children = (
-				1B2826AD0C67E60900AA7D9C /* CSHandle.h */,
-				1B2826A50C67E60900AA7D9C /* CSHandle.m */,
-				1B3E44430C6CB82600D63BC0 /* CSSubHandle.h */,
-				1B3E44440C6CB82700D63BC0 /* CSSubHandle.m */,
-				1B909CC80C9A175B009E5ACE /* CSMultiHandle.h */,
-				1B909CC90C9A175B009E5ACE /* CSMultiHandle.m */,
-				1B2826A80C67E60900AA7D9C /* CSFileHandle.h */,
-				1B2826AA0C67E60900AA7D9C /* CSFileHandle.m */,
-				1B2826A90C67E60900AA7D9C /* CSMemoryHandle.h */,
-				1B2826A70C67E60900AA7D9C /* CSMemoryHandle.m */,
-				1B4074FB0EB62C34008D5F17 /* CSStreamHandle.h */,
-				1B4074FC0EB62C34008D5F17 /* CSStreamHandle.m */,
-				1B4075D90EB758D8008D5F17 /* CSBufferedStreamHandle.h */,
-				1B4075DA0EB758D8008D5F17 /* CSBufferedStreamHandle.m */,
-				1B9096B10C887180009E5ACE /* CSFilterHandle.h */,
-				1B9096B20C887180009E5ACE /* CSFilterHandle.m */,
-				1B2826A60C67E60900AA7D9C /* CSZlibHandle.h */,
-				1B2826A40C67E60900AA7D9C /* CSZlibHandle.m */,
-				1B2826AB0C67E60900AA7D9C /* CSIFFHandle.h */,
-				1B2826AC0C67E60900AA7D9C /* CSIFFHandle.m */,
-			);
-			name = CSHandle;
-			sourceTree = "<group>";
-		};
 		1BCA06990E9C3DE60016D207 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -1062,7 +1006,6 @@
 		1BE4C35208E4C46300859EE2 /* External Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1B909CC70C9A172E009E5ACE /* CSHandle */,
 				1BCA06990E9C3DE60016D207 /* PDF */,
 				1BCA069A0E9C3DED0016D207 /* SWF */,
 				1BE4C47D08E5CA4200859EE2 /* XeeIFFHandle.h */,
@@ -1708,22 +1651,15 @@
 				1B2825CB0C67B8FB00AA7D9C /* XeeIPTCParser.m in Sources */,
 				1B2825CE0C67B90C00AA7D9C /* XeeXMPParser.m in Sources */,
 				1B2826560C67DD9500AA7D9C /* XeeDuckyParser.m in Sources */,
-				1B2826AE0C67E60900AA7D9C /* CSZlibHandle.m in Sources */,
-				1B2826AF0C67E60900AA7D9C /* CSHandle.m in Sources */,
-				1B2826B00C67E60900AA7D9C /* CSMemoryHandle.m in Sources */,
-				1B2826B10C67E60900AA7D9C /* CSFileHandle.m in Sources */,
-				1B3E44450C6CB82700D63BC0 /* CSSubHandle.m in Sources */,
 				1B3E45920C6E1EDD00D63BC0 /* XeeProperties.m in Sources */,
 				1B2B5B3F0C7510B30057B42F /* XeePhotoshopLayerParser.m in Sources */,
 				1B9094D90C7525F8009E5ACE /* XeePhotoshopLoader.m in Sources */,
 				1B2B5DAE0C78AEDD0057B42F /* XeeBitmapRawImage.m in Sources */,
 				1B2B5DB70C78AF140057B42F /* XeeIndexedRawImage.m in Sources */,
 				1B2B5DBC0C78AF1F0057B42F /* XeeRawImage.m in Sources */,
-				1B5E094A0C88F76100F22867 /* CSFilterHandle.m in Sources */,
 				1B5E0A420C8A37DA00F22867 /* CSCoroutine.m in Sources */,
 				1B9099D10C91BE1A009E5ACE /* XeeInterleavingHandle.m in Sources */,
 				1B0FF4CF0C96F78C000CED68 /* CSHexDump.m in Sources */,
-				1B909CCA0C9A175B009E5ACE /* CSMultiHandle.m in Sources */,
 				1B07078C0C9F3DA700FA8EBD /* SWFParser.m in Sources */,
 				1B0707910C9F3E5A00FA8EBD /* SWFGeometry.m in Sources */,
 				1B071A440CB159D600FA8EBD /* XeeExperimentalImage1Saver.m in Sources */,
@@ -1737,8 +1673,6 @@
 				1BCA08E50E9D75BF0016D207 /* XeeSWFSource.m in Sources */,
 				1BCA0C080EA008980016D207 /* PDFEncryptionHandler.m in Sources */,
 				1B4072A80EB40787008D5F17 /* CCITTHandle.m in Sources */,
-				1B4074FD0EB62C34008D5F17 /* CSStreamHandle.m in Sources */,
-				1B4075DB0EB758D8008D5F17 /* CSBufferedStreamHandle.m in Sources */,
 				1B40762F0EB7C325008D5F17 /* LZWHandle.m in Sources */,
 				1B4077300EB8E56B008D5F17 /* XeePNMLoader.m in Sources */,
 				1B4077A60EB928AC008D5F17 /* XeeXBMLoader.m in Sources */,

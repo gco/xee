@@ -5,9 +5,9 @@
 #import "CCITTHandle.h"
 #import "LZWHandle.h"
 
-#import "CSZlibHandle.h"
-#import "CSMemoryHandle.h"
-#import "CSMultiHandle.h"
+#import <XADMaster/CSZlibHandle.h>
+#import <XADMaster/CSMemoryHandle.h>
+#import <XADMaster/CSMultiHandle.h>
 
 
 
@@ -217,7 +217,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 -(CSHandle *)rawHandle
 {
-	return [fh subHandleWithRange:NSMakeRange(offs,[dict intValueForKey:@"Length" default:0])];
+	return [fh subHandleFrom:offs length:[dict intValueForKey:@"Length" default:0]];
 }
 
 -(CSHandle *)handle
@@ -329,15 +329,15 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 @implementation PDFASCII85Handle
 
--(void)resetFilter
+-(void)resetByteStream
 {
 	finalbytes=0;
 }
 
-static uint8_t ASCII85NextByte(PDFASCII85Handle *self)
+static uint8_t ASCII85NextByte(CSInputBuffer *input)
 {
 	uint8_t b;
-	do { b=CSFilterNextByte(self); }
+	do { b=CSInputNextByte(input); }
 	while(!((b>=33&&b<=117)||b=='z'||b=='~'));
 	return b;
 }
@@ -347,31 +347,31 @@ static uint8_t ASCII85NextByte(PDFASCII85Handle *self)
 	int byte=pos&3;
 	if(byte==0)
 	{
-		uint8_t c1=ASCII85NextByte(self);
+		uint8_t c1=ASCII85NextByte(input);
 
 		if(c1=='z') val=0;
-		else if(c1=='~') CSFilterEOF();
+		else if(c1=='~') CSByteStreamEOF(self);
 		else
 		{
 			uint8_t c2,c3,c4,c5;
 
-			c2=ASCII85NextByte(self);
+			c2=ASCII85NextByte(input);
 			if(c2!='~')
 			{
-				c3=ASCII85NextByte(self);
+				c3=ASCII85NextByte(input);
 				if(c3!='~')
 				{
-					c4=ASCII85NextByte(self);
+					c4=ASCII85NextByte(input);
 					if(c4!='~')
 					{
-						c5=ASCII85NextByte(self);
+						c5=ASCII85NextByte(input);
 						if(c5=='~') { c5=33; finalbytes=3; }
 					}
 					else { c4=c5=33; finalbytes=2; }
 				}
 				else { c3=c4=c5=33; finalbytes=1; }
 			}
-			else CSFilterEOF();
+			else CSByteStreamEOF(self);
 
 			val=((((c1-33)*85+c2-33)*85+c3-33)*85+c4-33)*85+c5-33;
 		}
@@ -379,7 +379,7 @@ static uint8_t ASCII85NextByte(PDFASCII85Handle *self)
 	}
 	else
 	{
-		if(finalbytes&&byte>=finalbytes) CSFilterEOF();
+		if(finalbytes&&byte>=finalbytes) CSByteStreamEOF(self);
 		return val>>24-byte*8;
 	}
 }
@@ -410,8 +410,8 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 	if(bpc==8)
 	{
 		int comp=pos%comps;
-		if((pos/comps)%cols==0) prev[comp]=CSFilterNextByte(self);
-		else prev[comp]+=CSFilterNextByte(self);
+		if((pos/comps)%cols==0) prev[comp]=CSInputNextByte(input);
+		else prev[comp]+=CSInputNextByte(input);
 		return prev[comp];
 	}
 	return 0;
@@ -447,7 +447,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 	[super dealloc];
 }
 
--(void)resetFilter
+-(void)resetByteStream
 {
 	memset(prevbuf,0,cols*comps+2*comps);
 }
@@ -463,11 +463,11 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 
 		if(col==0)
 		{
-			type=CSFilterNextByte(self);
+			type=CSInputNextByte(input);
 			for(int i=0;i<comps;i++) prevbuf[(i+cols*comps+comps+bufoffs)%buflen]=0;
 		}
 
-		int x=CSFilterNextByte(self);
+		int x=CSInputNextByte(input);
 		int a=prevbuf[(cols*comps+comps+bufoffs)%buflen];
 		int b=prevbuf[(comps+bufoffs)%buflen];
 		int c=prevbuf[bufoffs];

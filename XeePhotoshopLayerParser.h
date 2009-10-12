@@ -1,6 +1,8 @@
 #import <Cocoa/Cocoa.h>
-#import "CSHandle.h"
+
 #import "XeeImage.h"
+
+#import <XADMaster/CSHandle.h>
 
 @class XeePhotoshopImage;
 

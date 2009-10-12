@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "PDFEncryptionUtils.h"
-#import "CSHandle.h"
+#import <XADMaster/CSHandle.h>
 
 extern NSString *PDFUnsupportedEncryptionException;
 

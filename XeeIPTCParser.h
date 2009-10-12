@@ -1,5 +1,5 @@
 #import <Cocoa/Cocoa.h>
-#import "CSHandle.h"
+#import <XADMaster/CSHandle.h>
 
 @interface XeeIPTCParser:NSObject
 {

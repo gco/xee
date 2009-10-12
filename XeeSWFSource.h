@@ -1,6 +1,7 @@
 #import "XeeFileSource.h"
 #import "SWFParser.h"
-#import "CSMemoryHandle.h"
+
+#import <XADMaster/CSMemoryHandle.h>
 
 @interface XeeSWFSource:XeeListSource
 {

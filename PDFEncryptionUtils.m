@@ -183,13 +183,15 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if(self=[super initWithName:[handle name] bufferSize:16])
+	if(self=[super initWithName:[handle name]])
 	{
 		parent=[handle retain];
 		key=[keydata retain];
 
 		iv=[parent copyDataOfLength:16];
 		startoffs=[parent offsetInFile];
+
+		[self setBlockPointer:streambuffer];
 
 		AES_set_decrypt_key([key bytes],[key length]*8,&aeskey);
 	}
@@ -204,13 +206,13 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 	[super dealloc];
 }
 
--(void)resetBufferedStream
+-(void)resetBlockStream
 {
 	[parent seekToFileOffset:startoffs];
 	memcpy(ivbuffer,[iv bytes],16);
 }
 
--(int)fillBufferAtOffset:(off_t)pos
+-(int)produceBlockAtOffset:(off_t)pos
 {
 	uint8_t inbuf[16];
 	[parent readBytes:16 toBuffer:inbuf];

@@ -258,7 +258,7 @@
 		case XeeSizeSortOrder: break;
 		default:
 		{
-			NSString *path=[self path];
+			NSString *path=[self descriptiveName];
 			pathlen=[path length];
 			pathbuf=malloc(pathlen*sizeof(UniChar));
 			[path getCharacters:pathbuf];

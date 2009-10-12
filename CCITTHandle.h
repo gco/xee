@@ -1,8 +1,8 @@
-#import "CSFilterHandle.h"
+#import <XADMaster/CSByteStreamHandle.h>
 
 extern NSString *CCITTCodeException;
 
-@interface CCITTFaxHandle:CSFilterHandle
+@interface CCITTFaxHandle:CSByteStreamHandle
 {
 	int cols,white;
 	int col,colour,bitsleft;
@@ -10,7 +10,7 @@ extern NSString *CCITTCodeException;
 
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns white:(int)whitevalue;
 
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 -(void)startNewLine;
@@ -28,7 +28,7 @@ extern NSString *CCITTCodeException;
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns white:(int)whitevalue;
 -(void)dealloc;
 
--(void)resetFilter;
+-(void)resetByteStream;
 -(void)startNewLine;
 -(void)findNextSpanLength;
 

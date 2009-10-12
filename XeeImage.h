@@ -1,11 +1,11 @@
 #import <Cocoa/Cocoa.h>
 
 #import "XeeTypes.h"
-#import "CSFileHandle.h"
 #import "CSCoroutine.h"
 #import "XeeFSRef.h"
 #import "XeeProperties.h"
 
+#import <XADMaster/CSFileHandle.h>
 
 #define XeeCanSaveLosslesslyFlag 1
 #define XeeCanOverwriteLosslesslyFlag 2

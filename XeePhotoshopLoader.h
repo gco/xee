@@ -1,6 +1,7 @@
 #import "XeeMultiImage.h"
 #import "XeeBitmapImage.h"
-#import "CSFilterHandle.h"
+
+#import <XADMaster/CSByteStreamHandle.h>
 
 #define XeePhotoshopBitmapMode 0
 #define XeePhotoshopGreyscaleMode 1
@@ -34,7 +35,7 @@
 
 
 
-@interface XeePackbitsHandle:CSFilterHandle
+@interface XeePackbitsHandle:CSByteStreamHandle
 {
 	int rows,bytesperrow;
 	off_t totalsize,*offsets;
@@ -53,7 +54,7 @@
 
 @end
 
-@interface XeeDeltaHandle:CSFilterHandle
+@interface XeeDeltaHandle:CSByteStreamHandle
 {
 	int cols,depth;
 	uint16_t curr;
