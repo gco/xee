@@ -1,10 +1,15 @@
 #import "XeeFileSource.h"
-#import "XADArchive.h"
+
+#define NSUInteger unsigned long
+#import <XADMaster/XADArchive.h>
+#undef CSHandle
+
 
 @interface XeeArchiveSource:XeeFileSource
 {
-	XADArchive *archive;
+	XADArchiveParser *parser;
 	NSString *tmpdir;
+	int n;
 }
 
 +(NSArray *)fileTypes;
@@ -20,23 +25,21 @@
 -(BOOL)canSort;
 -(BOOL)canCopyCurrentImage;
 
--(XADArchive *)archiveForFile:(NSString *)archivename;
-
 @end
 
 
 
 @interface XeeArchiveEntry:XeeFileEntry
 {
-	XADArchive *archive;
-	int n;
+	XADArchiveParser *parser;
+	NSDictionary *dict;
 	XeeFSRef *ref;
 	NSString *path;
 	uint64_t size;
 	double time;
 }
 
--(id)initWithArchive:(XADArchive *)parentarchive entry:(int)num realPath:(NSString *)realpath;
+-(id)initWithArchiveParser:(XADArchiveParser *)parent entry:(NSDictionary *)entry realPath:(NSString *)realpath;
 -(id)initAsCopyOf:(XeeArchiveEntry *)other;
 -(void)dealloc;
 
@@ -48,6 +51,6 @@
 -(double)time;
 
 -(BOOL)isEqual:(XeeArchiveEntry *)other;
--(unsigned)hash;
+-(unsigned long)hash;
 
 @end

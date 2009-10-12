@@ -66,7 +66,7 @@
 -(XeeImage *)produceImage;
 
 -(BOOL)isEqual:(id)other;
--(unsigned)hash;
+-(unsigned long)hash;
 
 -(id)copyWithZone:(NSZone *)zone;
 

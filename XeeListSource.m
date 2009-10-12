@@ -333,7 +333,7 @@
 
 -(BOOL)isEqual:(id)other { return NO; }
 
--(unsigned)hash { return 0; }
+-(unsigned long)hash { return 0; }
 
 -(NSString *)description
 {

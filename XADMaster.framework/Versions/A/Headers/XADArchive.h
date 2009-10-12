@@ -1,9 +1,7 @@
 #import <Foundation/Foundation.h>
 
-//#import "XADArchiveParser.h"
-//#import "XADException.h"
-@class XADArchiveParser,CSHandle;
-typedef int XADError;
+#import "XADArchiveParser.h"
+#import "XADException.h"
 
 typedef int XADAction;
 //typedef off_t xadSize; // deprecated

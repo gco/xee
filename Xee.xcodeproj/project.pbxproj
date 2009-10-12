@@ -249,6 +249,10 @@
 		1BE7D7BE0B2E4739009166F5 /* XeeTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7BD0B2E4739009166F5 /* XeeTool.m */; };
 		1BE7D7CC0B2F58F4009166F5 /* XeeMoveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7CB0B2F58F4009166F5 /* XeeMoveTool.m */; };
 		1BE7D7D10B2F58FD009166F5 /* XeeCropTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7D00B2F58FD009166F5 /* XeeCropTool.m */; };
+		1BECC3C81082A788000385AB /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BECC3C61082A787000385AB /* UniversalDetector.framework */; };
+		1BECC3C91082A788000385AB /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BECC3C71082A788000385AB /* XADMaster.framework */; };
+		1BECC3FF1082A7B7000385AB /* UniversalDetector.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1BECC3C61082A787000385AB /* UniversalDetector.framework */; };
+		1BECC4001082A7B7000385AB /* XADMaster.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1BECC3C71082A788000385AB /* XADMaster.framework */; };
 		1BEEDCCA0A648BDC00603584 /* raw.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1BEEDCC90A648BDC00603584 /* raw.icns */; };
 		1BF142280B094080003A8D57 /* asahi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF1420F0B094080003A8D57 /* asahi.c */; };
 		1BF142290B094080003A8D57 /* canon.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF142100B094080003A8D57 /* canon.c */; };
@@ -299,6 +303,20 @@
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1BECC4061082A7DC000385AB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1BECC3FF1082A7B7000385AB /* UniversalDetector.framework in CopyFiles */,
+				1BECC4001082A7B7000385AB /* XADMaster.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -637,6 +655,8 @@
 		1BE7D7CB0B2F58F4009166F5 /* XeeMoveTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeMoveTool.m; sourceTree = "<group>"; };
 		1BE7D7CF0B2F58FD009166F5 /* XeeCropTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeCropTool.h; sourceTree = "<group>"; };
 		1BE7D7D00B2F58FD009166F5 /* XeeCropTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeCropTool.m; sourceTree = "<group>"; };
+		1BECC3C61082A787000385AB /* UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UniversalDetector.framework; sourceTree = "<group>"; };
+		1BECC3C71082A788000385AB /* XADMaster.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XADMaster.framework; sourceTree = "<group>"; };
 		1BEEDCC90A648BDC00603584 /* raw.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = raw.icns; path = icons/raw.icns; sourceTree = "<group>"; };
 		1BF1420F0B094080003A8D57 /* asahi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = asahi.c; sourceTree = "<group>"; };
 		1BF142100B094080003A8D57 /* canon.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = canon.c; sourceTree = "<group>"; };
@@ -686,7 +706,6 @@
 		1BFB0E4E0B139D420088CDB4 /* XeeArchiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeArchiveSource.m; sourceTree = "<group>"; };
 		1BFB0E500B139D4C0088CDB4 /* XeeClipboardSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeClipboardSource.h; sourceTree = "<group>"; };
 		1BFB0E510B139D4C0088CDB4 /* XeeClipboardSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeClipboardSource.m; sourceTree = "<group>"; };
-		1BFB11DE0B179CF90088CDB4 /* XADArchive.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XADArchive.h; sourceTree = "<group>"; };
 		1BFD2CC60982EA80000798A7 /* remove_disabled.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = remove_disabled.tiff; sourceTree = "<group>"; };
 		1BFD2CF9098325D0000798A7 /* add_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_pressed.png; sourceTree = "<group>"; };
 		1BFD2CFA098325D0000798A7 /* remove_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = remove_pressed.png; sourceTree = "<group>"; };
@@ -741,6 +760,8 @@
 				1B3D30D909351D7A00345FD0 /* Carbon.framework in Frameworks */,
 				1BFF73290B6AF5C500E0900B /* IOKit.framework in Frameworks */,
 				1BCA0AA70E9EBBC50016D207 /* libcrypto.dylib in Frameworks */,
+				1BECC3C81082A788000385AB /* UniversalDetector.framework in Frameworks */,
+				1BECC3C91082A788000385AB /* XADMaster.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1060,7 +1081,6 @@
 				1B0FF4CE0C96F78C000CED68 /* CSHexDump.m */,
 				1BE4B80B08D7655400859EE2 /* KFTypeSelectTableView.h */,
 				1BE4B80C08D7655400859EE2 /* KFTypeSelectTableView.m */,
-				1BFB11DE0B179CF90088CDB4 /* XADArchive.h */,
 				1BF1420E0B094080003A8D57 /* exiftags */,
 				1BE5E0680A7EE50700967AD2 /* libjpeg */,
 				1BE4C10E08E22FB500859EE2 /* libpng */,
@@ -1202,6 +1222,15 @@
 			name = "View Classes";
 			sourceTree = "<group>";
 		};
+		1BECC3C41082A779000385AB /* Local frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1BECC3C61082A787000385AB /* UniversalDetector.framework */,
+				1BECC3C71082A788000385AB /* XADMaster.framework */,
+			);
+			name = "Local frameworks";
+			sourceTree = "<group>";
+		};
 		1BF1420E0B094080003A8D57 /* exiftags */ = {
 			isa = PBXGroup;
 			children = (
@@ -1327,6 +1356,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1BECC3C41082A779000385AB /* Local frameworks */,
 				1BCA0AA60E9EBBC50016D207 /* libcrypto.dylib */,
 				1BE4C13108E2303200859EE2 /* libz.dylib */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
@@ -1363,6 +1393,7 @@
 			buildConfigurationList = 1B74976D08D33EA2003CCA48 /* Build configuration list for PBXNativeTarget "Xee" */;
 			buildPhases = (
 				8D15AC2B0486D014006FF6A4 /* Resources */,
+				1BECC4061082A7DC000385AB /* CopyFiles */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
 			);
@@ -1831,8 +1862,14 @@
 		1B74976E08D33EA2003CCA48 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1848,12 +1885,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					XADMaster,
-					"-weak_framework",
-					UniversalDetector,
-				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = Xee;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -1865,11 +1897,17 @@
 		1B74976F08D33EA2003CCA48 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
 					ppc,
 					i386,
 				);
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1882,12 +1920,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)\"";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					XADMaster,
-					"-weak_framework",
-					UniversalDetector,
-				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = Xee;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -1899,6 +1932,7 @@
 		1B74977A08D33EA2003CCA48 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
@@ -1907,6 +1941,7 @@
 		1B74977B08D33EA2003CCA48 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};

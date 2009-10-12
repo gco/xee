@@ -81,6 +81,6 @@
 -(BOOL)matchesObject:(id)obj;
 
 -(BOOL)isEqual:(XeeDirectoryEntry *)other;
--(unsigned)hash;
+-(unsigned long)hash;
 
 @end

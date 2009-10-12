@@ -8,7 +8,7 @@
 +(NSArray *)fileTypes
 {
 	return [NSArray arrayWithObjects:
-		@"zip",@"rar",@"cbz",@"cbr",@"lha",@"lzh",@"7z",
+		@"zip",@"cbz",@"rar",@"cbr",@"7z",@"cb7",@"lha",@"lzh",
 	nil];
 }
 
@@ -16,28 +16,34 @@
 {
 	if(self=[super init])
 	{
+		parser=nil;
 		tmpdir=[[NSTemporaryDirectory() stringByAppendingPathComponent:
 		[NSString stringWithFormat:@"Xee-archive-%04x%04x%04x",random()&0xffff,random()&0xffff,random()&0xffff]]
 		retain];
 
+		[[NSFileManager defaultManager] createDirectoryAtPath:tmpdir attributes:nil];
+
 		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:archivename]];
 		[icon setSize:NSMakeSize(16,16)];
 
-		archive=[[self archiveForFile:archivename] retain];
-		if(!archive)
+		@try
 		{
-			[self release];
-			return nil;
+			parser=[[XADArchiveParser archiveParserForPath:archivename] retain];
 		}
+		@catch(id e) {}
+
+		if(parser) return self;
 	}
-	return self;
+
+	[self release];
+	return nil;
 }
 
 -(void)dealloc
 {
-	if(tmpdir) [[NSFileManager defaultManager] removeFileAtPath:tmpdir handler:nil];
+	[[NSFileManager defaultManager] removeFileAtPath:tmpdir handler:nil];
 
-	[archive release];
+	[parser release];
 	[tmpdir release];
 
 	[super dealloc];
@@ -49,35 +55,51 @@
 {
 	[self startListUpdates];
 
-	NSArray *filetypes=[XeeImage allFileTypes];
-	int count=[archive numberOfEntries];
-	for(int i=0;i<count;i++)
+	@try
 	{
-		if([archive entryIsDirectory:i]) continue;
-		if([archive entryIsLink:i]) continue;
-
-		NSString *name=[archive nameOfEntry:i];
-		NSDictionary *attrs=[archive attributesOfEntry:i];
-		NSString *type=NSFileTypeForHFSTypeCode([attrs fileHFSTypeCode]);
-		NSString *ext=[[name pathExtension] lowercaseString];
-
-		if([filetypes indexOfObject:ext]!=NSNotFound||[filetypes indexOfObject:type]!=NSNotFound)
-		{
-			NSString *realpath=[tmpdir stringByAppendingPathComponent:name];
-			[self addEntry:[[[XeeArchiveEntry alloc]
-			initWithArchive:archive entry:i realPath:realpath] autorelease]];
-		}
+		n=0;
+		[parser setDelegate:self];
+		[parser parse];
+	}
+	@catch(id e)
+	{
+		NSLog(@"Error parsing archive file %@: %@",[parser filename],e);
 	}
 
-	[self sortFiles];
 	[self endListUpdates];
-
 	[self pickImageAtIndex:0];
+
+	[parser release];
+	parser=nil;
+}
+
+-(void)archiveParser:(XADArchiveParser *)dummy foundEntryWithDictionary:(NSDictionary *)dict
+{
+	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
+	NSNumber *islink=[dict objectForKey:XADIsLinkKey];
+
+	if(isdir&&[isdir boolValue]) return;
+	if(islink&&[islink boolValue]) return;
+
+	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	NSString *ext=[[name pathExtension] lowercaseString];
+	NSNumber *typenum=[dict objectForKey:XADFileTypeKey];
+	uint32_t typeval=typenum?[typenum unsignedIntValue]:0;
+	NSString *type=NSFileTypeForHFSTypeCode(typeval);
+
+	NSArray *filetypes=[XeeImage allFileTypes];
+
+	if([filetypes indexOfObject:ext]!=NSNotFound||[filetypes indexOfObject:type]!=NSNotFound)
+	{
+		NSString *realpath=[tmpdir stringByAppendingPathComponent:[NSString stringWithFormat:@"%d",n++]];
+		[self addEntry:[[[XeeArchiveEntry alloc]
+		initWithArchiveParser:parser entry:dict realPath:realpath] autorelease]];
+	}
 }
 
 
 
--(NSString *)representedFilename { return [archive filename]; }
+-(NSString *)representedFilename { return [parser filename]; }
 
 
 
@@ -87,6 +109,7 @@
 
 
 
+/*
 -(XADArchive *)archiveForFile:(NSString *)archivename
 {
 	Class archiveclass=NSClassFromString(@"XADArchive");
@@ -132,6 +155,7 @@
 
 	return [archiveclass archiveForFile:archivename];
 }
+*/
 
 @end
 
@@ -139,18 +163,18 @@
 
 @implementation XeeArchiveEntry
 
--(id)initWithArchive:(XADArchive *)parentarchive entry:(int)num realPath:(NSString *)realpath
+-(id)initWithArchiveParser:(XADArchiveParser *)parent entry:(NSDictionary *)entry realPath:(NSString *)realpath
 {
 	if(self=[super init])
 	{
-		archive=[parentarchive retain];
+		parser=[parent retain];
+		dict=[entry retain];
 		path=[realpath retain];
-		n=num;
 		ref=nil;
 
-		size=[archive uncompressedSizeOfEntry:n];
+		size=[[dict objectForKey:XADFileSizeKey] unsignedLongLongValue];
 
-		NSDate *date=[[archive dataForkParserDictionaryForEntry:n] objectForKey:@"XADLastModificationDate"];
+		NSDate *date=[dict objectForKey:XADLastModificationDateKey];
 		if(date) time=[date timeIntervalSinceReferenceDate];
 		else date=0;
 	}
@@ -161,8 +185,8 @@
 {
 	if(self=[super initAsCopyOf:other])
 	{
-		archive=[other->archive retain];
-		n=other->n;
+		parser=[other->parser retain];
+		dict=[other->dict retain];
 		ref=[other->ref retain];
 		path=[other->path retain];
 		size=other->size;
@@ -173,19 +197,44 @@
 
 -(void)dealloc
 {
-	[archive release];
+	[parser release];
+	[dict release];
 	[path release];
 	[ref release];
 	[super dealloc];
 }
 
--(NSString *)descriptiveName { return [archive nameOfEntry:n]; }
+-(NSString *)descriptiveName { return [[dict objectForKey:XADFileNameKey] string]; }
 
 -(XeeFSRef *)ref
 {
 	if(!ref)
 	{
-		[archive _extractEntry:n as:path];
+		int fh=open([path fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
+		if(fh==-1) return nil;
+
+		@try
+		{
+			XADHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:NO];
+			if(!srchandle) @throw @"Failed to get handle";
+
+			uint8_t buf[65536];
+			for(;;)
+			{
+				int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
+				if(actual==0) break;
+				if(write(fh,buf,actual)!=actual) @throw @"Failed to write to file";
+			}
+		}
+		@catch(id e)
+		{
+			NSLog(@"Error extracting file %@ from archive %@.",[self descriptiveName],[parser filename]);
+			close(fh);
+			return nil;
+		}
+
+		close(fh);
+
 		ref=[[XeeFSRef refForPath:path] retain];
 	}
 	return ref;
@@ -193,7 +242,7 @@
 
 -(NSString *)path { return path; }
 
--(NSString *)filename { return [[archive nameOfEntry:n] lastPathComponent]; }
+-(NSString *)filename { return [[[dict objectForKey:XADFileNameKey] string] lastPathComponent]; }
 
 -(uint64_t)size { return size; }
 
@@ -201,8 +250,8 @@
 
 
 
--(BOOL)isEqual:(XeeArchiveEntry *)other { return archive==other->archive&&n==other->n; }
+-(BOOL)isEqual:(XeeArchiveEntry *)other { return parser==other->parser&&dict==other->dict; }
 
--(unsigned)hash { return (unsigned)archive^n; }
+-(unsigned long)hash { return (uintptr_t)parser^(uintptr_t)dict; }
 
 @end

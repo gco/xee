@@ -417,6 +417,6 @@
 
 -(BOOL)isEqual:(XeeDirectoryEntry *)other { return [ref isEqual:other->ref]; }
 
--(unsigned)hash { return [ref hash]; }
+-(unsigned long)hash { return [ref hash]; }
 
 @end
