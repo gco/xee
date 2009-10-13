@@ -33,44 +33,6 @@ extern NSString *PDFMD5FinishedException;
 
 
 
-@interface PDFRC4Engine:NSObject
-{
-	unsigned char s[256];
-	int i,j;
-}
-
-+(PDFRC4Engine *)engineWithKey:(NSData *)key;
-
--(id)initWithKey:(NSData *)key;
-
--(NSData *)encryptedData:(NSData *)data;
-
--(void)encryptBytes:(unsigned char *)bytes length:(int)length;
--(void)skipBytes:(int)length;
-
-@end
-
-
-
-@interface PDFRC4Handle:CSHandle
-{
-	CSHandle *parent;
-	PDFRC4Engine *rc4;
-	NSData *key;
-	off_t pos,startoffs;
-}
-
--(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata;
--(void)dealloc;
-
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
--(void)seekToFileOffset:(off_t)offs;
--(int)readAtMost:(int)num toBuffer:(void *)buffer;
-
-@end
-
-
 
 @interface PDFAESHandle:CSBlockStreamHandle
 {

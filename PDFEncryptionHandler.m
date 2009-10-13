@@ -3,6 +3,7 @@
 #import "NSDictionaryNumberExtension.h"
 
 #import <XADMaster/CSMemoryHandle.h>
+#import <XADMaster/XADRC4Handle.h>
 
 NSString *PDFUnsupportedEncryptionException=@"PDFUnsupportedEncryptionException";
 
@@ -68,8 +69,8 @@ static const char PDFPasswordPadding[32]=
 		}
 
 		needspassword=![self setPassword:@""];
-		//if(needspassword) NSLog(@"macfan: %d",needspassword=![self setPassword:@"MacFan_Special"]);
-		//if(needspassword) NSLog(@"password: %d",needspassword=![self setPassword:@"password"]);
+		if(needspassword) NSLog(@"macfan: %d",needspassword=![self setPassword:@"MacFan_Special"]);
+		if(needspassword) NSLog(@"password: %d",needspassword=![self setPassword:@"password"]);
 	}
 	return self;
 }
@@ -102,7 +103,7 @@ static const char PDFPasswordPadding[32]=
 
 	if(revision==2)
 	{
-		PDFRC4Engine *rc4=[PDFRC4Engine engineWithKey:key];
+		XADRC4Engine *rc4=[XADRC4Engine engineWithKey:key];
 		NSData *test=[rc4 encryptedData:udata];
 		return [test length]==32&&!memcmp(PDFPasswordPadding,[test bytes],32);
 	}
@@ -120,7 +121,7 @@ static const char PDFPasswordPadding[32]=
 			unsigned char newkey[16];
 			for(int j=0;j<16;j++) newkey[j]=keybytes[j]^i;
 
-			PDFRC4Engine *rc4=[PDFRC4Engine engineWithKey:[NSData dataWithBytesNoCopy:newkey length:16 freeWhenDone:NO]];
+			XADRC4Engine *rc4=[XADRC4Engine engineWithKey:[NSData dataWithBytesNoCopy:newkey length:16 freeWhenDone:NO]];
 			data=[rc4 encryptedData:data];
 		}
 
@@ -261,13 +262,13 @@ static const char PDFPasswordPadding[32]=
 
 -(NSData *)decryptedData:(NSData *)data reference:(PDFObjectReference *)ref
 {
-	PDFRC4Engine *rc4=[PDFRC4Engine engineWithKey:[self keyForReference:ref AES:NO]];
+	XADRC4Engine *rc4=[XADRC4Engine engineWithKey:[self keyForReference:ref AES:NO]];
 	return [rc4 encryptedData:data];
 }
 
 -(CSHandle *)decryptedHandle:(CSHandle *)handle reference:(PDFObjectReference *)ref
 {
-	return [[[PDFRC4Handle alloc] initWithHandle:handle key:[self keyForReference:ref AES:NO]] autorelease];
+	return [[[XADRC4Handle alloc] initWithHandle:handle key:[self keyForReference:ref AES:NO]] autorelease];
 }
 
 @end
