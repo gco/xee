@@ -28,25 +28,27 @@ NSString *CCITTCodeException=@"CCITTCodeException";
 
 @implementation CCITTFaxHandle
 
-static int ReadSymbolWithCodeTable(CSInputBuffer *input,CCITTCodeTablePointer table)
+static int ReadSymbolWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer table)
 {
 	int offset=0;
 	for(;;)
 	{
-		int bit=CSInputNextBit(input);
+		if(CSInputAtEOF(self->input)) CSByteStreamEOF(self);
+
+		int bit=CSInputNextBit(self->input);
 		offset=table[offset][bit];
 		if(!offset) [NSException raise:CCITTCodeException format:@"Invalid Huffman code in bitstream"];
 		if(table[offset][0]==table[offset][1]) return table[offset][0];
 	}
 }
 
-static int ReadLengthWithCodeTable(CSInputBuffer *input,CCITTCodeTablePointer table)
+static int ReadLengthWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer table)
 {
 	int code,len=0;
 
 	do
 	{
-		code=ReadSymbolWithCodeTable(input,table);
+		code=ReadSymbolWithCodeTable(self,table);
 		if(code<0&&len) [NSException raise:CCITTCodeException format:@"Invalid EOL code in bitstream"];
 		len+=code;
 	}
@@ -191,7 +193,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 		nexthoriz=0;
 //NSLog(@"second horiz: %d to %d",bitsleft,currpos);
 	}
-	else switch(ReadSymbolWithCodeTable(input,T62DCodeTable))
+	else switch(ReadSymbolWithCodeTable(self,T62DCodeTable))
 	{
 		case PASS:
 			FindNextOldChangeOfColorAndLargerThan(self,currcol^1,currpos);
@@ -208,13 +210,13 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 		{
 			if(currcol==0)
 			{
-				bitsleft=ReadLengthWithCodeTable(input,T41DBlackCodeTable);
-				nexthoriz=ReadLengthWithCodeTable(input,T41DWhiteCodeTable);
+				bitsleft=ReadLengthWithCodeTable(self,T41DBlackCodeTable);
+				nexthoriz=ReadLengthWithCodeTable(self,T41DWhiteCodeTable);
 			}
 			else
 			{
-				bitsleft=ReadLengthWithCodeTable(input,T41DWhiteCodeTable);
-				nexthoriz=ReadLengthWithCodeTable(input,T41DBlackCodeTable);
+				bitsleft=ReadLengthWithCodeTable(self,T41DWhiteCodeTable);
+				nexthoriz=ReadLengthWithCodeTable(self,T41DBlackCodeTable);
 			}
 
 			colour=currcol;

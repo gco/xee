@@ -134,8 +134,7 @@ static int XeePDFSortPages(id first,id second,void *context)
 	[self endListUpdates];
 	[self pickImageAtIndex:0];
 
-	[parser release];
-	parser=nil;
+	// Don't release parser, as PDFStreams do not retain it
 }
 
 -(NSString *)representedFilename { return filename; }

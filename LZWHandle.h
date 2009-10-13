@@ -1,23 +1,16 @@
 #import <XADMaster/CSByteStreamHandle.h>
+#import <XADMaster/LZW.h>
 
 extern NSString *LZWInvalidCodeException;
-
-typedef struct LZWTreeNode
-{
-	uint16_t chr;
-	int16_t parent;
-} LZWTreeNode;
 
 @interface LZWHandle:CSByteStreamHandle
 {
 	BOOL early;
 
-	int numsymbols,symbolsize;
-	LZWTreeNode *nodes;
+	LZW *lzw;
+	int symbolsize;
 
-	int prevsymbol;
-
-	int currbyte,numbytes;
+	int currbyte;
 	uint8_t buffer[4096];
 }
 
