@@ -1,5 +1,6 @@
 #import "XeeXPMLoader.h"
-#import "CSRegex.h"
+
+#import <XADMaster/XADRegex.h>
 
 static int ConvertHex(int x)
 {
@@ -44,7 +45,7 @@ static int ConvertHex(int x)
 		NSString *string=[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"rgb.txt" ofType:nil]
 		encoding:NSASCIIStringEncoding error:NULL];
 
-		CSRegex *regex=[CSRegex regexWithPattern:@"\n[ \t]*([0-9]+)[ \t]+([0-9]+)[ \t]+([0-9]+)[ \t]+([^\n]+)"];
+		XADRegex *regex=[XADRegex regexWithPattern:@"\n[ \t]*([0-9]+)[ \t]+([0-9]+)[ \t]+([0-9]+)[ \t]+([^\n]+)"];
 		[regex beginMatchingString:string];
 		while([regex matchNext])
 		{
@@ -102,7 +103,7 @@ static int ConvertHex(int x)
 				NSNumber *col=nil;
 
 				NSString *hex=[matches objectAtIndex:2];
-				if(hex!=[CSRegex null]) col=[self parseHexColour:hex];
+				if(hex!=[XADRegex null]) col=[self parseHexColour:hex];
 				else
 				{
 					NSString *name=[[matches objectAtIndex:1] lowercaseString];

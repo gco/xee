@@ -3,7 +3,8 @@
 #import "XeeDelegate.h"
 #import "XeeImage.h"
 #import "XeeGraphicsStuff.h"
-#import "CSRegex.h"
+
+#import <XADMaster/XADRegex.h>
 
 
 

@@ -1,6 +1,6 @@
 #import "PDFParser.h"
-#import "CSRegex.h"
 
+#import <XADMaster/XADRegex.h>
 #import <XADMaster/CSFileHandle.h>
 
 

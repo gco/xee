@@ -1,7 +1,7 @@
 #import "XeeXMPParser.h"
 #import "XeeProperties.h"
-#import "CSRegex.h"
 
+#import <XADMaster/XADRegex.h>
 #import <wctype.h>
 
 @implementation XeeXMPParser

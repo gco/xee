@@ -6,7 +6,8 @@
 #import "XeeRawImage.h"
 #import "XeeBitmapRawImage.h"
 #import "XeeIndexedRawImage.h"
-#import "CSRegex.h"
+
+#import <XADMaster/XADRegex.h>
 
 
 

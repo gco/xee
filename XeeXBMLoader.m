@@ -1,5 +1,7 @@
 #import "XeeXBMLoader.h"
-#import "CSRegex.h"
+
+#import <XADMaster/XADRegex.h>
+
 
 
 @implementation XeeXBMImage
