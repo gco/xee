@@ -28,27 +28,13 @@ NSString *CCITTCodeException=@"CCITTCodeException";
 
 @implementation CCITTFaxHandle
 
-static int ReadSymbolWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer table)
-{
-	int offset=0;
-	for(;;)
-	{
-		if(CSInputAtEOF(self->input)) CSByteStreamEOF(self);
-
-		int bit=CSInputNextBit(self->input);
-		offset=table[offset][bit];
-		if(!offset) [NSException raise:CCITTCodeException format:@"Invalid Huffman code in bitstream"];
-		if(table[offset][0]==table[offset][1]) return table[offset][0];
-	}
-}
-
-static int ReadLengthWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer table)
+static int ReadLengthWithCodeTable(CSInputBuffer *input,XADPrefixCode *prefixcode)
 {
 	int code,len=0;
 
 	do
 	{
-		code=ReadSymbolWithCodeTable(self,table);
+		code=CSInputNextSymbolUsingCode(input,prefixcode);
 		if(code<0&&len) [NSException raise:CCITTCodeException format:@"Invalid EOL code in bitstream"];
 		len+=code;
 	}
@@ -125,26 +111,28 @@ static int ReadLengthWithCodeTable(CCITTFaxHandle *self,CCITTCodeTablePointer ta
 
 void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int pos)
 {
-	if(self->previndex>0) self->previndex--; // have to backtrack at most one step
-	if(pos==0) pos=-1; // kludge because technically the imaginary first change is at -1
+	if(self->previndex>0) self->previndex--; // Have to backtrack at most one step.
+	if(pos==0) pos=-1; // Kludge because technically the imaginary first change is at -1.
 
-	while((self->previndex&1)==col||self->prevchanges[self->previndex]<=pos)
+	if((self->previndex&1)==col) self->previndex++; // Align to correct colour.
+
+	while(self->previndex<self->numprevchanges&&self->prevchanges[self->previndex]<=pos)
 	{
-		self->previndex++;
-		if(self->previndex>=self->numprevchanges)
-		{
-			self->prevpos=self->cols;
-			return;
-		}
+		self->previndex+=2;
 	}
 
-	self->prevpos=self->prevchanges[self->previndex];
+	if(self->previndex<self->numprevchanges) self->prevpos=self->prevchanges[self->previndex];
+	else self->prevpos=self->cols;
 }
 
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns white:(int)whitevalue
 {
 	if(self=[super initWithHandle:handle columns:columns white:whitevalue])
 	{
+		maincode=[[XADPrefixCode alloc] initWithStaticTable:T62DCodeTable];
+		whitecode=[[XADPrefixCode alloc] initWithStaticTable:T41DWhiteCodeTable];
+		blackcode=[[XADPrefixCode alloc] initWithStaticTable:T41DBlackCodeTable];
+
 		prevchanges=malloc(sizeof(int)*columns);
 		currchanges=malloc(sizeof(int)*columns);
 	}
@@ -153,6 +141,9 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 
 -(void)dealloc
 {
+	[maincode release];
+	[whitecode release];
+	[blackcode release];
 	free(prevchanges);
 	free(currchanges);
 	[super dealloc];
@@ -177,7 +168,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 	numcurrchanges=0;
 	previndex=0;
 	nexthoriz=0;
-//NSLog(@"----------------new line-------------------");
+//NSlog(@"----------------new line-------------------");
 }
 
 -(void)findNextSpanLength
@@ -191,9 +182,9 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 		currchanges[numcurrchanges++]=currpos;
 
 		nexthoriz=0;
-//NSLog(@"second horiz: %d to %d",bitsleft,currpos);
+//NSlog(@"second horiz: %d to %d",bitsleft,currpos);
 	}
-	else switch(ReadSymbolWithCodeTable(self,T62DCodeTable))
+	else switch(CSInputNextSymbolUsingCode(input,maincode))
 	{
 		case PASS:
 			FindNextOldChangeOfColorAndLargerThan(self,currcol^1,currpos);
@@ -203,20 +194,20 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			colour=currcol;
 
 			currpos=prevpos;
-//NSLog(@"pass to: %d",currpos);
+//NSlog(@"pass to: %d",currpos);
 		break;
 
 		case HORIZONTAL:
 		{
 			if(currcol==0)
 			{
-				bitsleft=ReadLengthWithCodeTable(self,T41DBlackCodeTable);
-				nexthoriz=ReadLengthWithCodeTable(self,T41DWhiteCodeTable);
+				bitsleft=ReadLengthWithCodeTable(input,blackcode);
+				nexthoriz=ReadLengthWithCodeTable(input,whitecode);
 			}
 			else
 			{
-				bitsleft=ReadLengthWithCodeTable(self,T41DWhiteCodeTable);
-				nexthoriz=ReadLengthWithCodeTable(self,T41DBlackCodeTable);
+				bitsleft=ReadLengthWithCodeTable(input,whitecode);
+				nexthoriz=ReadLengthWithCodeTable(input,blackcode);
 			}
 
 			colour=currcol;
@@ -224,7 +215,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos+=bitsleft;
 			currchanges[numcurrchanges++]=currpos;
 
-//NSLog(@"first horiz: %d to %d",bitsleft,currpos);
+//NSlog(@"first horiz: %d to %d",bitsleft,currpos);
 		}
 		break;
 
@@ -237,7 +228,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical 0 to %d",currpos);
+//NSlog(@"vertical 0 to %d",currpos);
 		break;
 
 		case VERTICAL_L1:
@@ -249,7 +240,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos-1;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical l1 to %d",currpos);
+//NSlog(@"vertical l1 to %d",currpos);
 		break;
 
 		case VERTICAL_L2:
@@ -261,7 +252,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos-2;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical l2 to %d",currpos);
+//NSlog(@"vertical l2 to %d",currpos);
 		break;
 
 		case VERTICAL_L3:
@@ -273,7 +264,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos-3;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical l3 to %d",currpos);
+//NSlog(@"vertical l3 to %d",currpos);
 		break;
 
 		case VERTICAL_R1:
@@ -285,7 +276,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos+1;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical r1 to %d",currpos);
+//NSlog(@"vertical r1 to %d",currpos);
 		break;
 
 		case VERTICAL_R2:
@@ -297,7 +288,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos+2;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical r2 to %d",currpos);
+//NSlog(@"vertical r2 to %d",currpos);
 		break;
 
 		case VERTICAL_R3:
@@ -309,7 +300,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 			currpos=prevpos+3;
 			currcol^=1;
 			currchanges[numcurrchanges++]=currpos;
-//NSLog(@"vertical r3 to %d",currpos);
+//NSlog(@"vertical r3 to %d",currpos);
 		break;
 
 		case UNCOMPRESSED:
@@ -318,7 +309,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int col,int po
 
 		case EOFB:
 			colour=0;
-			bitsleft=0x7fffffff;
+			bitsleft=cols;
 		break;
 	}
 }
@@ -414,8 +405,7 @@ static int T62DCodeTable[][2]=
 	{8,6},{HORIZONTAL,HORIZONTAL},{VERTICAL_L1,VERTICAL_L1},{10,9},
 	{PASS,PASS},{14,11},{12,13},{VERTICAL_L2,VERTICAL_L2},
 	{VERTICAL_R2,VERTICAL_R2},{18,15},{16,17},{VERTICAL_L3,VERTICAL_L3},
-	{VERTICAL_R3,VERTICAL_R3},{23,19},{0,20},{0,21},{0,22},
-	{UNCOMPRESSED,UNCOMPRESSED},{24,0},{25,0},{26,0},{27,0},{0,28},
-	{29,0},{30,0},{31,0},{32,0},{33,0},{34,0},{35,0},{36,0},{37,0},
-	{38,0},{39,0},{0,40},{EOFB,EOFB},
+	{VERTICAL_R3,VERTICAL_R3},{19,0},{20,0},{21,0},{22,0},{23,0},{0,24},
+	{25,0},{26,0},{27,0},{28,0},{29,0},{30,0},{31,0},{32,0},{33,0},
+	{34,0},{35,0},{0,36},{EOFB,EOFB},
 };

@@ -105,6 +105,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 	if([parent atEndOfFile])
 	{
+		[self endBlockStream];
 		int val=streambuffer[15];
 		if(val>0&&val<=16)
 		{

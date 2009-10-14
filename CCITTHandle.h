@@ -1,4 +1,5 @@
 #import <XADMaster/CSByteStreamHandle.h>
+#import <XADMaster/XADPrefixCode.h>
 
 extern NSString *CCITTCodeException;
 
@@ -23,6 +24,7 @@ extern NSString *CCITTCodeException;
 	int *prevchanges,numprevchanges;
 	int *currchanges,numcurrchanges;
 	int prevpos,previndex,currpos,currcol,nexthoriz;
+	XADPrefixCode *maincode,*whitecode,*blackcode;
 }
 
 -(id)initWithHandle:(CSHandle *)handle columns:(int)columns white:(int)whitevalue;
