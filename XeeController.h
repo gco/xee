@@ -9,7 +9,7 @@
 #define XeeDrawerEdgeWidth 6.0
 
 @class XeeImage,XeeImageSource,XeeView,XeeDisplayWindow,XeeFullScreenWindow;
-@class XeeCollisionPanel,XeeRenamePanel,XeeStatusBar,XeeDestinationView;
+@class XeeCollisionPanel,XeeRenamePanel,XeePasswordPanel,XeeStatusBar,XeeDestinationView;
 @class XeeMoveTool,XeeCropTool;
 
 
@@ -21,7 +21,7 @@
 
 	float zoom;
 	int window_focus_x,window_focus_y;
-	BOOL blocked,awake,autofullscreen;
+	BOOL blocked,awake,autofullscreen,delaysheet;
 	int drawer_mode;
 
 	XeeMoveTool *movetool;
@@ -51,6 +51,7 @@
 	IBOutlet NSButton *closebutton;
 	IBOutlet XeeCollisionPanel *collisionpanel;
 	IBOutlet XeeRenamePanel *renamepanel;
+	IBOutlet XeePasswordPanel *passwordpanel;
 	IBOutlet NSTextField *delayfield;
 	IBOutlet NSPanel *delaypanel;
 }

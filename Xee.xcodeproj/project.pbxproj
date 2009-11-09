@@ -235,6 +235,8 @@
 		1BE5E4F30A824FA300967AD2 /* XeeSampleSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE5E4F20A824FA300967AD2 /* XeeSampleSet.m */; };
 		1BE5E9050A86CA0300967AD2 /* XeeTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE5E9040A86CA0300967AD2 /* XeeTypes.m */; };
 		1BE66CB108D1F11200387D3D /* XeeBitmapImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66CB008D1F11200387D3D /* XeeBitmapImage.m */; };
+		1BE782AE10A74D5C007EA6F6 /* PasswordPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1BE782AC10A74D5C007EA6F6 /* PasswordPanel.nib */; };
+		1BE782B910A77EE1007EA6F6 /* XeePasswordPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE782B810A77EE1007EA6F6 /* XeePasswordPanel.m */; };
 		1BE7D7BE0B2E4739009166F5 /* XeeTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7BD0B2E4739009166F5 /* XeeTool.m */; };
 		1BE7D7CC0B2F58F4009166F5 /* XeeMoveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7CB0B2F58F4009166F5 /* XeeMoveTool.m */; };
 		1BE7D7D10B2F58FD009166F5 /* XeeCropTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7D00B2F58FD009166F5 /* XeeCropTool.m */; };
@@ -614,6 +616,9 @@
 		1BE5E9040A86CA0300967AD2 /* XeeTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeTypes.m; sourceTree = "<group>"; };
 		1BE66CAF08D1F11200387D3D /* XeeBitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeBitmapImage.h; sourceTree = "<group>"; };
 		1BE66CB008D1F11200387D3D /* XeeBitmapImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeBitmapImage.m; sourceTree = "<group>"; };
+		1BE782AD10A74D5C007EA6F6 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
+		1BE782B710A77EE1007EA6F6 /* XeePasswordPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePasswordPanel.h; sourceTree = "<group>"; };
+		1BE782B810A77EE1007EA6F6 /* XeePasswordPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeePasswordPanel.m; sourceTree = "<group>"; };
 		1BE7D7BC0B2E4739009166F5 /* XeeTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeTool.h; sourceTree = "<group>"; };
 		1BE7D7BD0B2E4739009166F5 /* XeeTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeTool.m; sourceTree = "<group>"; };
 		1BE7D7CA0B2F58F4009166F5 /* XeeMoveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeMoveTool.h; sourceTree = "<group>"; };
@@ -1101,6 +1106,8 @@
 				1BB983E20B18C357000B4425 /* XeeCollisionPanel.m */,
 				1BB983E60B18C363000B4425 /* XeeRenamePanel.h */,
 				1BB983E70B18C363000B4425 /* XeeRenamePanel.m */,
+				1BE782B710A77EE1007EA6F6 /* XeePasswordPanel.h */,
+				1BE782B810A77EE1007EA6F6 /* XeePasswordPanel.m */,
 				1BE4BA1B08D9E3E500859EE2 /* XeeSimpleLayout.h */,
 				1BE4BA1C08D9E3E500859EE2 /* XeeSimpleLayout.m */,
 				1B5552020B278EEB00DC7FF3 /* XeeGraphicsStuff.h */,
@@ -1274,6 +1281,7 @@
 				1BF28B710B5B1A8500481BED /* RenamePanel.nib */,
 				1BF28B730B5B1A9200481BED /* IconSetWindow.nib */,
 				1BF28B750B5B1A9D00481BED /* SlideshowDelayPanel.nib */,
+				1BE782AC10A74D5C007EA6F6 /* PasswordPanel.nib */,
 				1BDBF88708E9E87B00C83392 /* Credits.rtf */,
 				1B262E6508BF97B000648EBC /* Localizable.strings */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
@@ -1377,6 +1385,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BE782AE10A74D5C007EA6F6 /* PasswordPanel.nib in Resources */,
 				1B4078280EBA122F008D5F17 /* rgb.txt in Resources */,
 				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
@@ -1666,6 +1675,7 @@
 				1B4077A60EB928AC008D5F17 /* XeeXBMLoader.m in Sources */,
 				1B4077A90EB928B5008D5F17 /* XeeXPMLoader.m in Sources */,
 				1B4078930EBE658B008D5F17 /* XeeDreamcastLoader.m in Sources */,
+				1BE782B910A77EE1007EA6F6 /* XeePasswordPanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1706,6 +1716,14 @@
 				1BDBF88308E9E7E800C83392 /* English */,
 			);
 			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		1BE782AC10A74D5C007EA6F6 /* PasswordPanel.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1BE782AD10A74D5C007EA6F6 /* English */,
+			);
+			name = PasswordPanel.nib;
 			sourceTree = "<group>";
 		};
 		1BF144920B0B83D3003A8D57 /* PropertyPanel.nib */ = {

@@ -1,6 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-@class XeeImage,XeeController;
+@class XeeController;
 
 @interface XeeRenamePanel:NSWindow
 {

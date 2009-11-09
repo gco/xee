@@ -99,6 +99,11 @@
 	}
 }
 
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)dummy
+{
+	[parser setPassword:[self demandPassword]];
+}
+
 
 
 -(NSString *)representedFilename { return [parser filename]; }

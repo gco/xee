@@ -114,8 +114,16 @@
 	if(!delay) delay=[[NSUserDefaults standardUserDefaults] integerForKey:@"slideshowDelay"];
 	[delayfield setIntValue:delay];
 
-	// not fullscreen safe!
-	[[NSApplication sharedApplication] beginSheet:delaypanel modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+	if(fullscreenwindow)
+	{
+		[delaypanel makeKeyAndOrderFront:nil];
+		delaysheet=NO;
+	}
+	else
+	{
+		[NSApp beginSheet:delaypanel modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+		delaysheet=YES;
+	}
 }
 
 -(IBAction)delayPanelOK:(id)sender
@@ -123,13 +131,13 @@
 	[[NSUserDefaults standardUserDefaults] setInteger:[delayfield intValue] forKey:@"slideshowCustomDelay"];
 	[[NSUserDefaults standardUserDefaults] setInteger:[delayfield intValue] forKey:@"slideshowDelay"];
 
-	[[NSApplication sharedApplication] endSheet:delaypanel];
+	if(delaysheet) [NSApp endSheet:delaypanel];
 	[delaypanel orderOut:nil];
 }
 
 -(IBAction)delayPanelCancel:(id)sender
 {
-	[[NSApplication sharedApplication] endSheet:delaypanel];
+	if(delaysheet) [NSApp endSheet:delaypanel];
 	[delaypanel orderOut:nil];
 }
 

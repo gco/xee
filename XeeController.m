@@ -10,6 +10,7 @@
 #import "XeePropertiesController.h"
 #import "XeeMoveTool.h"
 #import "XeeCropTool.h"
+#import "XeePasswordPanel.h"
 #import "XeeStringAdditions.h"
 
 #import <Carbon/Carbon.h>
@@ -52,6 +53,7 @@ static NSMutableArray *controllers=nil;
 
 		renamepanel=nil;
 		collisionpanel=nil;
+		passwordpanel=nil;
 		delaypanel=nil;
 
 		[controllers addObject:self];
@@ -81,6 +83,7 @@ static NSMutableArray *controllers=nil;
 	[drawer release];
 	[renamepanel release];
 	[collisionpanel release];
+	[passwordpanel release];
 	[delaypanel release];
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -295,6 +298,19 @@ static BOOL HasAppleMouse()
 -(void)xeeImageSource:(XeeImageSource *)source imageListDidChange:(int)num
 {
 	[self updateStatusBar];
+}
+
+-(NSString *)xeeImageSourceDemandsPassword:(XeeImageSource *)source
+{
+	if(!passwordpanel)
+	{
+		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"PasswordPanel" bundle:nil] autorelease];
+		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+	}
+
+	//[source setActionsBlocked:YES];
+
+	return [passwordpanel runModalForWindow:fullscreenwindow?nil:window];
 }
 
 -(void)xeeView:(XeeView *)view imageDidChange:(XeeImage *)image

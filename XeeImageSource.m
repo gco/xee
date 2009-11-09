@@ -280,6 +280,12 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 	else [delegate xeeImageSource:self imageListDidChange:[self numberOfImages]];
 }
 
+-(NSString *)demandPassword
+{
+	return [delegate xeeImageSourceDemandsPassword:self];
+}
+
+
 @end
 
 
@@ -288,5 +294,6 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 
 -(void)xeeImageSource:(XeeImageSource *)source imageListDidChange:(int)num {}
 -(void)xeeImageSource:(XeeImageSource *)source imageDidChange:(XeeImage *)newimage {}
+-(NSString *)xeeImageSourceDemandsPassword:(XeeImageSource *)source { return nil; }
 
 @end

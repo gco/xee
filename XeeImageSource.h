@@ -89,6 +89,7 @@ extern NSString *XeeErrorDomain;
 -(void)updateRandomList;
 -(void)triggerImageChangeAction:(XeeImage *)image;
 -(void)triggerImageListChangeAction;
+-(NSString *)demandPassword;
 
 @end
 
@@ -98,5 +99,6 @@ extern NSString *XeeErrorDomain;
 
 -(void)xeeImageSource:(XeeImageSource *)source imageListDidChange:(int)num;
 -(void)xeeImageSource:(XeeImageSource *)source imageDidChange:(XeeImage *)newimage;
+-(NSString *)xeeImageSourceDemandsPassword:(XeeImageSource *)source;
 
 @end

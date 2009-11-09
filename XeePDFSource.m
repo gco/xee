@@ -63,7 +63,15 @@ static int XeePDFSortPages(id first,id second,void *context)
 	{
 		[parser parse];
 
-		if([parser needsPassword]) @throw @"PDF file needs password";
+		if([parser needsPassword])
+		{
+			for(;;)
+			{
+				NSString *password=[self demandPassword];
+				if(!password) @throw @"Cancelled password request";
+				if([parser setPassword:password]) break;
+			}
+		}
 
 		// Find image objects in object list
 		NSMutableArray *images=[NSMutableArray array];
