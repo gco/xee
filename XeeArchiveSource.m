@@ -116,54 +116,6 @@
 
 
 
-/*
--(XADArchive *)archiveForFile:(NSString *)archivename
-{
-	Class archiveclass=NSClassFromString(@"XADArchive");
-
-	if(!archiveclass)
-	{
-		NSString *unarchiver=[[NSWorkspace sharedWorkspace] fullPathForApplication:@"The Unarchiver"];
-		if(!unarchiver)
-		{
-			NSString *ext=[[archivename pathExtension] lowercaseString];
-			if([[XeeArchiveSource fileTypes] indexOfObject:ext]!=NSNotFound)
-			{
-				NSAlert *alert=[[[NSAlert alloc] init] autorelease];
-				[alert setMessageText:NSLocalizedString(@"Problem Opening Archive",@"Error title when The Unarchiver is not installed")];
-				[alert setInformativeText:NSLocalizedString(@"Xee can only open images inside archive files if The Unarchiver is also installed. You can download The Unarchiver for free by clicking the button below.",@"Error text when The Unarchiver is not installed")];
-				[alert setAlertStyle:NSInformationalAlertStyle];
-				[alert addButtonWithTitle:NSLocalizedString(@"Visit the The Unarchiver Download Page","Button to download The Unarchiver when it is not installed")];
-				NSButton *cancel=[alert addButtonWithTitle:NSLocalizedString(@"Don't Bother","Button to not download The Unarchiver")];
-				[cancel setKeyEquivalent:@"\033"];
-
-				int res=[alert runModal];
-
-				if(res==NSAlertFirstButtonReturn)
-				[[NSWorkspace sharedWorkspace] openURL:
-				[NSURL URLWithString:@"http://wakaba.c3.cx/s/apps/unarchiver.html"]];
-			}
-
-			return nil;
-		}
-
-		NSString *xadpath=[unarchiver stringByAppendingPathComponent:@"Contents/Frameworks/XADMaster.framework"];
-		NSBundle *xadmaster=[NSBundle bundleWithPath:xadpath];
-		if(!xadmaster) return nil;
-		if(![xadmaster load]) return nil;
-
-		NSString *unipath=[unarchiver stringByAppendingPathComponent:@"Contents/Frameworks/UniversalDetector.framework"];
-		NSBundle *universal=[NSBundle bundleWithPath:unipath];
-		if(!universal) return nil;
-		if(![universal load]) return nil;
-
-		archiveclass=NSClassFromString(@"XADArchive");
-	}
-
-	return [archiveclass archiveForFile:archivename];
-}
-*/
-
 @end
 
 
