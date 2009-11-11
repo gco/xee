@@ -1,0 +1,43 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                closeWindowOrDrawer = id; 
+                delayPanelCancel = id; 
+                delayPanelOK = id; 
+                fullScreen = id; 
+                setResizeBlockFromSender = id; 
+                skip100Back = id; 
+                skip100Forward = id; 
+                skip10Back = id; 
+                skip10Forward = id; 
+                skipFirst = id; 
+                skipLast = id; 
+                skipNext = id; 
+                skipPrev = id; 
+                skipRandom = id; 
+                skipRandomPrev = id; 
+                toggleStatusBar = id; 
+            }; 
+            CLASS = XeeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                closebutton = NSButton; 
+                collisionpanel = XeeCollisionPanel; 
+                delayfield = NSTextField; 
+                delaypanel = NSPanel; 
+                drawer = NSDrawer; 
+                drawerseg = NSSegmentedControl; 
+                imageview = XeeView; 
+                renamepanel = XeeRenamePanel; 
+                statusbar = XeeStatusBar; 
+                table = NSTableView; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeFullScreenWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }
+    ); 
+    IBVersion = 1; 
+}

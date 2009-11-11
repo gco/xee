@@ -1,0 +1,532 @@
+/* A file size in kilobytes with one decimal */
+"%.1f kB" = "%.1f kB";
+
+/* A file size in kilobytes with two decimals */
+"%.2f kB" = "%.2f kB";
+
+/* A time in seconds with two decimals */
+"%.2f seconds" = "%.2f sekund";
+
+/* File size property value (%@ is shortened filesize, %d is exact) */
+"%@ (%d bytes)" = "%1$@ (%2$d bajtů)";
+
+/* Save panel format name for lossless saving (%@ is the format name, currently always JPEG) */
+"%@, Without Recompressing" = "%@, bez rekomprimace";
+
+/* A file size in bytes */
+"%d B" = "%d B";
+
+/* Description for CMYK images */
+"%d bits CMYK" = "%d bitový CMYK";
+
+/* Description for CMYK+alpha images */
+"%d bits CMYK+alpha" = "%d bitový CMYK+alfa";
+
+/* Description for floating-point greyscale images */
+"%d bits FP grey" = "%d bitový FP stupně šedi";
+
+/* Description for floating-point grey+alpha images */
+"%d bits FP grey+alpha" = "%d bitový FP stupně šedi+alfa";
+
+/* Description for floating-point RGB images */
+"%d bits FP RGB" = "%d bitový FP RGB";
+
+/* Description for floating-point RGBA images */
+"%d bits FP RGBA" = "%d bitový FP RGBA";
+
+/* Description for greyscale images */
+"%d bits grey" = "%d bitový stupně šedi";
+
+/* Description for grey+alpha images */
+"%d bits grey+alpha" = "%d bitový stupně šedi+alfa";
+
+/* Description for Lab images */
+"%d bits Lab" = "%d bits Lab";
+
+/* Description for Lab+alpha images */
+"%d bits Lab+alpha" = "%d bitový Lab+alpha";
+
+/* Description for RGBA images */
+"%d bits RGB" = "%d bitový RGB";
+
+/* Description for RGBA images */
+"%d bits RGBA" = "%d bitový RGBA";
+
+/* Description for indexed-colour images */
+"%d colours" = "%d barev";
+
+/* A file size in kilobytes with no decimals */
+"%d kB" = "%d kB";
+
+/* Name of actual orientation action in undo list */
+"Actual Orientation" = "Aktuální orientace";
+
+/* Actual Size toolbar button label */
+"Actual Size" = "Aktuální velikost";
+
+/* Animation toolbar segment label */
+"Animation" = "Animace";
+
+/* Animation toolbar segment title */
+"Animation And Frames" = "Animace a políčka";
+
+/* Auto orientation toolbar segment label */
+"Auto Orientation" = "Automatická orientace";
+
+/* Auto orientation toolbar segment title
+   Automatic Orientation toolbar button label
+   Name of automatic orientation action in undo list */
+"Automatic Orientation" = "Automatická orientace";
+
+/* Label for highest quality */
+"Best" = "Nejlepší";
+
+/* Description for 1-bit bitmapped images */
+"Bitmap" = "Bitová mapa";
+
+/* Cancel button */
+"Cancel" = "Zrušit";
+
+/* Action name for the keyboard shortcut for cancelling the current action, closing the current window, or drawer */
+"Cancel Action or Close Window or Drawer" = "Zrušit akci nebo zavřít okno či přihrádku";
+
+/* Destination list entry for picking a new folder */
+"Choose a folder..." = "Vybrat složku…";
+
+/* Colour format property label */
+"Colour format:" = "Barevný formát:";
+
+/* Compression type popup for saving TIFFs */
+"Compression:" = "Komprimace:";
+
+/* Action name for the keyboard shortcut for confirming the current action */
+"Confirm Action" = "Potvrzení akce";
+
+/* Copy button and menuitem
+   Copy file toolbar button */
+"Copy" = "Kopírovat";
+
+/* Copy file toolbar button label */
+"Copy file" = "Kopírovat soubor";
+
+/* Alternate Copy menuitem for images */
+"Copy Image" = "Kopírovat obrázek";
+
+/* Action name for the keyboard shortcut for copying to entry 1 in the destination list */
+"Copy to Destination #1" = "Kopírovat na místo #1";
+
+/* Action name for the keyboard shortcut for copying to entry 10 in the destination list */
+"Copy to Destination #10" = "Kopírovat na místo #10";
+
+/* Action name for the keyboard shortcut for copying to entry 2 in the destination list */
+"Copy to Destination #2" = "Kopírovat na místo #2";
+
+/* Action name for the keyboard shortcut for copying to entry 3 in the destination list */
+"Copy to Destination #3" = "Kopírovat na místo #3";
+
+/* Action name for the keyboard shortcut for copying to entry 4 in the destination list */
+"Copy to Destination #4" = "Kopírovat na místo #4";
+
+/* Action name for the keyboard shortcut for copying to entry 5 in the destination list */
+"Copy to Destination #5" = "Kopírovat na místo #5";
+
+/* Action name for the keyboard shortcut for copying to entry 6 in the destination list */
+"Copy to Destination #6" = "Kopírovat na místo #6";
+
+/* Action name for the keyboard shortcut for copying to entry 7 in the destination list */
+"Copy to Destination #7" = "Kopírovat na místo #7";
+
+/* Action name for the keyboard shortcut for copying to entry 8 in the destination list */
+"Copy to Destination #8" = "Kopírovat na místo #8";
+
+/* Action name for the keyboard shortcut for copying to entry 9 in the destination list */
+"Copy to Destination #9" = "Kopírovat na místo #9";
+
+/* Title of the copy failure dialog */
+"Couldn't copy file" = "Nelze zkopírovat soubor";
+
+/* Content of the icon installation failure dialog */
+"Couldn't copy the icon files into the application." = "Nelze zkopírovat soubory ikon do aplikace.";
+
+/* Title of the delete failure dialog */
+"Couldn't delete file" = "Nelze smazat soubor";
+
+/* Statusbar message when image loading fails to even identify a file */
+"Couldn't display file \"%@\"." = "Nelze zobrazit soubor \"%@\".";
+
+/* Title of the move failure dialog */
+"Couldn't move file" = "Nelze přesunout soubor";
+
+/* Title of the rename error dialog */
+"Couldn't rename file" = "Nelze přejmenovat soubor";
+
+/* Content of the file saving failure dialog */
+"Couldn't save the file \"%@\"." = "Nelze uložit soubor \"%@\".";
+
+/* Creation date property label */
+"Creation date:" = "Datum vytvoření:";
+
+/* Cropping segment label
+   Name of crop action in undo list */
+"Crop" = "Oříznout";
+
+/* Crop Tool toolbar button label
+   Cropping toolbar segment title */
+"Crop Tool" = "Nástroj oříznutí";
+
+/* Cropping bottom offset property label */
+"Cropping bottom offset:" = "Odsazení zdola:";
+
+/* Cropping left offset property label */
+"Cropping left offset:" = "Odsazení zleva:";
+
+/* Cropping properties section title */
+"Cropping properties" = "Vlastnosti oříznutí";
+
+/* Cropping right offset property label */
+"Cropping right offset:" = "Odsazení zprava:";
+
+/* Cropping top offset property label */
+"Cropping top offset:" = "Odsazení shora:";
+
+/* Title for the popup for the action when cropping in inexact when saving losslessly */
+"Cropping:" = "Oříznutí:";
+
+/* Delete button
+   Delete file toolbar button */
+"Delete" = "Smazat";
+
+/* Action name for the keyboard shortcut for deleting the current image (after a confirmation dialog) */
+"Delete After Confirmation" = "Smazat po potvrzení";
+
+/* Title of the delete confirmation dialog */
+"Delete File" = "Smazat soubor";
+
+/* Delete file toolbar button label
+   Delete file toolbar segment title */
+"Delete file" = "Smazat soubor";
+
+/* Content of the delete confirmation dialog */
+"Do you want to delete the image file \"%@\"?" = "Skutečně si přejete smazat soubor obrázku \"%@\"?";
+
+/* Button to not download The Unarchiver */
+"Don't Bother" = "Nerušit";
+
+/* Statusbar message when image loading fails */
+"Error loading image \"%@\"." = "Vyskytla se chyba při načítání obrázku \"%@\".";
+
+/* EXIF camera properties section title */
+"EXIF camera properties" = "EXIF data fotoaparátu";
+
+/* EXIF image properties section title */
+"EXIF image properties" = "EXIF data obrázku";
+
+/* EXIF other properties section title */
+"EXIF other properties" = "Ostatní EXIF data";
+
+/* Option to expand the cropping area when saving losslessly */
+"Expand" = "Rozšířit";
+
+/* Title of the move/copy to same folder dialog */
+"File already there" = "Již zde soubor je";
+
+/* File comments section title */
+"File comments" = "Poznámky k souboru";
+
+/* File format property label */
+"File format:" = "Formát souboru:";
+
+/* Copy/move toolbar segment title */
+"File Handling" = "Přiřazení souboru";
+
+/* File name property label */
+"File name:" = "Jméno souboru:";
+
+/* File properties section title */
+"File properties" = "Vlastnosti souboru";
+
+/* File size property label */
+"File size:" = "Velikost souboru:";
+
+/* First Image toolbar button label */
+"First Image" = "První obrázek";
+
+/* First/Last toolbar segment label */
+"First Last" = "První poslední";
+
+/* First/Last toolbar segment title */
+"First/Last" = "První/poslední";
+
+/* Fit On Screen toolbar button label */
+"Fit On Screen" = "Vyplnit obrazovku";
+
+/* Format popup for saving images */
+"Format:" = "Formát:";
+
+/* Full image height property label */
+"Full image height:" = "Celková výška obrázku:";
+
+/* Full image width property label */
+"Full image width:" = "Celková šířka obrázku:";
+
+/* Full path property label */
+"Full path:" = "Celá cesta:";
+
+/* Futaba timestamp property label */
+"Futaba timestamp:" = "Časové razítko Futaba:";
+
+/* No comment provided by engineer. */
+"GIF animation properties" = "Vlastnosti GIF animace";
+
+/* Menu item text for hiding the status bar */
+"Hide Status Bar" = "Skrýt stavový řádek";
+
+/* Title of the icon installation failure dialog */
+"Icon Installation Failed" = "Instalace ikon selhala";
+
+/* Image height property label */
+"Image height:" = "Výška obrázku:";
+
+/* Image properties section title */
+"Image properties" = "Vlastnosti obrázku";
+
+/* Title of the file saving failure dialog */
+"Image saving failed" = "Ukládání obrázku selhalo";
+
+/* Image width property label */
+"Image width:" = "Šířka obrázku:";
+
+/* Interlaced checkbox for saving PNGs */
+"Interlaced" = "Prokládaně";
+
+/* Option to keep untranslatable edge blocks */
+"Keep" = "Držet";
+
+/* Last Image toolbar button label */
+"Last Image" = "Poslední obrázek";
+
+/* Label for lowest quality */
+"Least" = "Nízká";
+
+/* Statusbar message while loading */
+"Loading \"%@\"..." = "načítá se \"%@\"...";
+
+/* Label for lossless quality */
+"Lossless" = "Bezztrátově";
+
+/* LZW TIFF compression popup entry */
+"LZW" = "LZW";
+
+/* Name of mirror horizontal action in undo list */
+"Mirror Horizontal" = "Zrcadlit vodorovně";
+
+/* Name of mirror vertical action in undo list */
+"Mirror Vertical" = "Zrcadlit svisle";
+
+/* Modification date property label */
+"Modification date:" = "Datum změny:";
+
+/* More properties (from ImageIO.framework) section title */
+"More properties" = "Více vlastností";
+
+/* Move file toolbar button
+   Move button */
+"Move" = "Přesunout";
+
+/* Move file toolbar button label */
+"Move file" = "Přesunout soubor";
+
+/* Action name for the keyboard shortcut for moving to entry 1 in the destination list */
+"Move to Destination #1" = "Přesunout na místo #1";
+
+/* Action name for the keyboard shortcut for moving to entry 10 in the destination list */
+"Move to Destination #10" = "Přesunout na místo #10";
+
+/* Action name for the keyboard shortcut for moving to entry 2 in the destination list */
+"Move to Destination #2" = "Přesunout na místo #2";
+
+/* Action name for the keyboard shortcut for moving to entry 3 in the destination list */
+"Move to Destination #3" = "Přesunout na místo #3";
+
+/* Action name for the keyboard shortcut for moving to entry 4 in the destination list */
+"Move to Destination #4" = "Přesunout na místo #4";
+
+/* Action name for the keyboard shortcut for moving to entry 5 in the destination list */
+"Move to Destination #5" = "Přesunout na místo #5";
+
+/* Action name for the keyboard shortcut for moving to entry 6 in the destination list */
+"Move to Destination #6" = "Přesunout na místo #6";
+
+/* Action name for the keyboard shortcut for moving to entry 7 in the destination list */
+"Move to Destination #7" = "Přesunout na místo #7";
+
+/* Action name for the keyboard shortcut for moving to entry 8 in the destination list */
+"Move to Destination #8" = "Přesunout na místo #8";
+
+/* Action name for the keyboard shortcut for moving to entry 9 in the destination list */
+"Move to Destination #9" = "Přesunout na místo #9";
+
+/* Navigation toolbar segment title */
+"Navigation" = "Navigace";
+
+/* Next Frame toolbar button label */
+"Next Frame" = "Následující políčko";
+
+/* Next Image toolbar button label */
+"Next Image" = "Následující obrázek";
+
+/* Default editor menu title when no default editor has been selected */
+"No Default Editor Selected" = "Není vybrán žádný výchozí editor";
+
+/* Status bar message when no images are available */
+"No images available" = "Nejsou dostupné žádné obrázky";
+
+/* No TIFF compression popup entry */
+"None" = "None";
+
+/* Number of frames GIF property label */
+"Number of frames:" = "Počet políček:";
+
+/* OK button */
+"OK" = "Budiž";
+
+/* Menu item for other delay in slideshow menu when selected */
+"Other (%d Seconds)..." = "Jiné (%d sekund)...";
+
+/* Menu item for other delay in slideshow menu when not selected */
+"Other..." = "Jiný…";
+
+/* PackBits TIFF compression popup entry */
+"PackBits" = "PackBits";
+
+/* Paste menuitem */
+"Paste" = "Vložit";
+
+/* Text asking the user to press keys when assigning a new keyboard shortcut */
+"Press the keys you want as a shortcut for this action." = "Stiskněte klávesy, které si přejete přiřadit k této akci.";
+
+/* Prev/Next toolbar segment label */
+"Prev Next" = "Předch. Násl.";
+
+/* Prev/Next toolbar segment title */
+"Prev/Next" = "Předch./Násl.";
+
+/* Previous toolbar button label */
+"Previous Frame" = "Předchozí políčko";
+
+/* Previous Image toolbar button label */
+"Previous Image" = "Předchozí obrázek";
+
+/* Error title when The Unarchiver is not installed */
+"Problem Opening Archive" = "Problém během otevírání archívu";
+
+/* Quality slider for saving JPEG and JPEG2000 */
+"Quality:" = "Kvalita:";
+
+/* Option to remove untranslatable edge blocks */
+"Remove" = "Odstranit";
+
+/* Rename file toolbar button */
+"Rename" = "Přejmenovat";
+
+/* Rename file toolbar segment title
+   Rename file toolbar button label */
+"Rename file" = "Přejmenovat soubor";
+
+/* Name of rotate 180 action in undo list
+   Rotate 180 toolbar button label */
+"Rotate 180" = "Natočit o 180°";
+
+/* Rotate Clockwise toolbar button label
+   Name of rotate clockwise action in undo list */
+"Rotate Clockwise" = "Natočit o -90°";
+
+/* Name of rotate counter-clockwise action in undo list
+   Rotate Counter-clockwise toolbar button label */
+"Rotate Counter-clockwise" = "Natočit o 90°";
+
+/* Rotation toolbar segment title
+   Rotation segment label */
+"Rotation" = "Natočení";
+
+/* Alpha channel checkbox for saving images */
+"Save alpha channel" = "Uložit alfa kanál";
+
+/* Message when saving an image as */
+"Saving as \"%@\"..." = "Ukládá se jako \"%@\"...";
+
+/* Message when saving an image */
+"Saving..." = "Ukládá se...";
+
+/* Action name for the scroll down key */
+"Scroll Down" = "Scroll Down";
+
+/* Action name for the scroll left key */
+"Scroll Left" = "Scroll Left";
+
+/* Action name for the scroll right key */
+"Scroll Right" = "Scroll Right";
+
+/* Action name for the scroll up key */
+"Scroll Up" = "Scroll Up";
+
+/* Title of the default editor submenu */
+"Set Default Editor" = "nastavit výchozí editor";
+
+/* Alternate Paste menuitem for images */
+"Show Clipboard" = "Zobrazit schránku";
+
+/* Menu item text for showing the status bar */
+"Show Status Bar" = "Zobrazit stavový řádek";
+
+/* Title of the file exists dialog */
+"The file \"%@\" already exists." = "Soubor \"%@\" již existuje.";
+
+/* Content of the copy failure dialog */
+"The file \"%@\" could not be copied to the folder \"%@\"." = "Soubor \"%1$@\" nelze zkopírovat do složky \"%2$@\".";
+
+/* Content of the delet failure dialog */
+"The file \"%@\" could not be deleted." = "Soubor \"%@\" nelze smazat.";
+
+/* Content of the move failure dialog */
+"The file \"%@\" could not be moved to the folder \"%@\"." = "Soubor \"%1$@\" nelze přesunout do složky \"%2$@\".";
+
+/* Content of the rename collision dialog */
+"The file \"%@\" could not be renamed because another file with the same name already exists." = "Soubor \"%@\" nelze přejmenovat, protože ve složce se již vyskytuje soubor se stejným jménem.";
+
+/* Content of the rename error dialog */
+"The file \"%@\" could not be renamed." = "Soubor \"%@\" nelze přejmenovat.";
+
+/* Content of the move/copy to same folder dialog */
+"The source and destination locations are the same." = "Umístění zdroje a cíle jsou stejné.";
+
+/* Text explaining that an entered keyboard shortcut is already in use */
+"This shortcut is already in use." = "Tato zkratka je již používána.";
+
+/* Toggle Animation toolbar button label */
+"Toggle Animation" = "Zastavit/Spustit animace";
+
+/* Total playing time GIF property label */
+"Total playing time:" = "Celkový čas:";
+
+/* Option to trim the cropping area when saving losslessly */
+"Trim" = "Seříznout";
+
+/* Title for the popup for selecting the action for untransformable blocks when saving losslessly */
+"Untransformable edge blocks:" = "Untransformable edge blocks:";
+
+/* Button to download The Unarchiver when it is not installed */
+"Visit the The Unarchiver Download Page" = "Navštivte domovské sídlo aplikace The Unarchiver";
+
+/* Error text when The Unarchiver is not installed */
+"Xee can only open images inside archive files if The Unarchiver is also installed. You can download The Unarchiver for free by clicking the button below." = "Aplikace Xee umí otevírat obrázky umístěné v archívech, pouze pokud je nainstalována aplikace The Unarchiver. Můžete si ho zkopírovat klepnutím na příslušné tlačítko.";
+
+/* Zoom toolbar segment title */
+"Zoom" = "Lupa";
+
+/* Zoom In toolbar button label */
+"Zoom In" = "Přiblížit";
+
+/* Zoom Out toolbar button label */
+"Zoom Out" = "Oddálit";
+

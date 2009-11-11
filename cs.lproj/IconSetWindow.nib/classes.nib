@@ -1,0 +1,42 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = XeeApplication; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }, 
+        {
+            ACTIONS = {
+                dummy = id; 
+                getInfo = id; 
+                installIconSet = id; 
+                keyboardShortcuts = id; 
+                openDocument = id; 
+                openHomePage = id; 
+                openSupportThread = id; 
+                paste = id; 
+                setDefaultEditorFromMenu = id; 
+            }; 
+            CLASS = XeeDelegate; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                antialiasmenu = NSMenu; 
+                copyitem = NSMenuItem; 
+                editmenu = NSMenu; 
+                formattab = NSTabViewItem; 
+                fullscreenwell = NSColorWell; 
+                iconfield = NSTextField; 
+                iconwindow = NSWindow; 
+                imagewell = NSColorWell; 
+                openmenu = NSMenu; 
+                pasteitem = NSMenuItem; 
+                prefstabs = NSTabView; 
+                prefswindow = NSWindow; 
+                properties = XeePropertiesController; 
+                statusitem = NSMenuItem; 
+                viewmenu = NSMenu; 
+                windowcontroller = XeeController; 
+                windowwell = NSColorWell; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

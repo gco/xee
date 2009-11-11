@@ -220,7 +220,7 @@ static BOOL KFKeyEventIsCancelEvent(NSEvent *keyEvent);
         // goes through the field editor's interpretKeyEvents.  It won't cause any damage because the field
         // editor has no delegate and will be cleared before it's used again anyway.  
         // Without this workaround, entering "option-e, f" will stick this table in a state where all 
-        // key-events start with character "«", which means type-select won't work. The state is only 
+        // key-events start with character "Â´", which means type-select won't work. The state is only 
         // exited when a different control starts processing text.
         //
         // This workaround kills the above problem, but is suboptimal in that a dead-key never times out (besides just

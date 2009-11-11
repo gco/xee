@@ -1,0 +1,89 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {launchAppFromMenu = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {findNext = id; findPrevious = id; }; 
+            CLASS = KFTypeSelectTableView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {CLASS = XeeApplication; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }, 
+        {CLASS = XeeCloseButton; LANGUAGE = ObjC; SUPERCLASS = NSButton; }, 
+        {
+            ACTIONS = {
+                closeWindowOrDrawer = id; 
+                fullScreen = id; 
+                setResizeBlockFromSender = id; 
+                toggleStatusBar = id; 
+            }; 
+            CLASS = XeeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                closebutton = NSButton; 
+                collisionpanel = XeeCollisionPanel; 
+                delayfield = NSTextField; 
+                delaypanel = NSPanel; 
+                destinationtable = XeeDestinationView; 
+                drawer = NSDrawer; 
+                drawerseg = NSSegmentedControl; 
+                imageview = XeeView; 
+                renamepanel = XeeRenamePanel; 
+                statusbar = XeeStatusBar; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                dummy = id; 
+                openDocument = id; 
+                openHomePage = id; 
+                openSupportThread = id; 
+                paste = id; 
+                setDefaultEditorFromMenu = id; 
+            }; 
+            CLASS = XeeDelegate; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                copyitem = NSMenuItem; 
+                editmenu = NSMenu; 
+                openmenu = NSMenu; 
+                pasteitem = NSMenuItem; 
+                windowcontroller = XeeController; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeDestinationListHandler; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                draggingExited = id; 
+                openInFinder = id; 
+                openInXee = id; 
+                removeFromList = id; 
+                switchMode = id; 
+            }; 
+            CLASS = XeeDestinationView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeController; }; 
+            SUPERCLASS = KFTypeSelectTableView; 
+        }, 
+        {CLASS = XeeFiletypeListSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = XeeFullScreenWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {CLASS = XeeStatusBar; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = XeeStatusCell; LANGUAGE = ObjC; SUPERCLASS = NSCell; }, 
+        {
+            CLASS = XeeView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSOpenGLView; 
+        }
+    ); 
+    IBVersion = 1; 
+}

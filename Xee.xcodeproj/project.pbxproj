@@ -509,7 +509,7 @@
 		1BDEDB8408D4B15F0065EA39 /* XeeImageSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeImageSaver.h; sourceTree = "<group>"; };
 		1BDEDB8508D4B15F0065EA39 /* XeeImageSaver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeImageSaver.m; sourceTree = "<group>"; };
 		1BE4B80B08D7655400859EE2 /* KFTypeSelectTableView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KFTypeSelectTableView.h; sourceTree = "<group>"; };
-		1BE4B80C08D7655400859EE2 /* KFTypeSelectTableView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = KFTypeSelectTableView.m; sourceTree = "<group>"; };
+		1BE4B80C08D7655400859EE2 /* KFTypeSelectTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFTypeSelectTableView.m; sourceTree = "<group>"; };
 		1BE4B81008D765C300859EE2 /* XeeDestinationList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XeeDestinationList.h; sourceTree = "<group>"; };
 		1BE4B81108D765C300859EE2 /* XeeDestinationList.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XeeDestinationList.m; sourceTree = "<group>"; };
 		1BE4BA1B08D9E3E500859EE2 /* XeeSimpleLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeSimpleLayout.h; sourceTree = "<group>"; };
@@ -619,6 +619,18 @@
 		1BE782AD10A74D5C007EA6F6 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
 		1BE782B710A77EE1007EA6F6 /* XeePasswordPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePasswordPanel.h; sourceTree = "<group>"; };
 		1BE782B810A77EE1007EA6F6 /* XeePasswordPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeePasswordPanel.m; sourceTree = "<group>"; };
+		1BE783B810AB433B007EA6F6 /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
+		1BE783B910AB4366007EA6F6 /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Japanese; path = Japanese.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1BE783BA10AB43BC007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		1BE783BB10AB44F7007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/PrefsWindow.nib; sourceTree = "<group>"; };
+		1BE783BC10AB44FC007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		1BE783BD10AB4503007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/PropertyPanel.nib; sourceTree = "<group>"; };
+		1BE783BE10AB450A007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/CollisionPanel.nib; sourceTree = "<group>"; };
+		1BE783BF10AB4511007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/RenamePanel.nib; sourceTree = "<group>"; };
+		1BE783C010AB4516007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
+		1BE783C110AB451D007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
+		1BE783C210AB4523007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
+		1BE783C310AB452A007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1BE7D7BC0B2E4739009166F5 /* XeeTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeTool.h; sourceTree = "<group>"; };
 		1BE7D7BD0B2E4739009166F5 /* XeeTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeTool.m; sourceTree = "<group>"; };
 		1BE7D7CA0B2F58F4009166F5 /* XeeMoveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeMoveTool.h; sourceTree = "<group>"; };
@@ -1362,6 +1374,7 @@
 				French,
 				German,
 				ru,
+				cs,
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Xee */;
 			projectDirPath = "";
@@ -1686,6 +1699,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C1660FE840EACC02AAC07 /* English */,
+				1BE783B910AB4366007EA6F6 /* Japanese */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1696,6 +1710,7 @@
 				1B5D48FD086DF190004480AB /* English */,
 				1BFF74F40B6C2B2000E0900B /* Japanese */,
 				1BFF74F50B6C2B2300E0900B /* ru */,
+				1BE783BC10AB44FC007EA6F6 /* cs */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -1706,6 +1721,7 @@
 				1B262E6308BF979E00648EBC /* English */,
 				1BFF74E00B6C2A6900E0900B /* Japanese */,
 				1BFF74E10B6C2A6D00E0900B /* ru */,
+				1BE783C310AB452A007EA6F6 /* cs */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1722,6 +1738,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				1BE782AD10A74D5C007EA6F6 /* English */,
+				1BE783B810AB433B007EA6F6 /* Japanese */,
+				1BE783C210AB4523007EA6F6 /* cs */,
 			);
 			name = PasswordPanel.nib;
 			sourceTree = "<group>";
@@ -1732,6 +1750,7 @@
 				1BF1436F0B0A6F95003A8D57 /* English */,
 				1BFF74F00B6C2B1800E0900B /* Japanese */,
 				1BFF74F10B6C2B1A00E0900B /* ru */,
+				1BE783BD10AB4503007EA6F6 /* cs */,
 			);
 			name = PropertyPanel.nib;
 			sourceTree = "<group>";
@@ -1742,6 +1761,7 @@
 				1BF288E10B55811600481BED /* English */,
 				1BFF74F80B6C2B2B00E0900B /* Japanese */,
 				1BFF74F90B6C2B2D00E0900B /* ru */,
+				1BE783BB10AB44F7007EA6F6 /* cs */,
 			);
 			name = PrefsWindow.nib;
 			sourceTree = "<group>";
@@ -1752,6 +1772,7 @@
 				1BB984250B18CCA6000B4425 /* English */,
 				1BFF74EC0B6C2B0F00E0900B /* Japanese */,
 				1BFF74ED0B6C2B1100E0900B /* ru */,
+				1BE783BE10AB450A007EA6F6 /* cs */,
 			);
 			name = CollisionPanel.nib;
 			sourceTree = "<group>";
@@ -1762,6 +1783,7 @@
 				1BB984270B18CCFF000B4425 /* English */,
 				1BFF74E80B6C2B0500E0900B /* Japanese */,
 				1BFF74E90B6C2B0800E0900B /* ru */,
+				1BE783BF10AB4511007EA6F6 /* cs */,
 			);
 			name = RenamePanel.nib;
 			sourceTree = "<group>";
@@ -1772,6 +1794,7 @@
 				1B66365B0B1F7B7400AF779A /* English */,
 				1BFF74E40B6C2AE400E0900B /* Japanese */,
 				1BFF74E50B6C2AE700E0900B /* ru */,
+				1BE783C010AB4516007EA6F6 /* cs */,
 			);
 			name = IconSetWindow.nib;
 			sourceTree = "<group>";
@@ -1782,6 +1805,7 @@
 				1BFF6F230B20F881005E2BD3 /* English */,
 				1BFF74E20B6C2AD300E0900B /* Japanese */,
 				1BFF74E30B6C2AD600E0900B /* ru */,
+				1BE783C110AB451D007EA6F6 /* cs */,
 			);
 			name = SlideshowDelayPanel.nib;
 			sourceTree = "<group>";
@@ -1792,6 +1816,7 @@
 				2A37F4B7FDCFA73011CA2CEA /* English */,
 				1BFF74FC0B6C2B3700E0900B /* Japanese */,
 				1BFF74FD0B6C2B3A00E0900B /* ru */,
+				1BE783BA10AB43BC007EA6F6 /* cs */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
