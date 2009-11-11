@@ -85,6 +85,7 @@
 -(IBAction)loopImagesStub:(id)sender;
 -(IBAction)randomOrderStub:(id)sender;
 -(IBAction)rememberZoomStub:(id)sender;
+-(IBAction)rememberFocusStub:(id)sender;
 
 -(XeeController *)controllerForDirectory:(XeeFSRef *)directory;
 -(void)controllerWillExit:(XeeController *)controller;

@@ -627,6 +627,7 @@ static BOOL HasAppleMouse()
 	BOOL shrink=[[NSUserDefaults standardUserDefaults] boolForKey:@"shrinkToFit"];
 	BOOL enlarge=[[NSUserDefaults standardUserDefaults] boolForKey:@"enlargeToFit"];
 	BOOL remember=[[NSUserDefaults standardUserDefaults] boolForKey:@"rememberZoom"];
+	BOOL rememberfocus=[[NSUserDefaults standardUserDefaults] boolForKey:@"rememberFocus"];
 	float savedzoom=[[NSUserDefaults standardUserDefaults] floatForKey:@"savedZoom"];
 
 	float horiz_zoom=maxsize.width/(float)[currimage width];
@@ -641,7 +642,7 @@ static BOOL HasAppleMouse()
 
 	NSSize newsize=NSMakeSize(zoom*(float)[currimage width],zoom*(float)[currimage height]);
 
-	[self setImageSize:newsize resetFocus:YES];
+	[self setImageSize:newsize resetFocus:!rememberfocus];
 }
 
 -(void)setResizeBlock:(BOOL)block { blocked=block; }
@@ -1166,7 +1167,7 @@ static BOOL HasAppleMouse()
 		SetSystemUIMode(kUIModeAllHidden,kUIOptionAutoShowMenuBar);
 
 		[self setStandardImageSize];
-[imageview update];
+		[imageview update];
 		[fullscreenwindow makeKeyAndOrderFront:nil];
 
 		[imageview setCursorShouldHide:YES];

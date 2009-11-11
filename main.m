@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 		@"2",@"antialiasQuality",
 		@"NO",@"useOrientation",
 		@"NO",@"rememberZoom",
+		@"NO",@"rememberFocus",
 		@"1",@"savedZoom",
 		@"0",@"scrollWheelFunction",
 		@"NO",@"wrapImageBrowsing",

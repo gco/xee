@@ -727,6 +727,8 @@ BOOL finderlaunch;
 
 -(IBAction)rememberZoomStub:(id)sender { }
 
+-(IBAction)rememberFocusStub:(id)sender { }
+
 
 
 -(XeeController *)controllerForDirectory:(XeeFSRef *)directory

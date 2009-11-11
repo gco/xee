@@ -1105,9 +1105,9 @@
 	<key>CFBundleSignature</key>
 	<string>xee!</string>
 	<key>CFBundleVersion</key>
-	<string>2.1 alpha 4</string>
+	<string>2.1 beta 1</string>
 	<key>CFShortVersion</key>
-	<string>2.1 alpha 1</string>
+	<string>2.1 beta 1</string>
 	<key>CSHiddenDocumentTypes</key>
 	<array>
 		<string>public.zip-archive</string>
