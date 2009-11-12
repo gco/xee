@@ -66,9 +66,9 @@
 	if(self=[super init])
 	{
 		handle=[fh retain];
-		parent=[parentimage retain];
-		props=[[NSMutableArray array] retain];
-		channeloffs=[[NSMutableDictionary dictionary] retain];
+		parent=parentimage;
+		props=[NSMutableArray new];
+		channeloffs=[NSMutableDictionary new];
 
 		mode=[parent mode];
 		depth=[parent bitDepth];
