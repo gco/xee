@@ -1,256 +1,384 @@
-{
-    IBClasses = (
-        {
-            CLASS = CSAction; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {target = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {deselectAll = id; selectAll = id; }; 
-            CLASS = CSFileTypeList; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSTableView; 
-        }, 
-        {CLASS = CSFileTypeListSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = CSKeyListenerWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
-        {CLASS = CSKeyStroke; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                addShortcut = id; 
-                draggingExited = id; 
-                removeShortcut = id; 
-                resetAll = id; 
-                resetToDefaults = id; 
-            }; 
-            CLASS = CSKeyboardList; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                addButton = NSControl; 
-                infoTextField = NSTextField; 
-                keyboardShortcuts = CSKeyboardShortcuts; 
-                removeButton = NSControl; 
-                resetButton = NSControl; 
-            }; 
-            SUPERCLASS = KFTypeSelectTableView; 
-        }, 
-        {CLASS = CSKeyboardShortcuts; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                animationToggle = id; 
-                autoRotate = id; 
-                copyFile = id; 
-                crop = id; 
-                deleteFileFromMenu = id; 
-                dummy = id; 
-                frameSkipNext = id; 
-                frameSkipPrev = id; 
-                fullScreen = id; 
-                keyboardShortcuts = id; 
-                launchAppFromMenu = id; 
-                launchDefaultEditor = id; 
-                losslessCrop = id; 
-                mirrorHorizontal = id; 
-                mirrorVertical = id; 
-                moveFile = id; 
-                myAction = id; 
-                openBugReport = id; 
-                openHomePage = id; 
-                openSupportThread = id; 
-                renameFileFromMenu = id; 
-                revealInFinder = id; 
-                rotate180 = id; 
-                rotateActual = id; 
-                rotateCCW = id; 
-                rotateCW = id; 
-                runSlideshow = id; 
-                saveImage = id; 
-                setAntialiasing = id; 
-                setAutoZoom = id; 
-                setCustomSlideshowDelay = id; 
-                setSlideshowDelay = id; 
-                setSortOrder = id; 
-                skip100Back = id; 
-                skip100Forward = id; 
-                skip10Back = id; 
-                skip10Forward = id; 
-                skipFirst = id; 
-                skipLast = id; 
-                skipNext = id; 
-                skipPrev = id; 
-                skipRandom = id; 
-                skipRandomPrev = id; 
-                toggleAnimation = id; 
-                toggleAutoEnlarge = id; 
-                toggleAutoShrink = id; 
-                toggleStatusBar = id; 
-                zoomActual = id; 
-                zoomFit = id; 
-                zoomIn = id; 
-                zoomOut = id; 
-            }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {findNext = id; findPrevious = id; }; 
-            CLASS = KFTypeSelectTableView; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSTableView; 
-        }, 
-        {CLASS = NSDatePicker; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }, 
-        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
-        {
-            ACTIONS = {setAutomaticZoom = id; }; 
-            CLASS = NSWindow; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSResponder; 
-        }, 
-        {
-            CLASS = XeeAction; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {target = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = XeeApplication; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }, 
-        {CLASS = XeeCloseButton; LANGUAGE = ObjC; SUPERCLASS = NSButton; }, 
-        {
-            ACTIONS = {cancelClick = id; renameClick = id; replaceClick = id; }; 
-            CLASS = XeeCollisionPanel; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                controller = XeeDirectoryController; 
-                icon = XeeView; 
-                namefield = NSTextField; 
-                newdate = NSTextField; 
-                newformat = NSTextField; 
-                newsize = NSTextField; 
-                olddate = NSTextField; 
-                oldformat = NSTextField; 
-                oldsize = NSTextField; 
-                titlefield = NSTextField; 
-            }; 
-            SUPERCLASS = NSWindow; 
-        }, 
-        {
-            ACTIONS = {
-                autoRotate = id; 
-                closeWindowOrDrawer = id; 
-                copy = id; 
-                frameSkipNext = id; 
-                frameSkipPrev = id; 
-                fullScreen = id; 
-                mirrorHorizontal = id; 
-                mirrorVertical = id; 
-                rotate180 = id; 
-                rotateActual = id; 
-                rotateCCW = id; 
-                rotateCW = id; 
-                saveImage = id; 
-                setAutoZoom = id; 
-                setResizeBlockFromSender = id; 
-                toggleAnimation = id; 
-                toggleStatusBar = id; 
-                zoomActual = id; 
-                zoomFit = id; 
-                zoomIn = id; 
-                zoomOut = id; 
-            }; 
-            CLASS = XeeController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {imageview = XeeView; statusbar = XeeStatusBar; window = XeeDisplayWindow; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                dummy = id; 
-                getInfo = id; 
-                installIconSet = id; 
-                keyboardShortcuts = id; 
-                openBugReport = id; 
-                openDocument = id; 
-                openHomePage = id; 
-                openSupportThread = id; 
-                paste = id; 
-                setDefaultEditorFromMenu = id; 
-            }; 
-            CLASS = XeeDelegate; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                antialiasmenu = NSMenu; 
-                copyitem = NSMenuItem; 
-                cropitem = NSMenuItem; 
-                editmenu = NSMenu; 
-                formattab = NSTabViewItem; 
-                fullscreenwell = NSColorWell; 
-                iconfield = NSTextField; 
-                iconwindow = NSWindow; 
-                imagewell = NSColorWell; 
-                openmenu = NSMenu; 
-                otherdelayitem = NSMenuItem; 
-                pasteitem = NSMenuItem; 
-                prefstabs = NSTabView; 
-                prefswindow = NSWindow; 
-                properties = XeePropertiesController; 
-                runslidesitem = NSMenuItem; 
-                slideshowmenu = NSMenu; 
-                sortmenu = NSMenu; 
-                statusitem = NSMenuItem; 
-                viewmenu = NSMenu; 
-                windowcontroller = XeeController; 
-                windowwell = NSColorWell; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = XeeDisplayWindow; LANGUAGE = ObjC; SUPERCLASS = XeeWindow; }, 
-        {CLASS = XeeFiletypeListSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = XeeFullScreenWindow; LANGUAGE = ObjC; SUPERCLASS = XeeWindow; }, 
-        {CLASS = XeeKeyCell; LANGUAGE = ObjC; SUPERCLASS = NSCell; }, 
-        {CLASS = XeeKeyImage; LANGUAGE = ObjC; SUPERCLASS = NSImage; }, 
-        {CLASS = XeeKeyListenerWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
-        {CLASS = XeeKeyStroke; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                addShortcut = id; 
-                draggingExited = id; 
-                removeShortcut = id; 
-                resetAll = id; 
-                resetToDefaults = id; 
-            }; 
-            CLASS = XeeKeyboardList; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                addButton = NSControl; 
-                infoTextField = NSTextField; 
-                keyboardShortcuts = XeeKeyboardShortcuts; 
-                removeButton = NSControl; 
-                resetButton = NSControl; 
-            }; 
-            SUPERCLASS = KFTypeSelectTableView; 
-        }, 
-        {CLASS = XeeKeyboardShortcuts; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {cancelClick = id; renameClick = id; }; 
-            CLASS = XeeRenamePanel; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {controller = XeeDirectoryController; namefield = NSTextField; }; 
-            SUPERCLASS = NSWindow; 
-        }, 
-        {
-            CLASS = XeeShortcutView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {keyboardList = XeeKeyboardList; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {
-            CLASS = XeeView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; }; 
-            SUPERCLASS = NSOpenGLView; 
-        }, 
-        {CLASS = XeeWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>findNext</key>
+				<string>id</string>
+				<key>findPrevious</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>KFTypeSelectTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>deselectAll</key>
+				<string>id</string>
+				<key>selectAll</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>CSFileTypeList</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>dummy</key>
+				<string>id</string>
+				<key>getInfo</key>
+				<string>id</string>
+				<key>installIconSet</key>
+				<string>id</string>
+				<key>keyboardShortcuts</key>
+				<string>id</string>
+				<key>openBugReport</key>
+				<string>id</string>
+				<key>openDocument</key>
+				<string>id</string>
+				<key>openHomePage</key>
+				<string>id</string>
+				<key>openSupportThread</key>
+				<string>id</string>
+				<key>paste</key>
+				<string>id</string>
+				<key>setDefaultEditorFromMenu</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>XeeDelegate</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>antialiasmenu</key>
+				<string>NSMenu</string>
+				<key>copyitem</key>
+				<string>NSMenuItem</string>
+				<key>cropitem</key>
+				<string>NSMenuItem</string>
+				<key>editmenu</key>
+				<string>NSMenu</string>
+				<key>formattab</key>
+				<string>NSTabViewItem</string>
+				<key>fullscreenwell</key>
+				<string>NSColorWell</string>
+				<key>iconfield</key>
+				<string>NSTextField</string>
+				<key>iconwindow</key>
+				<string>NSWindow</string>
+				<key>imagewell</key>
+				<string>NSColorWell</string>
+				<key>openmenu</key>
+				<string>NSMenu</string>
+				<key>otherdelayitem</key>
+				<string>NSMenuItem</string>
+				<key>pasteitem</key>
+				<string>NSMenuItem</string>
+				<key>prefstabs</key>
+				<string>NSTabView</string>
+				<key>prefswindow</key>
+				<string>NSWindow</string>
+				<key>properties</key>
+				<string>XeePropertiesController</string>
+				<key>runslidesitem</key>
+				<string>NSMenuItem</string>
+				<key>slideshowmenu</key>
+				<string>NSMenu</string>
+				<key>sortmenu</key>
+				<string>NSMenu</string>
+				<key>statusitem</key>
+				<string>NSMenuItem</string>
+				<key>viewmenu</key>
+				<string>NSMenu</string>
+				<key>windowcontroller</key>
+				<string>XeeController</string>
+				<key>windowwell</key>
+				<string>NSColorWell</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>CSKeyboardShortcuts</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>animationToggle</key>
+				<string>id</string>
+				<key>autoRotate</key>
+				<string>id</string>
+				<key>copyFile</key>
+				<string>id</string>
+				<key>crop</key>
+				<string>id</string>
+				<key>deleteFileFromMenu</key>
+				<string>id</string>
+				<key>dummy</key>
+				<string>id</string>
+				<key>frameSkipNext</key>
+				<string>id</string>
+				<key>frameSkipPrev</key>
+				<string>id</string>
+				<key>fullScreen</key>
+				<string>id</string>
+				<key>keyboardShortcuts</key>
+				<string>id</string>
+				<key>launchAppFromMenu</key>
+				<string>id</string>
+				<key>launchDefaultEditor</key>
+				<string>id</string>
+				<key>losslessCrop</key>
+				<string>id</string>
+				<key>mirrorHorizontal</key>
+				<string>id</string>
+				<key>mirrorVertical</key>
+				<string>id</string>
+				<key>moveFile</key>
+				<string>id</string>
+				<key>myAction</key>
+				<string>id</string>
+				<key>openBugReport</key>
+				<string>id</string>
+				<key>openHomePage</key>
+				<string>id</string>
+				<key>openSupportThread</key>
+				<string>id</string>
+				<key>renameFileFromMenu</key>
+				<string>id</string>
+				<key>revealInFinder</key>
+				<string>id</string>
+				<key>rotate180</key>
+				<string>id</string>
+				<key>rotateActual</key>
+				<string>id</string>
+				<key>rotateCCW</key>
+				<string>id</string>
+				<key>rotateCW</key>
+				<string>id</string>
+				<key>runSlideshow</key>
+				<string>id</string>
+				<key>saveImage</key>
+				<string>id</string>
+				<key>setAntialiasing</key>
+				<string>id</string>
+				<key>setAutoZoom</key>
+				<string>id</string>
+				<key>setCustomSlideshowDelay</key>
+				<string>id</string>
+				<key>setSlideshowDelay</key>
+				<string>id</string>
+				<key>setSortOrder</key>
+				<string>id</string>
+				<key>skip100Back</key>
+				<string>id</string>
+				<key>skip100Forward</key>
+				<string>id</string>
+				<key>skip10Back</key>
+				<string>id</string>
+				<key>skip10Forward</key>
+				<string>id</string>
+				<key>skipFirst</key>
+				<string>id</string>
+				<key>skipLast</key>
+				<string>id</string>
+				<key>skipNext</key>
+				<string>id</string>
+				<key>skipPrev</key>
+				<string>id</string>
+				<key>skipRandom</key>
+				<string>id</string>
+				<key>skipRandomPrev</key>
+				<string>id</string>
+				<key>toggleAnimation</key>
+				<string>id</string>
+				<key>toggleAutoEnlarge</key>
+				<string>id</string>
+				<key>toggleAutoShrink</key>
+				<string>id</string>
+				<key>toggleStatusBar</key>
+				<string>id</string>
+				<key>zoomActual</key>
+				<string>id</string>
+				<key>zoomFit</key>
+				<string>id</string>
+				<key>zoomIn</key>
+				<string>id</string>
+				<key>zoomOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>addShortcut</key>
+				<string>id</string>
+				<key>draggingExited</key>
+				<string>id</string>
+				<key>removeShortcut</key>
+				<string>id</string>
+				<key>resetAll</key>
+				<string>id</string>
+				<key>resetToDefaults</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>CSKeyboardList</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>addButton</key>
+				<string>NSControl</string>
+				<key>infoTextField</key>
+				<string>NSTextField</string>
+				<key>keyboardShortcuts</key>
+				<string>CSKeyboardShortcuts</string>
+				<key>removeButton</key>
+				<string>NSControl</string>
+				<key>resetButton</key>
+				<string>NSControl</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>KFTypeSelectTableView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>setAutomaticZoom</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>NSWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>XeeWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>XeeDisplayWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>XeeWindow</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>XeeView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>delegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSOpenGLView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>autoRotate</key>
+				<string>id</string>
+				<key>closeWindowOrDrawer</key>
+				<string>id</string>
+				<key>copy</key>
+				<string>id</string>
+				<key>frameSkipNext</key>
+				<string>id</string>
+				<key>frameSkipPrev</key>
+				<string>id</string>
+				<key>fullScreen</key>
+				<string>id</string>
+				<key>mirrorHorizontal</key>
+				<string>id</string>
+				<key>mirrorVertical</key>
+				<string>id</string>
+				<key>rotate180</key>
+				<string>id</string>
+				<key>rotateActual</key>
+				<string>id</string>
+				<key>rotateCCW</key>
+				<string>id</string>
+				<key>rotateCW</key>
+				<string>id</string>
+				<key>saveImage</key>
+				<string>id</string>
+				<key>setAutoZoom</key>
+				<string>id</string>
+				<key>setResizeBlockFromSender</key>
+				<string>id</string>
+				<key>toggleAnimation</key>
+				<string>id</string>
+				<key>toggleStatusBar</key>
+				<string>id</string>
+				<key>zoomActual</key>
+				<string>id</string>
+				<key>zoomFit</key>
+				<string>id</string>
+				<key>zoomIn</key>
+				<string>id</string>
+				<key>zoomOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>XeeController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>imageview</key>
+				<string>XeeView</string>
+				<key>statusbar</key>
+				<string>XeeStatusBar</string>
+				<key>window</key>
+				<string>XeeDisplayWindow</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

@@ -157,7 +157,6 @@
 		1BCC00800941DF690075669D /* tool_autorot.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00710941DF690075669D /* tool_autorot.png */; };
 		1BCC00810941DF690075669D /* tool_flip.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00720941DF690075669D /* tool_flip.png */; };
 		1BCC00820941DF690075669D /* tool_first.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BCC00730941DF690075669D /* tool_first.png */; };
-		1BDBF88808E9E87B00C83392 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1BDBF88708E9E87B00C83392 /* Credits.rtf */; };
 		1BDBF90E08EC663100C83392 /* XeeStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBF90D08EC663100C83392 /* XeeStatusBar.m */; };
 		1BDC059A087EE3FF005E88BD /* XeeImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDC0599087EE3FF005E88BD /* XeeImage.m */; };
 		1BDEDB8608D4B15F0065EA39 /* XeeImageSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDEDB8508D4B15F0065EA39 /* XeeImageSaver.m */; };
@@ -237,6 +236,7 @@
 		1BE66CB108D1F11200387D3D /* XeeBitmapImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE66CB008D1F11200387D3D /* XeeBitmapImage.m */; };
 		1BE782AE10A74D5C007EA6F6 /* PasswordPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1BE782AC10A74D5C007EA6F6 /* PasswordPanel.nib */; };
 		1BE782B910A77EE1007EA6F6 /* XeePasswordPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE782B810A77EE1007EA6F6 /* XeePasswordPanel.m */; };
+		1BE7849210ABA3AE007EA6F6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1BDBF88308E9E7E800C83392 /* Credits.rtf */; };
 		1BE7D7BE0B2E4739009166F5 /* XeeTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7BD0B2E4739009166F5 /* XeeTool.m */; };
 		1BE7D7CC0B2F58F4009166F5 /* XeeMoveTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7CB0B2F58F4009166F5 /* XeeMoveTool.m */; };
 		1BE7D7D10B2F58FD009166F5 /* XeeCropTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7D00B2F58FD009166F5 /* XeeCropTool.m */; };
@@ -501,7 +501,7 @@
 		1BCC00710941DF690075669D /* tool_autorot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_autorot.png; path = images/tool_autorot.png; sourceTree = "<group>"; };
 		1BCC00720941DF690075669D /* tool_flip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_flip.png; path = images/tool_flip.png; sourceTree = "<group>"; };
 		1BCC00730941DF690075669D /* tool_first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool_first.png; path = images/tool_first.png; sourceTree = "<group>"; };
-		1BDBF88308E9E7E800C83392 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
+		1BDBF88308E9E7E800C83392 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		1BDBF90C08EC663100C83392 /* XeeStatusBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeStatusBar.h; sourceTree = "<group>"; };
 		1BDBF90D08EC663100C83392 /* XeeStatusBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeStatusBar.m; sourceTree = "<group>"; };
 		1BDC0598087EE3FF005E88BD /* XeeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeImage.h; sourceTree = "<group>"; };
@@ -630,7 +630,8 @@
 		1BE783C010AB4516007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
 		1BE783C110AB451D007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
 		1BE783C210AB4523007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = cs; path = cs.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
-		1BE783C310AB452A007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1BE783C310AB452A007EA6F6 /* cs */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1BE7849310ABA3CA007EA6F6 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1BE7D7BC0B2E4739009166F5 /* XeeTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeTool.h; sourceTree = "<group>"; };
 		1BE7D7BD0B2E4739009166F5 /* XeeTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeTool.m; sourceTree = "<group>"; };
 		1BE7D7CA0B2F58F4009166F5 /* XeeMoveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeMoveTool.h; sourceTree = "<group>"; };
@@ -1294,7 +1295,7 @@
 				1BF28B730B5B1A9200481BED /* IconSetWindow.nib */,
 				1BF28B750B5B1A9D00481BED /* SlideshowDelayPanel.nib */,
 				1BE782AC10A74D5C007EA6F6 /* PasswordPanel.nib */,
-				1BDBF88708E9E87B00C83392 /* Credits.rtf */,
+				1BDBF88308E9E7E800C83392 /* Credits.rtf */,
 				1B262E6508BF97B000648EBC /* Localizable.strings */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
@@ -1404,7 +1405,7 @@
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				1B262DD008BF8CF200648EBC /* BrowserWindow.nib in Resources */,
 				1B262E6608BF97B000648EBC /* Localizable.strings in Resources */,
-				1BDBF88808E9E87B00C83392 /* Credits.rtf in Resources */,
+				1BE7849210ABA3AE007EA6F6 /* Credits.rtf in Resources */,
 				1B3EB0BF08FD76FE00CB908E /* depth_rgb.png in Resources */,
 				1B3EB0C008FD76FE00CB908E /* size.png in Resources */,
 				1B3EB0C108FD76FE00CB908E /* close_4.png in Resources */,
@@ -1700,6 +1701,7 @@
 			children = (
 				089C1660FE840EACC02AAC07 /* English */,
 				1BE783B910AB4366007EA6F6 /* Japanese */,
+				1BE7849310ABA3CA007EA6F6 /* cs */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1724,14 +1726,6 @@
 				1BE783C310AB452A007EA6F6 /* cs */,
 			);
 			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		1BDBF88708E9E87B00C83392 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1BDBF88308E9E7E800C83392 /* English */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 		1BE782AC10A74D5C007EA6F6 /* PasswordPanel.nib */ = {
