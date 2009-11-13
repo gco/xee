@@ -764,6 +764,17 @@ BOOL finderlaunch;
 		controller=windowcontroller;
 
 		if(directory) [controllers setObject:controller forKey:directory];
+
+		NSMutableSet *set=[NSMutableSet set];
+		NSEnumerator *enumerator=[[NSApp windows] objectEnumerator];
+		NSWindow *window;
+		while(window=[enumerator nextObject]) if([window frameAutosaveName]) [set addObject:[window frameAutosaveName]];
+
+		window=[controller window];
+		int n=1;
+		while([set containsObject:[NSString stringWithFormat:@"browserWindow%d",n]]) n++;
+
+		[window setFrameAutosaveName:[NSString stringWithFormat:@"browserWindow%d",n]];
 	}
 
 	[[controller window] makeKeyAndOrderFront:self];
