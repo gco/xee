@@ -475,6 +475,17 @@
 		1BB98D6A0B1CBCCB000B4425 /* XeeKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeKQueue.m; sourceTree = "<group>"; };
 		1BB98F150B1E1E5A000B4425 /* XeeFSRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeFSRef.h; sourceTree = "<group>"; };
 		1BB98F160B1E1E5A000B4425 /* XeeFSRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeFSRef.m; sourceTree = "<group>"; };
+		1BBC3F0010B3593600A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		1BBC3F0210B3595E00A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/PrefsWindow.nib; sourceTree = "<group>"; };
+		1BBC3F0310B3596400A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		1BBC3F0410B3596900A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/PropertyPanel.nib; sourceTree = "<group>"; };
+		1BBC3F0510B3596F00A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/CollisionPanel.nib; sourceTree = "<group>"; };
+		1BBC3F0610B3597500A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/RenamePanel.nib; sourceTree = "<group>"; };
+		1BBC3F0710B3597C00A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
+		1BBC3F0810B3598200A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
+		1BBC3F0910B3598900A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
+		1BBC3F0A10B3598F00A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1BBC3F0B10B3599500A05E29 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1BCA06960E9C3CDD0016D207 /* XeeListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeListSource.h; sourceTree = "<group>"; };
 		1BCA06970E9C3CDD0016D207 /* XeeListSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeListSource.m; sourceTree = "<group>"; };
 		1BCA069B0E9C3E110016D207 /* PDFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFParser.h; sourceTree = "<group>"; };
@@ -1376,6 +1387,7 @@
 				German,
 				ru,
 				cs,
+				zh_CN,
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Xee */;
 			projectDirPath = "";
@@ -1702,6 +1714,7 @@
 				089C1660FE840EACC02AAC07 /* English */,
 				1BE783B910AB4366007EA6F6 /* Japanese */,
 				1BE7849310ABA3CA007EA6F6 /* cs */,
+				1BBC3F0B10B3599500A05E29 /* zh_CN */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1713,6 +1726,7 @@
 				1BFF74F40B6C2B2000E0900B /* Japanese */,
 				1BFF74F50B6C2B2300E0900B /* ru */,
 				1BE783BC10AB44FC007EA6F6 /* cs */,
+				1BBC3F0310B3596400A05E29 /* zh_CN */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -1724,6 +1738,7 @@
 				1BFF74E00B6C2A6900E0900B /* Japanese */,
 				1BFF74E10B6C2A6D00E0900B /* ru */,
 				1BE783C310AB452A007EA6F6 /* cs */,
+				1BBC3F0A10B3598F00A05E29 /* zh_CN */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1734,6 +1749,7 @@
 				1BE782AD10A74D5C007EA6F6 /* English */,
 				1BE783B810AB433B007EA6F6 /* Japanese */,
 				1BE783C210AB4523007EA6F6 /* cs */,
+				1BBC3F0910B3598900A05E29 /* zh_CN */,
 			);
 			name = PasswordPanel.nib;
 			sourceTree = "<group>";
@@ -1745,6 +1761,7 @@
 				1BFF74F00B6C2B1800E0900B /* Japanese */,
 				1BFF74F10B6C2B1A00E0900B /* ru */,
 				1BE783BD10AB4503007EA6F6 /* cs */,
+				1BBC3F0410B3596900A05E29 /* zh_CN */,
 			);
 			name = PropertyPanel.nib;
 			sourceTree = "<group>";
@@ -1756,6 +1773,7 @@
 				1BFF74F80B6C2B2B00E0900B /* Japanese */,
 				1BFF74F90B6C2B2D00E0900B /* ru */,
 				1BE783BB10AB44F7007EA6F6 /* cs */,
+				1BBC3F0210B3595E00A05E29 /* zh_CN */,
 			);
 			name = PrefsWindow.nib;
 			sourceTree = "<group>";
@@ -1767,6 +1785,7 @@
 				1BFF74EC0B6C2B0F00E0900B /* Japanese */,
 				1BFF74ED0B6C2B1100E0900B /* ru */,
 				1BE783BE10AB450A007EA6F6 /* cs */,
+				1BBC3F0510B3596F00A05E29 /* zh_CN */,
 			);
 			name = CollisionPanel.nib;
 			sourceTree = "<group>";
@@ -1778,6 +1797,7 @@
 				1BFF74E80B6C2B0500E0900B /* Japanese */,
 				1BFF74E90B6C2B0800E0900B /* ru */,
 				1BE783BF10AB4511007EA6F6 /* cs */,
+				1BBC3F0610B3597500A05E29 /* zh_CN */,
 			);
 			name = RenamePanel.nib;
 			sourceTree = "<group>";
@@ -1789,6 +1809,7 @@
 				1BFF74E40B6C2AE400E0900B /* Japanese */,
 				1BFF74E50B6C2AE700E0900B /* ru */,
 				1BE783C010AB4516007EA6F6 /* cs */,
+				1BBC3F0710B3597C00A05E29 /* zh_CN */,
 			);
 			name = IconSetWindow.nib;
 			sourceTree = "<group>";
@@ -1800,6 +1821,7 @@
 				1BFF74E20B6C2AD300E0900B /* Japanese */,
 				1BFF74E30B6C2AD600E0900B /* ru */,
 				1BE783C110AB451D007EA6F6 /* cs */,
+				1BBC3F0810B3598200A05E29 /* zh_CN */,
 			);
 			name = SlideshowDelayPanel.nib;
 			sourceTree = "<group>";
@@ -1811,6 +1833,7 @@
 				1BFF74FC0B6C2B3700E0900B /* Japanese */,
 				1BFF74FD0B6C2B3A00E0900B /* ru */,
 				1BE783BA10AB43BC007EA6F6 /* cs */,
+				1BBC3F0010B3593600A05E29 /* zh_CN */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
