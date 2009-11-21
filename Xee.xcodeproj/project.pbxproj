@@ -710,23 +710,14 @@
 		1BFF6F230B20F881005E2BD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
 		1BFF73280B6AF5C500E0900B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		1BFF74E00B6C2A6900E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Japanese; path = Japanese.lproj/Localizable.strings; sourceTree = "<group>"; };
-		1BFF74E10B6C2A6D00E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1BFF74E20B6C2AD300E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
-		1BFF74E30B6C2AD600E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
 		1BFF74E40B6C2AE400E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
-		1BFF74E50B6C2AE700E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
 		1BFF74E80B6C2B0500E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/RenamePanel.nib; sourceTree = "<group>"; };
-		1BFF74E90B6C2B0800E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/RenamePanel.nib; sourceTree = "<group>"; };
 		1BFF74EC0B6C2B0F00E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/CollisionPanel.nib; sourceTree = "<group>"; };
-		1BFF74ED0B6C2B1100E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/CollisionPanel.nib; sourceTree = "<group>"; };
 		1BFF74F00B6C2B1800E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/PropertyPanel.nib; sourceTree = "<group>"; };
-		1BFF74F10B6C2B1A00E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/PropertyPanel.nib; sourceTree = "<group>"; };
 		1BFF74F40B6C2B2000E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
-		1BFF74F50B6C2B2300E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		1BFF74F80B6C2B2B00E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/PrefsWindow.nib; sourceTree = "<group>"; };
-		1BFF74F90B6C2B2D00E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/PrefsWindow.nib; sourceTree = "<group>"; };
 		1BFF74FC0B6C2B3700E0900B /* Japanese */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Japanese; path = Japanese.lproj/MainMenu.nib; sourceTree = "<group>"; };
-		1BFF74FD0B6C2B3A00E0900B /* ru */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ru; path = ru.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4B7FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* Xee_Prefix.pch */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = Xee_Prefix.pch; sourceTree = "<group>"; };
@@ -1724,7 +1715,6 @@
 			children = (
 				1B5D48FD086DF190004480AB /* English */,
 				1BFF74F40B6C2B2000E0900B /* Japanese */,
-				1BFF74F50B6C2B2300E0900B /* ru */,
 				1BE783BC10AB44FC007EA6F6 /* cs */,
 				1BBC3F0310B3596400A05E29 /* zh_CN */,
 			);
@@ -1736,7 +1726,6 @@
 			children = (
 				1B262E6308BF979E00648EBC /* English */,
 				1BFF74E00B6C2A6900E0900B /* Japanese */,
-				1BFF74E10B6C2A6D00E0900B /* ru */,
 				1BE783C310AB452A007EA6F6 /* cs */,
 				1BBC3F0A10B3598F00A05E29 /* zh_CN */,
 			);
@@ -1759,7 +1748,6 @@
 			children = (
 				1BF1436F0B0A6F95003A8D57 /* English */,
 				1BFF74F00B6C2B1800E0900B /* Japanese */,
-				1BFF74F10B6C2B1A00E0900B /* ru */,
 				1BE783BD10AB4503007EA6F6 /* cs */,
 				1BBC3F0410B3596900A05E29 /* zh_CN */,
 			);
@@ -1771,7 +1759,6 @@
 			children = (
 				1BF288E10B55811600481BED /* English */,
 				1BFF74F80B6C2B2B00E0900B /* Japanese */,
-				1BFF74F90B6C2B2D00E0900B /* ru */,
 				1BE783BB10AB44F7007EA6F6 /* cs */,
 				1BBC3F0210B3595E00A05E29 /* zh_CN */,
 			);
@@ -1783,7 +1770,6 @@
 			children = (
 				1BB984250B18CCA6000B4425 /* English */,
 				1BFF74EC0B6C2B0F00E0900B /* Japanese */,
-				1BFF74ED0B6C2B1100E0900B /* ru */,
 				1BE783BE10AB450A007EA6F6 /* cs */,
 				1BBC3F0510B3596F00A05E29 /* zh_CN */,
 			);
@@ -1795,7 +1781,6 @@
 			children = (
 				1BB984270B18CCFF000B4425 /* English */,
 				1BFF74E80B6C2B0500E0900B /* Japanese */,
-				1BFF74E90B6C2B0800E0900B /* ru */,
 				1BE783BF10AB4511007EA6F6 /* cs */,
 				1BBC3F0610B3597500A05E29 /* zh_CN */,
 			);
@@ -1807,7 +1792,6 @@
 			children = (
 				1B66365B0B1F7B7400AF779A /* English */,
 				1BFF74E40B6C2AE400E0900B /* Japanese */,
-				1BFF74E50B6C2AE700E0900B /* ru */,
 				1BE783C010AB4516007EA6F6 /* cs */,
 				1BBC3F0710B3597C00A05E29 /* zh_CN */,
 			);
@@ -1819,7 +1803,6 @@
 			children = (
 				1BFF6F230B20F881005E2BD3 /* English */,
 				1BFF74E20B6C2AD300E0900B /* Japanese */,
-				1BFF74E30B6C2AD600E0900B /* ru */,
 				1BE783C110AB451D007EA6F6 /* cs */,
 				1BBC3F0810B3598200A05E29 /* zh_CN */,
 			);
@@ -1831,7 +1814,6 @@
 			children = (
 				2A37F4B7FDCFA73011CA2CEA /* English */,
 				1BFF74FC0B6C2B3700E0900B /* Japanese */,
-				1BFF74FD0B6C2B3A00E0900B /* ru */,
 				1BE783BA10AB43BC007EA6F6 /* cs */,
 				1BBC3F0010B3593600A05E29 /* zh_CN */,
 			);
