@@ -152,12 +152,12 @@ void XeePlayPoof(NSWindow *somewindow);
 	else [super keyDown:event];
 }
 
--(void)menuForEvent:(NSEvent *)event
+-(NSMenu*)menuForEvent:(NSEvent *)event
 {
 	NSPoint clickpoint=[self convertPoint:[event locationInWindow] fromView:nil];
 	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:[self rowAtPoint:clickpoint]] byExtendingSelection:NO];
 
-	[super menuForEvent:event];
+	return [super menuForEvent:event];
 }
 
 

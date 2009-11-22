@@ -22,7 +22,7 @@
 -(void)drawRow:(int)row clipRect:(NSRect)clipRect;
 
 -(void)keyDown:(NSEvent *)event;
--(void)menuForEvent:(NSEvent *)event;
+-(NSMenu*)menuForEvent:(NSEvent *)event;
 -(void)mouseDown:(NSEvent *)event;
 
 -(unsigned int)draggingSourceOperationMaskForLocal:(BOOL)local;

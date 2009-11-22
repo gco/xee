@@ -371,9 +371,9 @@
 	return back;
 }
 
--(int)orientation { return orientation; }
+-(XeeTransformation)orientation { return orientation; }
 
--(int)correctOrientation { return correctorientation; }
+-(XeeTransformation)correctOrientation { return correctorientation; }
 
 -(NSRect)croppingRect
 {
