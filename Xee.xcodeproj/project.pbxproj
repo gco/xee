@@ -371,6 +371,17 @@
 		1B2B5DB60C78AF140057B42F /* XeeIndexedRawImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeIndexedRawImage.m; sourceTree = "<group>"; };
 		1B2B5DBA0C78AF1F0057B42F /* XeeRawImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeRawImage.h; sourceTree = "<group>"; };
 		1B2B5DBB0C78AF1F0057B42F /* XeeRawImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeRawImage.m; sourceTree = "<group>"; };
+		1B32D4D010FBFAB3002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		1B32D4D110FBFABC002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/PrefsWindow.nib; sourceTree = "<group>"; };
+		1B32D4D310FBFAE3002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		1B32D4D410FBFAED002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/PropertyPanel.nib; sourceTree = "<group>"; };
+		1B32D4D510FBFAF7002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/CollisionPanel.nib; sourceTree = "<group>"; };
+		1B32D4D610FBFAFE002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/RenamePanel.nib; sourceTree = "<group>"; };
+		1B32D4D710FBFB05002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
+		1B32D4D810FBFB0D002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/SlideshowDelayPanel.nib; sourceTree = "<group>"; };
+		1B32D4D910FBFB13002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Spanish; path = Spanish.lproj/PasswordPanel.nib; sourceTree = "<group>"; };
+		1B32D4DA10FBFB1C002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Spanish; path = Spanish.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1B32D4DB10FBFB30002A2C76 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Spanish; path = Spanish.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1B33ECA7093A8E2F00297778 /* button_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = button_right.png; path = images/button_right.png; sourceTree = "<group>"; };
 		1B33ECA8093A8E2F00297778 /* button_mid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = button_mid.png; path = images/button_mid.png; sourceTree = "<group>"; };
 		1B33ECA9093A8E2F00297778 /* button_left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = button_left.png; path = images/button_left.png; sourceTree = "<group>"; };
@@ -1379,6 +1390,7 @@
 				ru,
 				cs,
 				zh_CN,
+				Spanish,
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Xee */;
 			projectDirPath = "";
@@ -1706,6 +1718,7 @@
 				1BE783B910AB4366007EA6F6 /* Japanese */,
 				1BE7849310ABA3CA007EA6F6 /* cs */,
 				1BBC3F0B10B3599500A05E29 /* zh_CN */,
+				1B32D4DB10FBFB30002A2C76 /* Spanish */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1717,6 +1730,7 @@
 				1BFF74F40B6C2B2000E0900B /* Japanese */,
 				1BE783BC10AB44FC007EA6F6 /* cs */,
 				1BBC3F0310B3596400A05E29 /* zh_CN */,
+				1B32D4D310FBFAE3002A2C76 /* Spanish */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -1728,6 +1742,7 @@
 				1BFF74E00B6C2A6900E0900B /* Japanese */,
 				1BE783C310AB452A007EA6F6 /* cs */,
 				1BBC3F0A10B3598F00A05E29 /* zh_CN */,
+				1B32D4DA10FBFB1C002A2C76 /* Spanish */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1739,6 +1754,7 @@
 				1BE783B810AB433B007EA6F6 /* Japanese */,
 				1BE783C210AB4523007EA6F6 /* cs */,
 				1BBC3F0910B3598900A05E29 /* zh_CN */,
+				1B32D4D910FBFB13002A2C76 /* Spanish */,
 			);
 			name = PasswordPanel.nib;
 			sourceTree = "<group>";
@@ -1750,6 +1766,7 @@
 				1BFF74F00B6C2B1800E0900B /* Japanese */,
 				1BE783BD10AB4503007EA6F6 /* cs */,
 				1BBC3F0410B3596900A05E29 /* zh_CN */,
+				1B32D4D410FBFAED002A2C76 /* Spanish */,
 			);
 			name = PropertyPanel.nib;
 			sourceTree = "<group>";
@@ -1761,6 +1778,7 @@
 				1BFF74F80B6C2B2B00E0900B /* Japanese */,
 				1BE783BB10AB44F7007EA6F6 /* cs */,
 				1BBC3F0210B3595E00A05E29 /* zh_CN */,
+				1B32D4D110FBFABC002A2C76 /* Spanish */,
 			);
 			name = PrefsWindow.nib;
 			sourceTree = "<group>";
@@ -1772,6 +1790,7 @@
 				1BFF74EC0B6C2B0F00E0900B /* Japanese */,
 				1BE783BE10AB450A007EA6F6 /* cs */,
 				1BBC3F0510B3596F00A05E29 /* zh_CN */,
+				1B32D4D510FBFAF7002A2C76 /* Spanish */,
 			);
 			name = CollisionPanel.nib;
 			sourceTree = "<group>";
@@ -1783,6 +1802,7 @@
 				1BFF74E80B6C2B0500E0900B /* Japanese */,
 				1BE783BF10AB4511007EA6F6 /* cs */,
 				1BBC3F0610B3597500A05E29 /* zh_CN */,
+				1B32D4D610FBFAFE002A2C76 /* Spanish */,
 			);
 			name = RenamePanel.nib;
 			sourceTree = "<group>";
@@ -1794,6 +1814,7 @@
 				1BFF74E40B6C2AE400E0900B /* Japanese */,
 				1BE783C010AB4516007EA6F6 /* cs */,
 				1BBC3F0710B3597C00A05E29 /* zh_CN */,
+				1B32D4D710FBFB05002A2C76 /* Spanish */,
 			);
 			name = IconSetWindow.nib;
 			sourceTree = "<group>";
@@ -1805,6 +1826,7 @@
 				1BFF74E20B6C2AD300E0900B /* Japanese */,
 				1BE783C110AB451D007EA6F6 /* cs */,
 				1BBC3F0810B3598200A05E29 /* zh_CN */,
+				1B32D4D810FBFB0D002A2C76 /* Spanish */,
 			);
 			name = SlideshowDelayPanel.nib;
 			sourceTree = "<group>";
@@ -1816,6 +1838,7 @@
 				1BFF74FC0B6C2B3700E0900B /* Japanese */,
 				1BE783BA10AB43BC007EA6F6 /* cs */,
 				1BBC3F0010B3593600A05E29 /* zh_CN */,
+				1B32D4D010FBFAB3002A2C76 /* Spanish */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
