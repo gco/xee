@@ -122,6 +122,19 @@ void CGAccessSessionRelease(CGAccessSessionRef session);
 	return YES;
 }
 
+-(void)invertImage
+{
+	// Used to invert the colours of TIFF bitmap images.
+
+	if(bitspercomponent!=8) return; // TODO: should throw an exception?
+
+	for(int y=0;y<height;y++)
+	for(int i=0;i<bytesperrow;i++)
+	{
+		data[y*bytesperrow+i]^=0xff;
+	}
+}
+
 -(CGColorSpaceRef)createColorSpaceForCGImage
 {
 	if(!imageref) return [super createColorSpaceForCGImage];

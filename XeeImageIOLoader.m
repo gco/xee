@@ -94,7 +94,13 @@ static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
 	XeeBitmapImage *image=nil;
 
 	if(colormodel!=kCGImagePropertyColorModelCMYK&&colormodel!=kCGImagePropertyColorModelLab
-	&&!(isindexed&&[isindexed boolValue])) image=[[[XeeCGImage alloc] initWithCGImage:cgimage] autorelease];
+	&&!(isindexed&&[isindexed boolValue]))
+	{
+		image=[[[XeeCGImage alloc] initWithCGImage:cgimage] autorelease];
+
+		NSNumber *photometric=[[cgproperties objectForKey:@"{TIFF}"] objectForKey:@"PhotometricInterpretation"];
+		if(photometric&&[photometric intValue]==0) [(XeeCGImage *)image invertImage];
+	}
 
 	if(!image)
 	{
@@ -149,6 +155,9 @@ static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
 
 	NSDictionary *cgproperties=[(id)CGImageSourceCopyPropertiesAtIndex(source,0,(CFDictionaryRef)options) autorelease];
 	XeeCGImage *image=[[[XeeCGImage alloc] initWithCGImage:cgimage] autorelease];
+
+	NSNumber *photometric=[[cgproperties objectForKey:@"{TIFF}"] objectForKey:@"PhotometricInterpretation"];
+	if(photometric&&[photometric intValue]==0) [image invertImage];
 
 	CGImageRelease(cgimage);
 
@@ -235,7 +244,9 @@ static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
 	{
 		id value=[cgproperties objectForKey:key];
 		if(![value isKindOfClass:[NSDictionary class]]) continue;
+
 		NSString *keyname=[imageio localizedStringForKey:key value:key table:@"CGImageSource"];
+
 		[array addObject:[XeePropertyItem itemWithLabel:keyname
 		value:[self convertCGPropertyValues:value imageIOBundle:imageio]
 		identifier:[NSString stringWithFormat:@"%@.%@",@"imageio",key]]];
