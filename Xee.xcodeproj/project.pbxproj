@@ -80,23 +80,6 @@
 		1B5E0A420C8A37DA00F22867 /* CSCoroutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5E0A410C8A37DA00F22867 /* CSCoroutine.m */; };
 		1B68CEC80885F4B1001971C8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B68CE2C0885F42A001971C8 /* OpenGL.framework */; };
 		1B68CEDA0885F5D7001971C8 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B68CED90885F5D7001971C8 /* QuickTime.framework */; };
-		1B86FDD30B813E0800E302DB /* XeePNGLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C03B08E0DC5500859EE2 /* XeePNGLoader.m */; };
-		1B86FDD40B813E0D00E302DB /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C10F08E22FB500859EE2 /* png.c */; };
-		1B86FDD50B813E0E00E302DB /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11208E22FB500859EE2 /* pngerror.c */; };
-		1B86FDD60B813E0E00E302DB /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11308E22FB500859EE2 /* pngget.c */; };
-		1B86FDD70B813E0F00E302DB /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11408E22FB500859EE2 /* pngmem.c */; };
-		1B86FDD80B813E0F00E302DB /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11508E22FB500859EE2 /* pngpread.c */; };
-		1B86FDD90B813E1000E302DB /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11608E22FB500859EE2 /* pngread.c */; };
-		1B86FDDA0B813E1000E302DB /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11708E22FB500859EE2 /* pngrio.c */; };
-		1B86FDDB0B813E1100E302DB /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11808E22FB500859EE2 /* pngrtran.c */; };
-		1B86FDDC0B813E1100E302DB /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11908E22FB500859EE2 /* pngrutil.c */; };
-		1B86FDDD0B813E1300E302DB /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11A08E22FB500859EE2 /* pngset.c */; };
-		1B86FDDE0B813E1300E302DB /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11B08E22FB500859EE2 /* pngtrans.c */; };
-		1B86FDDF0B813E1400E302DB /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11C08E22FB500859EE2 /* pngwio.c */; };
-		1B86FDE00B813E1500E302DB /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11D08E22FB500859EE2 /* pngwrite.c */; };
-		1B86FDE10B813E1500E302DB /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11E08E22FB500859EE2 /* pngwtran.c */; };
-		1B86FDE20B813E1600E302DB /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE4C11F08E22FB500859EE2 /* pngwutil.c */; };
-		1B86FDF10B813FE200E302DB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BE4C13108E2303200859EE2 /* libz.dylib */; };
 		1B9094D90C7525F8009E5ACE /* XeePhotoshopLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE5DEB40A7E9B6900967AD2 /* XeePhotoshopLoader.m */; };
 		1B9099D10C91BE1A009E5ACE /* XeeInterleavingHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B9099D00C91BE1A009E5ACE /* XeeInterleavingHandle.m */; };
 		1B996C250928EE9E0026832A /* jpeg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1B996C230928EE9E0026832A /* jpeg.icns */; };
@@ -432,8 +415,6 @@
 		1B66365B0B1F7B7400AF779A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/IconSetWindow.nib; sourceTree = "<group>"; };
 		1B68CE2C0885F42A001971C8 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		1B68CED90885F5D7001971C8 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		1B86FDBB0B8136B400E302DB /* PNGLoader.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PNGLoader.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B86FDBC0B8136B400E302DB /* PNGLoader-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PNGLoader-Info.plist"; sourceTree = "<group>"; };
 		1B9099CF0C91BE1A009E5ACE /* XeeInterleavingHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XeeInterleavingHandle.h; sourceTree = "<group>"; };
 		1B9099D00C91BE1A009E5ACE /* XeeInterleavingHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XeeInterleavingHandle.m; sourceTree = "<group>"; };
 		1B996C230928EE9E0026832A /* jpeg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = jpeg.icns; path = icons/jpeg.icns; sourceTree = "<group>"; };
@@ -737,14 +718,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1B86FDB90B8136B400E302DB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1B86FDF10B813FE200E302DB /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D15AC330486D014006FF6A4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -768,7 +741,6 @@
 			isa = PBXGroup;
 			children = (
 				8D15AC370486D014006FF6A4 /* Xee.app */,
-				1B86FDBB0B8136B400E302DB /* PNGLoader.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1263,7 +1235,6 @@
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
-				1B86FDBC0B8136B400E302DB /* PNGLoader-Info.plist */,
 			);
 			name = Xee;
 			sourceTree = "<group>";
@@ -1338,23 +1309,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1B86FDBA0B8136B400E302DB /* PNGLoader */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1B86FDBE0B8136B700E302DB /* Build configuration list for PBXNativeTarget "PNGLoader" */;
-			buildPhases = (
-				1B86FDB70B8136B400E302DB /* Resources */,
-				1B86FDB80B8136B400E302DB /* Sources */,
-				1B86FDB90B8136B400E302DB /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = PNGLoader;
-			productName = PNGLoader;
-			productReference = 1B86FDBB0B8136B400E302DB /* PNGLoader.bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
 		8D15AC270486D014006FF6A4 /* Xee */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1B74976D08D33EA2003CCA48 /* Build configuration list for PBXNativeTarget "Xee" */;
@@ -1397,19 +1351,11 @@
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* Xee */,
-				1B86FDBA0B8136B400E302DB /* PNGLoader */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1B86FDB70B8136B400E302DB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D15AC2B0486D014006FF6A4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1506,29 +1452,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1B86FDB80B8136B400E302DB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1B86FDD30B813E0800E302DB /* XeePNGLoader.m in Sources */,
-				1B86FDD40B813E0D00E302DB /* png.c in Sources */,
-				1B86FDD50B813E0E00E302DB /* pngerror.c in Sources */,
-				1B86FDD60B813E0E00E302DB /* pngget.c in Sources */,
-				1B86FDD70B813E0F00E302DB /* pngmem.c in Sources */,
-				1B86FDD80B813E0F00E302DB /* pngpread.c in Sources */,
-				1B86FDD90B813E1000E302DB /* pngread.c in Sources */,
-				1B86FDDA0B813E1000E302DB /* pngrio.c in Sources */,
-				1B86FDDB0B813E1100E302DB /* pngrtran.c in Sources */,
-				1B86FDDC0B813E1100E302DB /* pngrutil.c in Sources */,
-				1B86FDDD0B813E1300E302DB /* pngset.c in Sources */,
-				1B86FDDE0B813E1300E302DB /* pngtrans.c in Sources */,
-				1B86FDDF0B813E1400E302DB /* pngwio.c in Sources */,
-				1B86FDE00B813E1500E302DB /* pngwrite.c in Sources */,
-				1B86FDE10B813E1500E302DB /* pngwtran.c in Sources */,
-				1B86FDE20B813E1600E302DB /* pngwutil.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D15AC300486D014006FF6A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1850,7 +1773,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1938,66 +1861,6 @@
 			};
 			name = Release;
 		};
-		1B86FDBF0B8136B700E302DB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Xee_Prefix.pch;
-				INFOPLIST_FILE = "PNGLoader-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)\"";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-					"-undefined",
-					dynamic_lookup,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = PNGLoader;
-				WRAPPER_EXTENSION = bundle;
-				ZERO_LINK = NO;
-			};
-			name = Debug;
-		};
-		1B86FDC00B8136B700E302DB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Xee_Prefix.pch;
-				INFOPLIST_FILE = "PNGLoader-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)\"";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-					"-undefined",
-					dynamic_lookup,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = PNGLoader;
-				WRAPPER_EXTENSION = bundle;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2015,15 +1878,6 @@
 			buildConfigurations = (
 				1B74977A08D33EA2003CCA48 /* Debug */,
 				1B74977B08D33EA2003CCA48 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		1B86FDBE0B8136B700E302DB /* Build configuration list for PBXNativeTarget "PNGLoader" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1B86FDBF0B8136B700E302DB /* Debug */,
-				1B86FDC00B8136B700E302DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
