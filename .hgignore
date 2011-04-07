@@ -1,0 +1,5 @@
+glob:Crap
+glob:.DS_Store
+glob:*.mode1
+glob:*.mode1v3
+glob:*.pbxuser
