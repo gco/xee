@@ -1,5 +1,6 @@
 #import "XeeController.h"
 #import "XeeControllerImageActions.h"
+#import "XeeControllerNavigationActions.h"
 #import "XeeDelegate.h"
 #import "XeeView.h"
 #import "XeeImage.h"
@@ -33,6 +34,9 @@ static NSMutableArray *controllers=nil;
 		source=nil;
 		currimage=nil;
 
+		zoom=1;
+		touchrotation=0;
+		touchrotateleftpoint=touchrotaterightpoint=0;
 		blocked=awake=autofullscreen=NO;
 		drawer_mode=XeeNoMode;
 
@@ -283,6 +287,49 @@ static BOOL HasAppleMouse()
 	}
 }
 
+-(void)beginGestureWithEvent:(NSEvent *)event
+{
+	touchrotation=0;
+	touchrotateleftpoint=45;
+	touchrotaterightpoint=-45;
+}
+
+-(void)endGestureWithEvent:(NSEvent *)event
+{
+}
+
+-(void)magnifyWithEvent:(NSEvent *)event
+{
+	float delta=[event magnification];
+	float newzoom=zoom*(delta+1.0);
+	[self setZoom:newzoom];
+}
+
+-(void)rotateWithEvent:(NSEvent *)event
+{
+	touchrotation+=[event deltaZ];
+
+	if(touchrotation>touchrotateleftpoint)
+	{
+		touchrotateleftpoint+=80;
+		touchrotaterightpoint+=80;
+		[self rotateCCW:nil];
+	}
+	else if(touchrotation<touchrotaterightpoint)
+	{
+		touchrotateleftpoint-=80;
+		touchrotaterightpoint-=80;
+		[self rotateCW:nil];
+	}
+}
+
+-(void)swipeWithEvent:(NSEvent *)event
+{
+	float x=[event deltaX];
+	if(x>0) [self skipPrev:nil];
+	else if(x<0) [self skipNext:nil];
+}
+
 
 
 -(void)xeeImageSource:(XeeImageSource *)msgsource imageDidChange:(XeeImage *)image
@@ -488,6 +535,8 @@ static BOOL HasAppleMouse()
 }
 
 -(BOOL)isFullscreen { return fullscreenwindow?YES:NO; }
+
+-(float)zoom { return zoom; }
 
 
 

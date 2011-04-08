@@ -20,6 +20,7 @@
 	XeeImage *currimage;
 
 	float zoom;
+	float touchrotation,touchrotateleftpoint,touchrotaterightpoint;
 	int window_focus_x,window_focus_y;
 	BOOL blocked,awake,autofullscreen,delaysheet;
 	int drawer_mode;
@@ -72,6 +73,11 @@
 -(void)refreshImageNotification:(NSNotification *)notification;
 
 -(void)scrollWheel:(NSEvent *)event;
+-(void)beginGestureWithEvent:(NSEvent *)event;
+-(void)endGestureWithEvent:(NSEvent *)event;
+-(void)magnifyWithEvent:(NSEvent *)event;
+-(void)rotateWithEvent:(NSEvent *)event;
+-(void)swipeWithEvent:(NSEvent *)event;
 
 -(void)xeeImageSource:(XeeImageSource *)msgsource imageDidChange:(XeeImage *)image;
 -(void)xeeImageSource:(XeeImageSource *)source imageListDidChange:(int)num;
@@ -88,6 +94,7 @@
 -(NSString *)currentFilename;
 -(NSArray *)currentProperties;
 -(BOOL)isFullscreen;
+-(float)zoom;
 
 -(void)setImageSource:(XeeImageSource *)newsource;
 -(void)setImage:(XeeImage *)image;

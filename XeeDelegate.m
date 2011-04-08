@@ -825,31 +825,64 @@ BOOL finderlaunch;
 
 
 
+BOOL IsHoveredViewOfClass(NSEvent *event,Class class);
+
 @implementation XeeApplication
 
 -(void)sendEvent:(NSEvent *)event
 {
-	if([event type]==NSScrollWheel)
+	int type=[event type];
+	if(type==NSScrollWheel||type==NSEventTypeBeginGesture||type==NSEventTypeEndGesture||
+	type==NSEventTypeMagnify||type==NSEventTypeRotate||type==NSEventTypeSwipe)
 	{
-		NSWindow *window=[event window];
-		if(window)
-		{
-			NSView *content=[window contentView];
-			NSPoint mouse=[content convertPoint:[window mouseLocationOutsideOfEventStream] fromView:nil];
-			NSView *hit=[content hitTest:mouse];
-
-			if(hit)
-			if([hit isKindOfClass:[NSTableView class]]) goto keiji;
-			//[[hit superview] isKindOfClass:[NSScrollView class]]
-		}
-
 		id keydelegate=[[[NSApplication sharedApplication] keyWindow] delegate];
-		if(keydelegate&&[keydelegate respondsToSelector:@selector(scrollWheel:)])
-		[keydelegate scrollWheel:event];
+		if(keydelegate && [keydelegate isKindOfClass:[XeeController class]])
+		{
+			XeeController *controller=keydelegate;
+
+			if(type==NSScrollWheel)
+			{
+				if(!IsHoveredViewOfClass(event,[NSTableView class]))
+				[controller scrollWheel:event];
+			}
+			else if(type==NSEventTypeBeginGesture)
+			{
+				[controller beginGestureWithEvent:event];
+			}
+			else if(type==NSEventTypeEndGesture)
+			{
+				[controller endGestureWithEvent:event];
+			}
+			else if(type==NSEventTypeMagnify)
+			{
+				[controller magnifyWithEvent:event];
+			}
+			else if(type==NSEventTypeRotate)
+			{
+				[controller rotateWithEvent:event];
+			}
+			else if(type==NSEventTypeSwipe)
+			{
+				[controller swipeWithEvent:event];
+			}
+		}
 	}
 
-	keiji:
 	[super sendEvent:event];
+}
+
+BOOL IsHoveredViewOfClass(NSEvent *event,Class class)
+{
+	NSWindow *window=[event window];
+	if(window)
+	{
+		NSView *content=[window contentView];
+		NSPoint mouse=[content convertPoint:[window mouseLocationOutsideOfEventStream] fromView:nil];
+		NSView *hit=[content hitTest:mouse];
+
+		if(hit&&[hit isKindOfClass:class]) return YES;
+	}
+	return NO;
 }
 
 @end
