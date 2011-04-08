@@ -266,6 +266,7 @@
 	if(sortorder==XeeDefaultSortOrder)
 	{
 		NSDictionary *dsdict=CSParseDSStore([[[dirref parent] path] stringByAppendingPathComponent:@".DS_Store"]);
+
 		NSData *lsvo=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvo"];
 		if(lsvo&&[lsvo length]>=11)
 		{
@@ -273,6 +274,21 @@
 			{
 				case 'phys': sortorder=XeeSizeSortOrder; break;
 				case 'modd': sortorder=XeeDateSortOrder; break; // !5JrU4QOlH6
+			}
+		}
+		else
+		{
+			NSData *lsvp=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvp"];
+			if(lsvp)
+			{
+				NSDictionary *properties=(NSDictionary *)[NSPropertyListSerialization
+				propertyListFromData:lsvp mutabilityOption:NSPropertyListMutableContainersAndLeaves
+				format:nil errorDescription:nil];
+			
+				NSString *sortcolumn=[properties objectForKey:@"sortColumn"];
+
+				if([sortcolumn isEqualToString:@"dateModified"]) sortorder=XeeDateSortOrder;
+				else if([sortcolumn isEqualToString:@"size"]) sortorder=XeeSizeSortOrder;
 			}
 		}
 	}
