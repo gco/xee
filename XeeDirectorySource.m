@@ -267,28 +267,28 @@
 	{
 		NSDictionary *dsdict=CSParseDSStore([[[dirref parent] path] stringByAppendingPathComponent:@".DS_Store"]);
 
-		NSData *lsvo=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvo"];
-		if(lsvo&&[lsvo length]>=11)
+		NSData *lsvp=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvp"];
+		if(lsvp)
 		{
-			switch(XeeBEUInt32((uint8_t *)[lsvo bytes]+7))
-			{
-				case 'phys': sortorder=XeeSizeSortOrder; break;
-				case 'modd': sortorder=XeeDateSortOrder; break; // !5JrU4QOlH6
-			}
+			NSDictionary *properties=(NSDictionary *)[NSPropertyListSerialization
+			propertyListFromData:lsvp mutabilityOption:NSPropertyListMutableContainersAndLeaves
+			format:nil errorDescription:nil];
+			
+			NSString *sortcolumn=[properties objectForKey:@"sortColumn"];
+
+			if([sortcolumn isEqualToString:@"dateModified"]) sortorder=XeeDateSortOrder;
+			else if([sortcolumn isEqualToString:@"size"]) sortorder=XeeSizeSortOrder;
 		}
 		else
 		{
-			NSData *lsvp=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvp"];
-			if(lsvp)
+			NSData *lsvo=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvo"];
+			if(lsvo&&[lsvo length]>=11)
 			{
-				NSDictionary *properties=(NSDictionary *)[NSPropertyListSerialization
-				propertyListFromData:lsvp mutabilityOption:NSPropertyListMutableContainersAndLeaves
-				format:nil errorDescription:nil];
-			
-				NSString *sortcolumn=[properties objectForKey:@"sortColumn"];
-
-				if([sortcolumn isEqualToString:@"dateModified"]) sortorder=XeeDateSortOrder;
-				else if([sortcolumn isEqualToString:@"size"]) sortorder=XeeSizeSortOrder;
+				switch(XeeBEUInt32((uint8_t *)[lsvo bytes]+7))
+				{
+					case 'phys': sortorder=XeeSizeSortOrder; break;
+					case 'modd': sortorder=XeeDateSortOrder; break; // !5JrU4QOlH6
+				}
 			}
 		}
 	}
