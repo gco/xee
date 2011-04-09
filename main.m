@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 		@"NO",@"rememberZoom",
 		@"NO",@"rememberFocus",
 		@"1",@"savedZoom",
-		@"0",@"scrollWheelFunction",
+		@"1",@"scrollWheelFunction",
 		@"NO",@"wrapImageBrowsing",
 		@"NO",@"autoFullscreen",
 		@"NO",@"randomizeSlideshow",
