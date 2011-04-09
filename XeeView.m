@@ -10,7 +10,14 @@
 #import <Carbon/Carbon.h>
 
 
+
 GLuint make_resize_texture();
+
+@interface NSEvent (DeviceDelta)
+-(float)deviceDeltaX;
+-(float)deviceDeltaY;
+@end
+
 
 
 @implementation XeeView
@@ -286,13 +293,37 @@ GLuint make_resize_texture();
 	[[tool cursor] set];
 }
 
+BOOL IsSmoothScrollEvent(NSEvent *event)
+{
+	const EventRef carbonevent=(EventRef)[event eventRef];
+	if(!carbonevent) return NO;
+	if(GetEventKind(carbonevent)!=kEventMouseScroll) return NO;
+	if(![event respondsToSelector:@selector(deviceDeltaX)]) return NO;
+	if(![event respondsToSelector:@selector(deviceDeltaY)]) return NO;
+	return YES;
+}
+
 -(void)scrollWheel:(NSEvent *)event
 {
 	if([[NSUserDefaults standardUserDefaults] integerForKey:@"scrollWheelFunction"]==1)
 	{
-		int old_x=x,old_y=y;
-		x-=[event deltaX]*24;
-		y-=[event deltaY]*24;
+		float dx,dy;
+		if(IsSmoothScrollEvent(event))
+		{
+			dx=[event deviceDeltaX];
+			dy=[event deviceDeltaY];
+		}
+		else
+		{
+			dx=[event deltaX]*24;
+			dy=[event deltaY]*24;
+		}
+			
+		//NSLog(@"scrollwheel: scrollEvent is %i, %f dx, %f dy, %f dx, %f dy", scrollEvent, dx, dy);
+		
+ 		int old_x=x,old_y=y;
+		x-=dx;
+		y-=dy;
 		[self clampCoords];
 		if(x!=old_x||y!=old_y) [self invalidateImageAndTool];
 	}

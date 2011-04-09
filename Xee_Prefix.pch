@@ -19,4 +19,10 @@
 -(float)magnification;
 @end
 
+#define kEventMouseScroll 11
+
+@interface NSEvent()
+-(const void *)eventRef;
+@end
+
 #endif
