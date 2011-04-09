@@ -267,17 +267,20 @@
 	{
 		NSDictionary *dsdict=CSParseDSStore([[[dirref parent] path] stringByAppendingPathComponent:@".DS_Store"]);
 
-		NSData *lsvp=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvp"];
-		if(lsvp)
+		if(floor(NSAppKitVersionNumber)>949)
 		{
-			NSDictionary *properties=(NSDictionary *)[NSPropertyListSerialization
-			propertyListFromData:lsvp mutabilityOption:NSPropertyListMutableContainersAndLeaves
-			format:nil errorDescription:nil];
+			NSData *lsvp=[[dsdict objectForKey:[dirref name]] objectForKey:@"lsvp"];
+			if(lsvp)
+			{
+				NSDictionary *properties=(NSDictionary *)[NSPropertyListSerialization
+				propertyListFromData:lsvp mutabilityOption:NSPropertyListMutableContainersAndLeaves
+				format:nil errorDescription:nil];
 			
-			NSString *sortcolumn=[properties objectForKey:@"sortColumn"];
+				NSString *sortcolumn=[properties objectForKey:@"sortColumn"];
 
-			if([sortcolumn isEqualToString:@"dateModified"]) sortorder=XeeDateSortOrder;
-			else if([sortcolumn isEqualToString:@"size"]) sortorder=XeeSizeSortOrder;
+				if([sortcolumn isEqualToString:@"dateModified"]) sortorder=XeeDateSortOrder;
+				else if([sortcolumn isEqualToString:@"size"]) sortorder=XeeSizeSortOrder;
+			}
 		}
 		else
 		{
