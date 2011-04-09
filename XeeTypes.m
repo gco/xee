@@ -1,5 +1,6 @@
 #import "XeeTypes.h"
 
+#import <Carbon/Carbon.h>
 #import <OpenGL/gl.h>
 #import <sys/time.h>
 
@@ -192,4 +193,21 @@ NSString *XeeHexDump(const uint8_t *data,int length,int maxlen)
 
 	return str;
 }
+
+
+
+//
+// Events
+//
+
+BOOL IsSmoothScrollEvent(NSEvent *event)
+{
+	const EventRef carbonevent=(EventRef)[event eventRef];
+	if(!carbonevent) return NO;
+	if(GetEventKind(carbonevent)!=kEventMouseScroll) return NO;
+	if(![event respondsToSelector:@selector(deviceDeltaX)]) return NO;
+	if(![event respondsToSelector:@selector(deviceDeltaY)]) return NO;
+	return YES;
+}
+
 

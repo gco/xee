@@ -133,3 +133,11 @@ double XeeGetTime();
 //
 
 NSString *XeeHexDump(const uint8_t *data,int length,int maxlen);
+
+
+
+//
+// Events
+//
+
+BOOL IsSmoothScrollEvent(NSEvent *event);

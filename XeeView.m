@@ -293,16 +293,6 @@ GLuint make_resize_texture();
 	[[tool cursor] set];
 }
 
-BOOL IsSmoothScrollEvent(NSEvent *event)
-{
-	const EventRef carbonevent=(EventRef)[event eventRef];
-	if(!carbonevent) return NO;
-	if(GetEventKind(carbonevent)!=kEventMouseScroll) return NO;
-	if(![event respondsToSelector:@selector(deviceDeltaX)]) return NO;
-	if(![event respondsToSelector:@selector(deviceDeltaY)]) return NO;
-	return YES;
-}
-
 -(void)scrollWheel:(NSEvent *)event
 {
 	if([[NSUserDefaults standardUserDefaults] integerForKey:@"scrollWheelFunction"]==1)

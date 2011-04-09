@@ -206,84 +206,48 @@ static NSMutableArray *controllers=nil;
 
 
 
-static BOOL HasAppleMouse()
-{
-	io_iterator_t iterator;
-	if(IORegistryCreateIterator(kIOMasterPortDefault,kIOServicePlane,kIORegistryIterateRecursively,&iterator)!=KERN_SUCCESS) return NO;
-
-	io_registry_entry_t entry;
-	while(entry=IOIteratorNext(iterator))
-	{
-		io_name_t name;
-		IORegistryEntryGetName(entry,name);
-		if(!strcmp(name,"Apple Optical USB Mouse")) return YES;
-	}
-	return NO;
-}
-
 -(void)scrollWheel:(NSEvent *)event
 {
 	if([[NSUserDefaults standardUserDefaults] integerForKey:@"scrollWheelFunction"]==0)
 	{
 		if([self isCropping]) return;
 
-		static BOOL apple=NO;
-		static time_t lastcheck=0;
+		float deltay=[event deltaY];
+		if(deltay==0) return;
 
-		time_t t=time(NULL);
-		if(t-lastcheck>10)
-		{
-			lastcheck=t;
-			apple=HasAppleMouse();
-		}
-
-		int step=[event deltaY]>0?-1:1;
-
-		if(apple)
+		if(IsSmoothScrollEvent(event))
 		{
 			static const NSTimeInterval delay=0.25;
-			static NSTimeInterval starttime;
 			static NSTimeInterval prevtime=0;
-			static int steps;
 			NSTimeInterval currtime=[event timestamp];
+
+			static float lastdistance=0;
+			static float distance=0;
 
 			if(currtime-prevtime>delay)
 			{
-				starttime=currtime;
-				steps=0;
-				[source skip:step];
-			}
-			else if(currtime-starttime<delay)
-			{
-				steps+=step;
+				lastdistance=0;
+				distance=-deltay;
+				
+				if(deltay<0) { [source skip:1]; distance+=1; }
+				else [source skip:-1];
 			}
 			else
 			{
-				[source skip:step+steps];
-				steps=0;
+				int oldpos=floor(distance/4);
+				distance-=deltay;
+				int pos=floor(distance/4);
+
+				if(oldpos!=pos) [source skip:pos-oldpos];
 			}
 
 			prevtime=currtime;
 		}
-		else [source skip:step];
-
-
-/*		float step=-[event deltaY];
-		float sensitivity=[[NSUserDefaults standardUserDefaults] floatForKey:@"scrollSensitivity"];
-
-		scrollpos+=step/sensitivity;
-
-		float end=[source numberOfImages]-0.25;
-		if(scrollpos<0.25) scrollpos=0.25;
-		if(scrollpos>end) scrollpos=end;
-
-		int newindex;
-		if(step<0) newindex=(int)(scrollpos+0.25);
-		else newindex=(int)(scrollpos-0.25);
-
-		float oldscrollpos=scrollpos;
-		[source skip:newindex-[source indexOfCurrentImage]];
-		scrollpos=oldscrollpos;*/
+		else
+		{
+			if(deltay<0) [source skip:1];
+			else [source skip:-1];
+		}
 	}
 }
 
