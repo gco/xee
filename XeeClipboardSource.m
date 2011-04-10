@@ -31,6 +31,8 @@
 		NSString *type=[pboard availableTypeFromArray:[NSArray arrayWithObjects:NSTIFFPboardType,NSPICTPboardType,nil]];
 		NSData *data=[pboard dataForType:type];
 
+		size=[data length];
+
 		CSHandle *handle;
 		if([type isEqual:NSPICTPboardType])
 		{
@@ -73,6 +75,12 @@
 	[super dealloc];
 }
 
+-(void)start
+{
+	[image runLoader];
+	[self triggerImageChangeAction:image];
+}
+
 -(int)numberOfImages { return 1; }
 
 -(int)indexOfCurrentImage { return 0; }
@@ -81,9 +89,10 @@
 
 -(NSString *)descriptiveNameOfCurrentImage { return NSLocalizedString(@"Clipboard contents",@"Window title when showing the contents of the clipboard"); }
 
+-(uint64_t)sizeOfCurrentImage { return size; }
+
 -(void)pickImageAtIndex:(int)index next:(int)next
 {
-	if(![image loaded]) [image runLoader];
 	[self triggerImageChangeAction:image];
 }
 

@@ -372,8 +372,7 @@ GLuint make_resize_texture();
 	}
 
 	if(inside) [[tool cursor] set];
-	else if(wasinside)
-	[[NSCursor arrowCursor] set];
+	else if(wasinside) [[NSCursor arrowCursor] set];
 }
 
 

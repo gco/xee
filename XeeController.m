@@ -1033,7 +1033,9 @@ static NSMutableArray *controllers=nil;
 	}
 
 	[statusbar addEntry:XeeDescribeSize([source sizeOfCurrentImage]) imageNamed:@"filesize"];
-	[statusbar addEntry:XeeDescribeDate([source dateOfCurrentImage])];
+
+	NSDate *date=[source dateOfCurrentImage];
+	if(date) [statusbar addEntry:XeeDescribeDate(date)];
 
 	if(currimage&&[currimage filename])
 	{

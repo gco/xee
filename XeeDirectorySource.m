@@ -72,7 +72,7 @@
 	[self endListUpdates];
 
 	if(first) [self pickImageAtIndex:[entries indexOfObject:first]];
-	else  [self pickImageAtIndex:0];
+	else [self pickImageAtIndex:0];
 
 	[first release];
 	first=nil;
