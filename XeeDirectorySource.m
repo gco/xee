@@ -325,7 +325,10 @@
 	XeeFSRef *subref;
 	while(subref=[dirref nextDirectoryEntry])
 	{
-		NSString *ext=[[[subref name] pathExtension] lowercaseString];
+		NSString *name=[subref name];
+		if([name hasPrefix:@"._"]) continue;
+
+		NSString *ext=[[name pathExtension] lowercaseString];
 		NSString *type=[subref HFSTypeCode];
 
 		if([filetypes objectForKey:ext]||[filetypes objectForKey:type])
