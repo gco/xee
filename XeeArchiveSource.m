@@ -7,8 +7,10 @@
 
 +(NSArray *)fileTypes
 {
+
 	return [NSArray arrayWithObjects:
 		@"zip",@"cbz",@"rar",@"cbr",@"7z",@"cb7",@"lha",@"lzh",
+		@"000",@"001",@"iso",@"bin",@"alz",@"sit",@"sitx",
 	nil];
 }
 
