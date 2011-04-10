@@ -92,6 +92,7 @@
 	}
 	else
 	{
+		slideshowcount=0;
 		slideshowtimer=[[NSTimer scheduledTimerWithTimeInterval:1
 		target:self selector:@selector(slideshowStep:) userInfo:nil repeats:YES] retain];
 	}
