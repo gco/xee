@@ -47,7 +47,12 @@
 					while(node=[enumerator nextObject])
 					{
 						NSString *name=[self parsePropertyName:node];
-						if(name) [props addObjectsFromArray:[XeePropertyItem itemsWithLabel:name valueArray:[self parsePropertyValue:node]]];
+						if(name)
+						{
+							NSArray *values=[self parsePropertyValue:node];
+							NSArray *items=[XeePropertyItem itemsWithLabel:name valueArray:values];
+							[props addObjectsFromArray:items];
+						}
 					}
 				}
 
@@ -128,8 +133,8 @@
 		if([name isEqual:@"rdf:Alt"]||[[child name] isEqual:@"rdf:Seq"]||[[child name] isEqual:@"rdf:Bag"])
 		{
 			NSString *path;
-			if([[child name] isEqual:@"rdf:Alt"]) path=@"rdf:li[1]/text()";
-			else path=@"rdf:li/text()";
+			if([[child name] isEqual:@"rdf:Alt"]) path=@"rdf:li[1]";
+			else path=@"rdf:li";
 
 			NSError *err;
 			NSArray *lis=[child nodesForXPath:path error:&err];
@@ -139,8 +144,13 @@
 
 			NSMutableArray *array=[NSMutableArray array];
 			NSEnumerator *enumerator=[lis objectEnumerator];
-			NSXMLNode *currchild;
-			while(currchild=[enumerator nextObject]) [array addObject:[self parseSingleValue:currchild]];
+			NSXMLNode *li;
+			while(li=[enumerator nextObject])
+			{
+				NSArray *children=[li children];
+				if([children count]==1) [array addObject:[self parseSingleValue:[children objectAtIndex:0]]];
+				else if([children count]>1) [array addObject:[self parseSingleValue:li]];
+			}
 
 			return array;
 		}
