@@ -51,7 +51,9 @@
 -(void)xeeImagePropertiesDidChange:(XeeImage *)msgimage;
 
 -(void)invalidate;
+-(void)invalidateTool;
 -(void)invalidateImageAndTool;
+-(void)updateCursorForMousePosition:(NSPoint)pos;
 
 -(void)startScrolling;
 -(void)stopScrolling;

@@ -625,7 +625,7 @@ static NSMutableArray *controllers=nil;
 //	[imageview setFocus:focus];
 
 	[window setFrame:NSMakeRect(win_x,win_y,win_width,win_height) display:YES];
-	[window invalidateCursorRectsForView:imageview]; // just to make sure
+	//[window invalidateCursorRectsForView:imageview]; // just to make sure
 
 	if(reset) [imageview setFocus:NSMakePoint(0,0)];
 

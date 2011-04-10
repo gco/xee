@@ -235,23 +235,24 @@ GLuint make_resize_texture();
 {
 	NSPoint pos=[self convertPoint:[event locationInWindow] fromView:nil];
 
-	if([event clickCount]==2) [tool mouseDoubleClickedAt:pos];
-	else [tool mouseDownAt:pos];
-	[[tool cursor] set];
-
 	clicking=YES;
 	lowquality=YES;
+
+	if([event clickCount]==2) [tool mouseDoubleClickedAt:pos];
+	else [tool mouseDownAt:pos];
+	[self updateCursorForMousePosition:pos];
 }
 
 -(void)mouseUp:(NSEvent *)event
 {
 	NSPoint pos=[self convertPoint:[event locationInWindow] fromView:nil];
 
-	[tool mouseUpAt:pos];
-	[[tool cursor] set];
-
 	clicking=NO;
 	lowquality=NO;
+
+	[tool mouseUpAt:pos];
+	[self updateCursorForMousePosition:pos];
+
 	[self invalidate];
 }
 
@@ -259,23 +260,8 @@ GLuint make_resize_texture();
 {
 	NSPoint pos=[self convertPoint:[event locationInWindow] fromView:nil];
 
-	BOOL wasinside=inside;
-
-	if(drawresize)
-	{
-		NSRect rect1=[self bounds];
-		NSRect rect2=[self bounds];
-		rect1.size.width-=15;
-		rect2.size.height-=15;
-
-		inside=NSPointInRect(pos,rect1)||NSPointInRect(pos,rect2);
-	}
-	else inside=NSPointInRect(pos,[self bounds]);
-
 	[tool mouseMovedTo:pos relative:NSMakePoint([event deltaX],[event deltaY])];
-
-	if(inside) [[tool cursor] set];
-	else if(wasinside) [[NSCursor arrowCursor] set];
+	[self updateCursorForMousePosition:pos];
 
 	if(hidecursor)
 	{
@@ -289,8 +275,7 @@ GLuint make_resize_texture();
 	NSPoint pos=[self convertPoint:[event locationInWindow] fromView:nil];
 
 	[tool mouseDraggedTo:pos relative:NSMakePoint([event deltaX],[event deltaY])];
-
-	[[tool cursor] set];
+	[self updateCursorForMousePosition:pos];
 }
 
 -(void)scrollWheel:(NSEvent *)event
@@ -349,15 +334,46 @@ GLuint make_resize_texture();
 	[self setNeedsDisplay:YES];
 }
 
--(void)invalidateImageAndTool
+-(void)invalidateTool
 {
 	NSPoint position=[self convertPoint:[[self window] mouseLocationOutsideOfEventStream] fromView:nil];
 	if(clicking) [tool mouseDraggedTo:position relative:NSMakePoint(0,0)];
 	else [tool mouseMovedTo:position relative:NSMakePoint(0,0)];
 
-	[[tool cursor] set];
+	[self updateCursorForMousePosition:position];
+}
 
+-(void)invalidateImageAndTool
+{
 	[self invalidate];
+	[self invalidateTool];
+}
+
+-(void)updateCursorForMousePosition:(NSPoint)pos
+{
+	BOOL wasinside=inside;
+
+	if(clicking)
+	{
+		inside=YES;
+	}
+	else if(drawresize)
+	{
+		NSRect rect1=[self bounds];
+		NSRect rect2=[self bounds];
+		rect1.size.width-=15;
+		rect2.size.height-=15;
+
+		inside=NSPointInRect(pos,rect1)||NSPointInRect(pos,rect2);
+	}
+	else
+	{
+		inside=NSPointInRect(pos,[self bounds]);
+	}
+
+	if(inside) [[tool cursor] set];
+	else if(wasinside)
+	[[NSCursor arrowCursor] set];
 }
 
 
@@ -532,7 +548,8 @@ GLuint make_resize_texture();
 
 	[self setFocus:focus];
 
-	[self invalidateImageAndTool];
+	[self invalidate];
+	[self performSelector:@selector(invalidateTool) withObject:nil afterDelay:0];
 }
 
 -(void)setDrawResizeCorner:(BOOL)draw { drawresize=draw; }
