@@ -10,6 +10,35 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 @implementation CSKeyboardShortcuts
 
++(NSArray *)parseMenu:(NSMenu *)menu
+{
+	return [self parseMenu:menu namespace:[NSMutableSet set]];
+}
+
++(NSArray *)parseMenu:(NSMenu *)menu namespace:(NSMutableSet *)namespace
+{
+	NSMutableArray *array=[NSMutableArray array];
+
+	int count=[menu numberOfItems];
+	for(int i=0;i<count;i++)
+	{
+		NSMenuItem *item=[menu itemAtIndex:i];
+		NSMenu *submenu=[item submenu];
+		SEL sel=[item action];
+
+		if(submenu) [array addObjectsFromArray:[self parseMenu:submenu namespace:namespace]];
+		else if(sel) [array addObject:[CSAction actionFromMenuItem:item namespace:namespace]];
+	}
+
+	return array;
+}
+
++(CSKeyboardShortcuts *)defaultShortcuts { return defaultshortcuts; }
+
++(void)installWindowClass { [CSKeyListenerWindow install]; }
+
+
+
 -(id)init
 {
 	if(self=[super init])
@@ -112,30 +141,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	return nil;
 }
 
-
-
-+(NSArray *)parseMenu:(NSMenu *)menu
-{
-	NSMutableArray *array=[NSMutableArray array];
-
-	int count=[menu numberOfItems];
-	for(int i=0;i<count;i++)
-	{
-		NSMenuItem *item=[menu itemAtIndex:i];
-		NSMenu *submenu=[item submenu];
-		SEL sel=[item action];
-
-		if(submenu) [array addObjectsFromArray:[self parseMenu:submenu]];
-		else if(sel) [array addObject:[CSAction actionFromMenuItem:item]];
-	}
-
-	return array;
-}
-
-+(CSKeyboardShortcuts *)defaultShortcuts { return defaultshortcuts; }
-
-+(void)installWindowClass { [CSKeyListenerWindow install]; }
-
 @end
 
 
@@ -143,6 +148,31 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 // CSAction
 
 @implementation CSAction
+
++(CSAction *)actionWithTitle:(NSString *)acttitle selector:(SEL)selector
+{
+	return [[[CSAction alloc] initWithTitle:acttitle identifier:nil selector:selector target:nil defaultShortcut:nil] autorelease];
+}
+
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector
+{
+	return [[[CSAction alloc] initWithTitle:acttitle identifier:ident selector:selector target:nil defaultShortcut:nil] autorelease];
+}
+
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector defaultShortcut:(CSKeyStroke *)defshortcut
+{
+	return [[[CSAction alloc] initWithTitle:acttitle identifier:ident selector:selector target:nil defaultShortcut:defshortcut] autorelease];
+}
+
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident
+{
+	return [[[CSAction alloc] initWithTitle:acttitle identifier:ident selector:0 target:nil defaultShortcut:nil] autorelease];
+}
+
++(CSAction *)actionFromMenuItem:(NSMenuItem *)item namespace:(NSMutableSet *)namespace
+{
+	return [[[CSAction alloc] initWithMenuItem:item namespace:namespace] autorelease];
+}
 
 -(id)initWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector target:(id)acttarget defaultShortcut:(CSKeyStroke *)defshortcut
 {
@@ -169,14 +199,25 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	return self;
 }
 
--(id)initWithMenuItem:(NSMenuItem *)menuitem
+-(id)initWithMenuItem:(NSMenuItem *)menuitem namespace:(NSMutableSet *)namespace
 {
-	NSString *ident=nil;
+	NSString *baseidentifier=NSStringFromSelector([menuitem action]);
+	if([menuitem tag]) baseidentifier=[NSString stringWithFormat:@"%@%d",baseidentifier,[menuitem tag]];
 
-	if([menuitem tag]) ident=[NSString stringWithFormat:@"%@%d",
-	NSStringFromSelector([menuitem action]),[menuitem tag]];
+	NSString *uniqueidentifier=baseidentifier;
 
-	if(self=[self initWithTitle:[menuitem title] identifier:ident selector:[menuitem action] target:[menuitem target] defaultShortcut:[CSKeyStroke keyFromMenuItem:menuitem]])
+	int counter=2;
+	while([namespace containsObject:uniqueidentifier])
+	{
+		uniqueidentifier=[NSString stringWithFormat:@"%@(%d)",baseidentifier,counter];
+		counter++;
+	}
+
+	[namespace addObject:uniqueidentifier];
+
+	if(self=[self initWithTitle:[menuitem title] identifier:uniqueidentifier
+	selector:[menuitem action] target:[menuitem target]
+	defaultShortcut:[CSKeyStroke keyFromMenuItem:menuitem]])
 	{
 		item=[menuitem retain];
 		[self updateMenuItem];
@@ -457,34 +498,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	return [title compare:[other title] options:NSNumericSearch|NSCaseInsensitiveSearch];
 }
 
-
-
-+(CSAction *)actionWithTitle:(NSString *)acttitle selector:(SEL)selector
-{
-	return [[[CSAction alloc] initWithTitle:acttitle identifier:nil selector:selector target:nil defaultShortcut:nil] autorelease];
-}
-
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector
-{
-	return [[[CSAction alloc] initWithTitle:acttitle identifier:ident selector:selector target:nil defaultShortcut:nil] autorelease];
-}
-
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector defaultShortcut:(CSKeyStroke *)defshortcut
-{
-	return [[[CSAction alloc] initWithTitle:acttitle identifier:ident selector:selector target:nil defaultShortcut:defshortcut] autorelease];
-}
-
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident
-{
-	return [[[CSAction alloc] initWithTitle:acttitle identifier:ident selector:0 target:nil defaultShortcut:nil] autorelease];
-}
-
-+(CSAction *)actionFromMenuItem:(NSMenuItem *)item
-{
-	return [[[CSAction alloc] initWithMenuItem:item] autorelease];
-}
-
-
 @end
 
 
@@ -492,6 +505,49 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 // CSKeyStroke
 
 @implementation CSKeyStroke
+
++(CSKeyStroke *)keyForCharacter:(NSString *)character modifiers:(unsigned int)modifiers
+{
+	return [[[CSKeyStroke alloc] initWithCharacter:character modifiers:modifiers] autorelease];
+}
+
++(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(unsigned int)modifiers;
+{
+	return [[[CSKeyStroke alloc] initWithCharacter:[NSString stringWithFormat:@"%C",character] modifiers:modifiers] autorelease];
+}
+
++(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item
+{
+	if([[item keyEquivalent] length]==0) return nil;
+	return [CSKeyStroke keyForCharacter:[item keyEquivalent] modifiers:[item keyEquivalentModifierMask]];
+}
+
++(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict
+{
+	return [CSKeyStroke keyForCharacter:[dict objectForKey:@"character"] modifiers:[[dict objectForKey:@"modifiers"] unsignedIntValue]];
+}
+
++(NSArray *)keysFromDictionaries:(NSArray *)dicts
+{
+	NSMutableArray *keys=[NSMutableArray arrayWithCapacity:[dicts count]];
+	NSEnumerator *enumerator=[dicts objectEnumerator];
+	NSDictionary *dict;
+
+	while(dict=[enumerator nextObject]) [keys addObject:[CSKeyStroke keyFromDictionary:dict]];
+
+	return keys;
+}
+
++(NSArray *)dictionariesFromKeys:(NSArray *)keys
+{
+	NSMutableArray *dicts=[NSMutableArray arrayWithCapacity:[keys count]];
+	NSEnumerator *enumerator=[keys objectEnumerator];
+	CSKeyStroke *key;
+
+	while(key=[enumerator nextObject]) [dicts addObject:[key dictionary]];
+
+	return dicts;
+}
 
 -(id)initWithCharacter:(NSString *)character modifiers:(unsigned int)modifiers
 {
@@ -658,51 +714,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 		default: return [chr uppercaseString];
 //		default: return [NSString stringWithFormat:@"%d",[character characterAtIndex:0]];
 	}
-}
-
-
-
-+(CSKeyStroke *)keyForCharacter:(NSString *)character modifiers:(unsigned int)modifiers
-{
-	return [[[CSKeyStroke alloc] initWithCharacter:character modifiers:modifiers] autorelease];
-}
-
-+(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(unsigned int)modifiers;
-{
-	return [[[CSKeyStroke alloc] initWithCharacter:[NSString stringWithFormat:@"%C",character] modifiers:modifiers] autorelease];
-}
-
-+(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item
-{
-	if([[item keyEquivalent] length]==0) return nil;
-	return [CSKeyStroke keyForCharacter:[item keyEquivalent] modifiers:[item keyEquivalentModifierMask]];
-}
-
-+(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict
-{
-	return [CSKeyStroke keyForCharacter:[dict objectForKey:@"character"] modifiers:[[dict objectForKey:@"modifiers"] unsignedIntValue]];
-}
-
-+(NSArray *)keysFromDictionaries:(NSArray *)dicts
-{
-	NSMutableArray *keys=[NSMutableArray arrayWithCapacity:[dicts count]];
-	NSEnumerator *enumerator=[dicts objectEnumerator];
-	NSDictionary *dict;
-
-	while(dict=[enumerator nextObject]) [keys addObject:[CSKeyStroke keyFromDictionary:dict]];
-
-	return keys;
-}
-
-+(NSArray *)dictionariesFromKeys:(NSArray *)keys
-{
-	NSMutableArray *dicts=[NSMutableArray arrayWithCapacity:[keys count]];
-	NSEnumerator *enumerator=[keys objectEnumerator];
-	CSKeyStroke *key;
-
-	while(key=[enumerator nextObject]) [dicts addObject:[key dictionary]];
-
-	return dicts;
 }
 
 @end
@@ -1102,6 +1113,11 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 @implementation CSKeyListenerWindow
 
++(void)install
+{
+	[self poseAsClass:[NSWindow class]];
+}
+
 -(BOOL)performKeyEquivalent:(NSEvent *)event
 {
 	if(![self isKindOfClass:[NSPanel class]])
@@ -1111,11 +1127,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	}
 
 	return [super performKeyEquivalent:event];
-}
-
-+(void)install
-{
-	[self poseAsClass:[NSWindow class]];
 }
 
 @end

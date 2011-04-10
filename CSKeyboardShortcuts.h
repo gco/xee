@@ -20,6 +20,12 @@
 	NSArray *actions;
 }
 
++(NSArray *)parseMenu:(NSMenu *)menu;
++(NSArray *)parseMenu:(NSMenu *)menu namespace:(NSMutableSet *)namespace;
+
++(CSKeyboardShortcuts *)defaultShortcuts;
++(void)installWindowClass;
+
 -(id)init;
 -(void)dealloc;
 
@@ -35,11 +41,6 @@
 -(CSAction *)actionForEvent:(NSEvent *)event;
 -(CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(int)ignoredmods ignoringMenuItems:(BOOL)ignoremenu;
 -(CSKeyStroke *)findKeyStrokeForEvent:(NSEvent *)event index:(int *)index;
-
-+(NSArray *)parseMenu:(NSMenu *)menu;
-
-+(CSKeyboardShortcuts *)defaultShortcuts;
-+(void)installWindowClass;
 
 @end
 
@@ -57,8 +58,14 @@
 	NSMutableArray *shortcuts,*defshortcuts;
 }
 
++(CSAction *)actionWithTitle:(NSString *)acttitle selector:(SEL)selector;
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector;
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector defaultShortcut:(CSKeyStroke *)defshortcut;
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident;
++(CSAction *)actionFromMenuItem:(NSMenuItem *)item namespace:(NSMutableSet *)namespace;
+
 -(id)initWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector target:(id)acttarget defaultShortcut:(CSKeyStroke *)defshortcut;
--(id)initWithMenuItem:(NSMenuItem *)menuitem;
+-(id)initWithMenuItem:(NSMenuItem *)menuitem namespace:(NSMutableSet *)namespace;
 -(void)dealloc;
 
 -(NSString *)title;
@@ -92,12 +99,6 @@
 -(NSString *)description;
 -(NSComparisonResult)compare:(CSAction *)other;
 
-+(CSAction *)actionWithTitle:(NSString *)acttitle selector:(SEL)selector;
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector;
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector defaultShortcut:(CSKeyStroke *)defshortcut;
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident;
-+(CSAction *)actionFromMenuItem:(NSMenuItem *)item;
-
 @end
 
 
@@ -108,6 +109,14 @@
 	unsigned int mod;
 	NSImage *img;
 }
+
++(CSKeyStroke *)keyForCharacter:(NSString *)character modifiers:(unsigned int)modifiers;
++(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(unsigned int)modifiers;
++(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item;
++(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict;
+
++(NSArray *)keysFromDictionaries:(NSArray *)dicts;
++(NSArray *)dictionariesFromKeys:(NSArray *)keys;
 
 -(id)initWithCharacter:(NSString *)character modifiers:(unsigned int)modifiers;
 -(void)dealloc;
@@ -122,14 +131,6 @@
 -(NSString *)description;
 -(NSString *)descriptionOfModifiers;
 -(NSString *)descriptionOfCharacter;
-
-+(CSKeyStroke *)keyForCharacter:(NSString *)character modifiers:(unsigned int)modifiers;
-+(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(unsigned int)modifiers;
-+(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item;
-+(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict;
-
-+(NSArray *)keysFromDictionaries:(NSArray *)dicts;
-+(NSArray *)dictionariesFromKeys:(NSArray *)keys;
 
 @end
 
@@ -194,8 +195,9 @@
 {
 }
 
--(BOOL)performKeyEquivalent:(NSEvent *)event;
 +(void)install;
+
+-(BOOL)performKeyEquivalent:(NSEvent *)event;
 
 @end
 
