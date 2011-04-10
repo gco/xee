@@ -86,13 +86,13 @@
 
 
 
--(BOOL)canBrowse { return YES; }
--(BOOL)canSort { return YES; }
--(BOOL)canRenameCurrentImage { return YES; }
--(BOOL)canDeleteCurrentImage { return YES; }
--(BOOL)canCopyCurrentImage { return YES; }
--(BOOL)canMoveCurrentImage { return YES; }
--(BOOL)canOpenCurrentImage { return YES; }
+-(BOOL)canBrowse { return currentry!=nil; }
+-(BOOL)canSort { return currentry!=nil; }
+-(BOOL)canRenameCurrentImage { return currentry!=nil; }
+-(BOOL)canDeleteCurrentImage { return currentry!=nil; }
+-(BOOL)canCopyCurrentImage { return currentry!=nil; }
+-(BOOL)canMoveCurrentImage { return currentry!=nil; }
+-(BOOL)canOpenCurrentImage { return currentry!=nil; }
 
 -(BOOL)canSaveCurrentImage
 {

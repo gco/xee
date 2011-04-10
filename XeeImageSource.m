@@ -15,8 +15,9 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 		sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortingOrder"];
 
 		actionsblocked=NO;
-		pendingimage=nil;
+		pendingimagechange=NO;
 		pendinglistchange=NO;
+		pendingimage=nil;
 
 		rand_ordering=NULL;
 		rand_size=0;
@@ -97,11 +98,12 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 	if(actionsblocked&&!blocked)
 	{
 		actionsblocked=NO;
-		if(pendingimage)
+		if(pendingimagechange)
 		{
 			[self triggerImageChangeAction:pendingimage];
 			[pendingimage release];
 			pendingimage=nil;
+			pendingimagechange=NO;
 		}
 
 		if(pendinglistchange)
@@ -260,6 +262,7 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 			[pendingimage release];
 			pendingimage=[image retain];
 		}
+		pendingimagechange=YES;
 	}
 	else
 	{
@@ -268,7 +271,7 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 		else
 		{
 			NSInvocation *invocation=[NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:@selector(XeeImageSource:imageDidChange:)]];
-			[invocation setArgument:<#(void *)argumentLocation#> atIndex:<#(int)index#>
+			[invocation setArgument: atIndex:
 		}
 
 		else [delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];

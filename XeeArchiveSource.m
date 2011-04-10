@@ -117,9 +117,9 @@
 
 
 
--(BOOL)canBrowse { return YES; }
--(BOOL)canSort { return YES; }
--(BOOL)canCopyCurrentImage { return YES; }
+-(BOOL)canBrowse { return currentry!=nil; }
+-(BOOL)canSort { return currentry!=nil; }
+-(BOOL)canCopyCurrentImage { return currentry!=nil; }
 
 
 

@@ -24,8 +24,8 @@ extern NSString *XeeErrorDomain;
 	int sortorder;
 
 	BOOL actionsblocked;
+	BOOL pendingimagechange,pendinglistchange;
 	XeeImage *pendingimage;
-	BOOL pendinglistchange;
 
 	struct rand_entry { int next,prev; } *rand_ordering;
 	int rand_size;

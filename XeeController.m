@@ -1002,6 +1002,8 @@ static NSMutableArray *controllers=nil;
 
 -(void)updateStatusBar
 {
+	[statusbar setNeedsDisplay:YES];
+
 	[statusbar removeAllCells];
 
 	if([source indexOfCurrentImage]==NSNotFound)
@@ -1081,8 +1083,6 @@ static NSMutableArray *controllers=nil;
 	{
 		[statusbar addEntry:[source descriptiveNameOfCurrentImage]];
 	}
-
-	[statusbar setNeedsDisplay:YES];
 }
 
 -(void)setStatusBarHidden:(BOOL)hidden

@@ -184,7 +184,7 @@
 
 -(NSString *)windowRepresentedFilename { return filename; }
 
--(BOOL)canBrowse { return YES; }
+-(BOOL)canBrowse { return currentry!=nil; }
 
 @end
 
