@@ -16,7 +16,8 @@
 
 -(void)start;
 
--(NSString *)representedFilename;
+-(NSString *)windowTitle;
+-(NSString *)windowRepresentedFilename;
 -(BOOL)canBrowse;
 
 @end

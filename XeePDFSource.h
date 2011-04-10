@@ -12,7 +12,8 @@
 -(id)initWithFile:(NSString *)pdfname;
 -(void)dealloc;
 
--(NSString *)representedFilename;
+-(NSString *)windowTitle;
+-(NSString *)windowRepresentedFilename;
 -(BOOL)canBrowse;
 
 @end

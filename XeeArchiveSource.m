@@ -16,6 +16,8 @@
 {
 	if(self=[super init])
 	{
+		filename=[archivename retain];
+
 		parser=nil;
 		tmpdir=[[NSTemporaryDirectory() stringByAppendingPathComponent:
 		[NSString stringWithFormat:@"Xee-archive-%04x%04x%04x",random()&0xffff,random()&0xffff,random()&0xffff]]
@@ -63,7 +65,7 @@
 	}
 	@catch(id e)
 	{
-		NSLog(@"Error parsing archive file %@: %@",[parser filename],e);
+		NSLog(@"Error parsing archive file %@: %@",filename,e);
 	}
 
 	[self runSorter];
@@ -106,7 +108,12 @@
 
 
 
--(NSString *)representedFilename { return [parser filename]; }
+-(NSString *)windowTitle
+{
+	return [NSString stringWithFormat:@"%@ (%@)",[filename lastPathComponent],[currentry descriptiveName]];
+}
+
+-(NSString *)windowRepresentedFilename { return filename; }
 
 
 

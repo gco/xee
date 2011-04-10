@@ -177,7 +177,12 @@
 	parser=nil;
 }
 
--(NSString *)representedFilename { return filename; }
+-(NSString *)windowTitle
+{
+	return [NSString stringWithFormat:@"%@ (%@)",[filename lastPathComponent],[currentry descriptiveName]];
+}
+
+-(NSString *)windowRepresentedFilename { return filename; }
 
 -(BOOL)canBrowse { return YES; }
 

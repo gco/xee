@@ -57,7 +57,9 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 
 -(int)indexOfCurrentImage { return 0; }
 
--(NSString *)representedFilename { return nil; }
+-(NSString *)windowTitle { return nil; }
+
+-(NSString *)windowRepresentedFilename { return nil; }
 
 -(NSString *)descriptiveNameOfCurrentImage { return nil; }
 

@@ -80,7 +80,9 @@
 
 
 
--(NSString *)representedFilename { return [(XeeFileEntry *)currentry path]; }
+-(NSString *)windowTitle { return [currentry descriptiveName]; }
+
+-(NSString *)windowRepresentedFilename { return [(XeeFileEntry *)currentry path]; }
 
 
 

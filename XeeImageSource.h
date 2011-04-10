@@ -45,7 +45,8 @@ extern NSString *XeeErrorDomain;
 
 -(int)numberOfImages;
 -(int)indexOfCurrentImage;
--(NSString *)representedFilename;
+-(NSString *)windowTitle;
+-(NSString *)windowRepresentedFilename;
 -(NSString *)descriptiveNameOfCurrentImage;
 -(NSString *)filenameOfCurrentImage;
 -(uint64_t)sizeOfCurrentImage;

@@ -6,6 +6,7 @@
 
 @interface XeeArchiveSource:XeeFileSource
 {
+	NSString *filename;
 	XADArchiveParser *parser;
 	NSString *tmpdir;
 	int n;
@@ -18,7 +19,8 @@
 
 -(void)start;
 
--(NSString *)representedFilename;
+-(NSString *)windowTitle;
+-(NSString *)windowRepresentedFilename;
 
 -(BOOL)canBrowse;
 -(BOOL)canSort;

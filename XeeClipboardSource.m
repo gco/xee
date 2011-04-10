@@ -77,7 +77,9 @@
 
 -(int)indexOfCurrentImage { return 0; }
 
--(NSString *)descriptiveNameOfCurrentImage { return @"Clipboard contents"; }
+-(NSString *)windowTitle { return NSLocalizedString(@"Clipboard contents",@"Window title when showing the contents of the clipboard"); }
+
+-(NSString *)descriptiveNameOfCurrentImage { return NSLocalizedString(@"Clipboard contents",@"Window title when showing the contents of the clipboard"); }
 
 -(void)pickImageAtIndex:(int)index next:(int)next
 {

@@ -14,6 +14,7 @@
 
 -(int)numberOfImages;
 -(int)indexOfCurrentImage;
+-(NSString *)windowTitle;
 -(NSString *)descriptiveNameOfCurrentImage;
 
 -(void)pickImageAtIndex:(int)index next:(int)next;

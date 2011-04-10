@@ -17,7 +17,8 @@
 -(id)initWithRef:(XeeFSRef *)ref image:(XeeImage *)image;
 -(void)dealloc;
 
--(NSString *)representedFilename;
+-(NSString *)windowTitle;
+-(NSString *)windowRepresentedFilename;
 
 -(BOOL)canBrowse;
 -(BOOL)canSort;

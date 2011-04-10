@@ -298,9 +298,12 @@ static NSMutableArray *controllers=nil;
 
 -(void)xeeImageSource:(XeeImageSource *)msgsource imageDidChange:(XeeImage *)image
 {
-	NSString *filename=[source representedFilename];
-	if(filename) [window setTitleWithRepresentedFilename:filename];
+	NSString *title=[source windowTitle];
+	if(title) [window setTitle:title];
 	else [window setTitle:@"Xee"];
+
+	NSString *filename=[source windowRepresentedFilename];
+	if(filename) [window setRepresentedFilename:filename];
 
 	[self setImage:image];
 	[self updateStatusBar];
@@ -345,9 +348,12 @@ static NSMutableArray *controllers=nil;
 	if([[NSApplication sharedApplication] mainWindow]==window)
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:self];
 
-	NSString *filename=[source representedFilename];
-	if(filename) [window setTitleWithRepresentedFilename:filename];
+	NSString *title=[source windowTitle];
+	if(title) [window setTitle:title];
 	else [window setTitle:@"Xee"];
+
+	NSString *filename=[source windowRepresentedFilename];
+	if(filename) [window setRepresentedFilename:filename];
 
 	[self updateStatusBar];
 }

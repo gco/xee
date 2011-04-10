@@ -145,7 +145,12 @@ static int XeePDFSortPages(id first,id second,void *context)
 	// Don't release parser, as PDFStreams do not retain it
 }
 
--(NSString *)representedFilename { return filename; }
+-(NSString *)windowTitle
+{
+	return [NSString stringWithFormat:@"%@ (%@)",[filename lastPathComponent],[currentry descriptiveName]];
+}
+
+-(NSString *)windowRepresentedFilename { return filename; }
 
 -(BOOL)canBrowse { return YES; }
 
