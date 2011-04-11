@@ -162,11 +162,11 @@ BOOL finderlaunch;
 		@"cancel:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharCode:NSEnterCharacter modifiers:0],
-			[CSKeyStroke keyForCharCode:13 modifiers:0],
+			[CSKeyStroke keyForCharCode:NSCarriageReturnCharacter modifiers:0],
 		nil],@"confirm:",
 		[NSArray arrayWithObjects:
-			[CSKeyStroke keyForCharCode:127 modifiers:0],
-			[CSKeyStroke keyForCharCode:NSDeleteFunctionKey modifiers:0],
+			[CSKeyStroke keyForCharCode:NSDeleteCharacter modifiers:0],
+			[CSKeyStroke keyForCharCode:NSBackspaceCharacter modifiers:0],
 		nil],@"askAndDelete:",
 		[NSArray arrayWithObjects:[CSKeyStroke keyForCharCode:NSUpArrowFunctionKey modifiers:0],nil],
 		@"scrollUp",
@@ -259,7 +259,8 @@ BOOL finderlaunch;
 			[CSKeyStroke keyForCharacter:@"1" modifiers:0],
 		nil],@"frameSkipPrev:",
 		[NSArray arrayWithObjects:
-			[CSKeyStroke keyForCharacter:@" " modifiers:0],
+			[CSKeyStroke keyForCharacter:@"a" modifiers:0],
+			[CSKeyStroke keyForCharacter:@"3" modifiers:0],
 		nil],@"toggleAnimation:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"+" modifiers:0],
@@ -277,7 +278,7 @@ BOOL finderlaunch;
 		nil],@"zoomActual:",
 		[NSArray arrayWithObjects:
 			[CSKeyStroke keyForCharacter:@"f" modifiers:0],
-			[CSKeyStroke keyForCharCode:13 modifiers:CSAlt],
+			[CSKeyStroke keyForCharCode:NSCarriageReturnCharacter modifiers:CSAlt],
 		nil],@"fullScreen:",
 	nil]];
 

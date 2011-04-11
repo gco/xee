@@ -39,7 +39,7 @@
 
 -(BOOL)handleKeyEvent:(NSEvent *)event;
 -(CSAction *)actionForEvent:(NSEvent *)event;
--(CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(int)ignoredmods ignoringMenuItems:(BOOL)ignoremenu;
+-(CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(int)ignoredmods;
 -(CSKeyStroke *)findKeyStrokeForEvent:(NSEvent *)event index:(int *)index;
 
 @end
@@ -113,6 +113,7 @@
 +(CSKeyStroke *)keyForCharacter:(NSString *)character modifiers:(unsigned int)modifiers;
 +(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(unsigned int)modifiers;
 +(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item;
++(CSKeyStroke *)keyFromEvent:(NSEvent *)event;
 +(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict;
 
 +(NSArray *)keysFromDictionaries:(NSArray *)dicts;
@@ -124,6 +125,7 @@
 -(NSString *)character;
 -(unsigned int)modifiers;
 -(NSDictionary *)dictionary;
+
 -(NSImage *)image;
 
 -(BOOL)matchesEvent:(NSEvent *)event ignoringModifiers:(int)ignoredmods;
@@ -205,6 +207,10 @@
 
 @interface NSEvent (CSKeyboardShortcutsAdditions)
 
++(NSString *)remapCharacters:(NSString *)characters;
+
 -(NSString *)charactersIgnoringAllModifiers;
+-(NSString *)remappedCharacters;
+-(NSString *)remappedCharactersIgnoringAllModifiers;
 
 @end

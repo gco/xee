@@ -199,7 +199,7 @@ GLuint make_resize_texture();
 
 -(void)keyDown:(NSEvent *)event
 {
-	CSAction *action=[[CSKeyboardShortcuts defaultShortcuts] actionForEvent:event ignoringModifiers:CSShift ignoringMenuItems:YES];
+	CSAction *action=[[CSKeyboardShortcuts defaultShortcuts] actionForEvent:event ignoringModifiers:CSShift];
 	if(action)
 	{
 		NSString *identifier=[action identifier];
@@ -216,7 +216,7 @@ GLuint make_resize_texture();
 
 -(void)keyUp:(NSEvent *)event
 {
-	CSAction *action=[[CSKeyboardShortcuts defaultShortcuts] actionForEvent:event ignoringModifiers:CSShift ignoringMenuItems:YES];
+	CSAction *action=[[CSKeyboardShortcuts defaultShortcuts] actionForEvent:event ignoringModifiers:CSShift];
 	if(action)
 	{
 		NSString *identifier=[action identifier];

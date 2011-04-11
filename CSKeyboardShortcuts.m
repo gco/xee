@@ -93,25 +93,21 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 -(BOOL)handleKeyEvent:(NSEvent *)event
 {
-	CSAction *action=[self actionForEvent:event ignoringModifiers:0 ignoringMenuItems:YES];
+	CSAction *action=[self actionForEvent:event ignoringModifiers:0];
 	if(action&&[action perform:event]) return YES;
 	return NO;
 }
 
--(CSAction *)actionForEvent:(NSEvent *)event { return [self actionForEvent:event ignoringModifiers:0 ignoringMenuItems:NO]; }
+-(CSAction *)actionForEvent:(NSEvent *)event { return [self actionForEvent:event ignoringModifiers:0]; }
 
--(CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(int)ignoredmods ignoringMenuItems:(BOOL)ignoremenu
+-(CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(int)ignoredmods
 {
 	NSEnumerator *enumerator=[actions objectEnumerator];
 	CSAction *action;
-
 	while(action=[enumerator nextObject])
 	{
 		NSEnumerator *keyenumerator=[[action shortcuts] objectEnumerator];
 		CSKeyStroke *key;
-
-		if(ignoremenu&&[action isMenuItem]) [keyenumerator nextObject];
-
 		while(key=[keyenumerator nextObject])
 		{
 			if([key matchesEvent:event ignoringModifiers:ignoredmods]) return action;
@@ -128,7 +124,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 		NSEnumerator *keyenumerator=[[action shortcuts] objectEnumerator];
 		CSKeyStroke *key;
-
 		while(key=[keyenumerator nextObject])
 		{
 			if([key matchesEvent:event ignoringModifiers:0])
@@ -339,15 +334,40 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 -(BOOL)perform:(NSEvent *)event
 {
 	if(!sel) return NO;
-	if(item&&[[item keyEquivalent] length])
+
+	if(item)
 	{
 		[[item menu] update];
 		if([item isEnabled])
-		return [[item menu] performKeyEquivalent:[NSEvent keyEventWithType:NSKeyDown location:[event locationInWindow]
-		modifierFlags:[item keyEquivalentModifierMask] timestamp:[event timestamp] windowNumber:[event windowNumber] context:[event context]
-		characters:[item keyEquivalent] charactersIgnoringModifiers:[item keyEquivalent] isARepeat:[event isARepeat] 
-		keyCode:0]];
-		else return YES; // avoid beeping
+		{
+			NSString *keyequivalent=[[item keyEquivalent] retain];
+			unsigned int modifiermask=[item keyEquivalentModifierMask];
+
+			[item setKeyEquivalent:@"\020"];
+			[item setKeyEquivalentModifierMask:CSCmd|CSShift|CSAlt|CSCtrl];
+
+			NSEvent *keyevent=[NSEvent keyEventWithType:NSKeyDown
+			location:[event locationInWindow]
+			modifierFlags:CSCmd|CSShift|CSAlt|CSCtrl
+			timestamp:[event timestamp]
+			windowNumber:[event windowNumber]
+			context:[event context]
+			characters:@"\020"
+			charactersIgnoringModifiers:@"\020"
+			isARepeat:[event isARepeat] 
+			keyCode:0];
+
+			BOOL res=[[item menu] performKeyEquivalent:keyevent];
+
+			[item setKeyEquivalent:[keyequivalent autorelease]];
+			[item setKeyEquivalentModifierMask:modifiermask];
+
+			return res;
+		}
+		else
+		{
+			return YES; // avoid beeping
+		}
 	}
 	else
 	{
@@ -513,7 +533,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 +(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(unsigned int)modifiers;
 {
-	return [[[CSKeyStroke alloc] initWithCharacter:[NSString stringWithFormat:@"%C",character] modifiers:modifiers] autorelease];
+	return [CSKeyStroke keyForCharacter:[NSString stringWithFormat:@"%C",character] modifiers:modifiers];
 }
 
 +(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item
@@ -522,10 +542,21 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	return [CSKeyStroke keyForCharacter:[item keyEquivalent] modifiers:[item keyEquivalentModifierMask]];
 }
 
++(CSKeyStroke *)keyFromEvent:(NSEvent *)event
+{
+	NSString *character=[event remappedCharactersIgnoringAllModifiers];
+	unsigned int modifiers=[event modifierFlags];
+	return [CSKeyStroke keyForCharacter:character modifiers:modifiers];
+}
+
 +(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict
 {
-	return [CSKeyStroke keyForCharacter:[dict objectForKey:@"character"] modifiers:[[dict objectForKey:@"modifiers"] unsignedIntValue]];
+	NSString *character=[dict objectForKey:@"character"];
+	unsigned int modifiers=[[dict objectForKey:@"modifiers"] unsignedIntValue];
+	return [CSKeyStroke keyForCharacter:character modifiers:modifiers];
 }
+
+
 
 +(NSArray *)keysFromDictionaries:(NSArray *)dicts
 {
@@ -579,6 +610,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 		[NSNumber numberWithUnsignedInt:mod],@"modifiers",
 	nil];
 }
+
+
 
 -(NSImage *)image
 {
@@ -637,8 +670,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 	unsigned int eventmod=[event modifierFlags]&(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask)&~ignoredmods;
 	unsigned int maskedmod=mod&~ignoredmods;
-	NSString *eventchr=[event characters];
-	NSString *nomodchr=[event charactersIgnoringAllModifiers];
+	NSString *eventchr=[event remappedCharacters];
+	NSString *nomodchr=[event remappedCharactersIgnoringAllModifiers];
 
 	if(![eventchr isEqual:nomodchr])
 	if([chr isEqual:eventchr])
@@ -676,14 +709,15 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	if(!chr||![chr length]) return @"(Empty)";
 	switch([chr characterAtIndex:0])
 	{
-		case 3: return [NSString stringWithFormat:@"%C",0x2305]; // enter
-		case 8: return [NSString stringWithFormat:@"%C",0x232b]; // backspace
-		case 9: return [NSString stringWithFormat:@"%C",0x21e5]; // tab
-		case 13: return [NSString stringWithFormat:@"%C",0x21a9]; // return
-		case 25: return [NSString stringWithFormat:@"%C",0x21e4]; // reverse tab
+		case NSEnterCharacter: return [NSString stringWithFormat:@"%C",0x2305];
+		case NSBackspaceCharacter: return [NSString stringWithFormat:@"%C",0x232b];
+		case NSTabCharacter: return [NSString stringWithFormat:@"%C",0x21e5];
+		case NSCarriageReturnCharacter: return [NSString stringWithFormat:@"%C",0x21a9];
+		case NSBackTabCharacter: return [NSString stringWithFormat:@"%C",0x21e4];
+		case 16: return @"DLE"; // Context menu key on PC keyboard, ASCII DLE.
 		case 27: return [NSString stringWithFormat:@"%C",0x238b]; // esc
-		case 32: return @"Space"; // space
-		case 127: return [NSString stringWithFormat:@"%C",0x232b]; // forward delete
+		case ' ': return @"Space";
+		case NSDeleteCharacter: return [NSString stringWithFormat:@"%C",0x2326];
 		case NSUpArrowFunctionKey: return [NSString stringWithFormat:@"%C",0x2191];
 		case NSDownArrowFunctionKey: return [NSString stringWithFormat:@"%C",0x2193];
 		case NSLeftArrowFunctionKey: return [NSString stringWithFormat:@"%C",0x2190];
@@ -692,11 +726,11 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 		case NSF2FunctionKey: return @"F2";
 		case NSF3FunctionKey: return @"F3";
 		case NSF4FunctionKey: return @"F4";
-		case NSF5FunctionKey: return @"F4";
-		case NSF6FunctionKey: return @"F5";
-		case NSF7FunctionKey: return @"F6";
-		case NSF8FunctionKey: return @"F7";
-		case NSF9FunctionKey: return @"F8";
+		case NSF5FunctionKey: return @"F5";
+		case NSF6FunctionKey: return @"F6";
+		case NSF7FunctionKey: return @"F7";
+		case NSF8FunctionKey: return @"F8";
+		case NSF9FunctionKey: return @"F9";
 		case NSF10FunctionKey: return @"F10";
 		case NSF11FunctionKey: return @"F11";
 		case NSF12FunctionKey: return @"F12";
@@ -704,13 +738,14 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 		case NSF14FunctionKey: return @"F14";
 		case NSF15FunctionKey: return @"F15";
 		case NSInsertFunctionKey: return @"Insert";
-		case NSDeleteFunctionKey: return [NSString stringWithFormat:@"%C",0x2326];	
+		//case NSDeleteFunctionKey: return [NSString stringWithFormat:@"%C",0x2326];
+		case NSDeleteFunctionKey: return @"(invalid)";
 		case NSHomeFunctionKey: return [NSString stringWithFormat:@"%C",0x2196];
 		case NSEndFunctionKey: return [NSString stringWithFormat:@"%C",0x2198];
 		case NSPageUpFunctionKey: return [NSString stringWithFormat:@"%C",0x21de];
 		case NSPageDownFunctionKey: return [NSString stringWithFormat:@"%C",0x21df];
-		case NSClearLineFunctionKey: return @"Num lock"; // 2327?
-		case NSHelpFunctionKey: return @"Help"; // 225f?
+		case NSClearLineFunctionKey: return [NSString stringWithFormat:@"%C",0x2327];
+		case NSHelpFunctionKey: return [NSString stringWithFormat:@"?%C",0x20dd];
 		default: return [chr uppercaseString];
 //		default: return [NSString stringWithFormat:@"%d",[character characterAtIndex:0]];
 	}
@@ -818,11 +853,11 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 {
 	NSString *chr=[event charactersIgnoringModifiers];
 	if([chr length])
+
 	switch([chr characterAtIndex:0])
 	{
-		case NSDeleteFunctionKey:
-		case NSBackspaceCharacter:
 		case NSDeleteCharacter:
+		case NSDeleteFunctionKey:
 			if(selected)
 			{
 				[self removeShortcut:nil];
@@ -1038,8 +1073,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 	if(event&&[event type]==NSKeyDown)
 	{
-		CSKeyStroke *stroke=[CSKeyStroke keyForCharacter:[event charactersIgnoringAllModifiers] modifiers:[event modifierFlags]];
-
 		int otherrow;
 		CSKeyStroke *other=[keyboardShortcuts findKeyStrokeForEvent:event index:&otherrow];
 
@@ -1052,6 +1085,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 		}
 		else
 		{
+			CSKeyStroke *stroke=[CSKeyStroke keyFromEvent:event];
+
 			[action setShortcuts:[[action shortcuts] arrayByAddingObject:stroke]];
 			selected=stroke;
 			[infoTextField setStringValue:@""];
@@ -1059,6 +1094,10 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 		[self reloadData];
 		[self updateButtons];
+
+		NSEvent *upevent=[[self window] nextEventMatchingMask:NSKeyUpMask
+		untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:YES];
+		[[self window] discardEventsMatchingMask:NSAnyEventMask beforeEvent:upevent];
 	}
 	else [infoTextField setStringValue:@""];
 }
@@ -1137,6 +1176,25 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 @implementation NSEvent (CSKeyboardShortcutsAdditions)
 
++(NSString *)remapCharacters:(NSString *)characters
+{
+	static NSDictionary *remapdictionary=nil;
+	if(!remapdictionary)
+	{
+		remapdictionary=[[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSString stringWithFormat:@"%C",NSBackspaceCharacter],
+			[NSString stringWithFormat:@"%C",NSDeleteCharacter],
+
+			[NSString stringWithFormat:@"%C",NSDeleteCharacter],
+			[NSString stringWithFormat:@"%C",NSDeleteFunctionKey],
+		nil] retain];
+	}
+
+	NSString *remapped=[remapdictionary objectForKey:characters];
+	if(remapped) return remapped;
+	else return characters;
+}
+
 -(NSString *)charactersIgnoringAllModifiers
 {
 	unsigned short keycode=[self keyCode];
@@ -1171,5 +1229,10 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 	return [[self charactersIgnoringModifiers] lowercaseString];
 }
+
+-(NSString *)remappedCharacters { return [NSEvent remapCharacters:[self characters]]; }
+
+-(NSString *)remappedCharactersIgnoringAllModifiers { return [NSEvent remapCharacters:[self charactersIgnoringAllModifiers]]; }
+
 
 @end
