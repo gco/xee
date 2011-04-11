@@ -32,24 +32,10 @@
 			kCGImageAlphaPremultipliedLast);
 			if(context)
 			{
-				CGDataProviderRef provider=CGDataProviderCreateWithCFData(thumbdata);
-				if(provider)
-				{
-					thumbnail=CGImageCreate(thumbwidth,thumbheight,
-					8,32,thumbwidth*4,CGImageGetColorSpace(cgimage),kCGImageAlphaPremultipliedLast,
-					provider,NULL,NO,kCGRenderingIntentDefault);
-					if(thumbnail)
-					{
-						CGContextSetInterpolationQuality(context,kCGInterpolationHigh);
-						CGContextDrawImage(context,CGRectMake(0,0,thumbwidth,thumbheight),cgimage);
+				CGContextSetInterpolationQuality(context,kCGInterpolationHigh);
+				CGContextDrawImage(context,CGRectMake(0,0,thumbwidth,thumbheight),cgimage);
+				thumbnail=CGBitmapContextCreateImage(context);
 
-						// My propositions are elucidatory in this way: he who understands
-						// me finally recognizes them as senseless, when he has climbed out
-						// through them, on them, over them. (He must so to speak throw away
-						// the ladder, after he has climbed up on it.)
-					}
-					CGDataProviderRelease(provider);
-				}
 				CGContextRelease(context);
 			}
 			CFRelease(thumbdata);
@@ -66,7 +52,6 @@
 
 	CFMutableDataRef thumbdata=NULL;
 	int quality=60;
-
 	do
 	{
 		CFMutableDataRef data=CFDataCreateMutable(kCFAllocatorDefault,0);

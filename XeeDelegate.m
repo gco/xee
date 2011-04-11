@@ -836,7 +836,7 @@ BOOL IsHoveredViewOfClass(NSEvent *event,Class class);
 	if(type==NSScrollWheel||type==NSEventTypeBeginGesture||type==NSEventTypeEndGesture||
 	type==NSEventTypeMagnify||type==NSEventTypeRotate||type==NSEventTypeSwipe)
 	{
-		id keydelegate=[[[NSApplication sharedApplication] keyWindow] delegate];
+		id keydelegate=[[NSApp keyWindow] delegate];
 		if(keydelegate && [keydelegate isKindOfClass:[XeeController class]])
 		{
 			XeeController *controller=keydelegate;
