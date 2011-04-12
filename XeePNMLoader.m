@@ -14,7 +14,10 @@
 	const unsigned char *head=[block bytes];
 	int len=[block length];
 
-	if(len>=3&&head[0]=='P'&&(head[1]=='4'||head[1]=='5'||head[1]=='6')&&isspace(head[2])) return YES;
+	if(len>=3)
+	if(head[0]=='P')
+	if(head[1]>='1'&&head[1]<='6')
+	if(isspace(head[2])) return YES;
 
 	return NO;
 
@@ -38,32 +41,70 @@
 		}
 
 		int type=[fh readUInt8];
-		if(type!='4'&&type!='5'&&type!='6') return;
+		if(type<'0'||type>'6')return;
 
 		int imgwidth=[self nextIntegerAfterWhiteSpace];
 		int imgheight=[self nextIntegerAfterWhiteSpace];
 
 		XeeImage *image=nil;
 
-		if(type=='4')
+		int maxval;
+		switch(type)
 		{
-			image=[[[XeeBitmapRawImage alloc] initWithHandle:fh width:imgwidth height:imgheight] autorelease];
-		}
-		else
-		{
-			int maxval=[self nextIntegerAfterWhiteSpace];
-			int colourspace=type=='5'?XeeGreyRawColourSpace:XeeRGBRawColourSpace;
-			int bitdepth=maxval>=256?16:8;
+			case '1':
+				image=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeLuma8 width:imgwidth height:imgheight] autorelease];
+			break;
 
-			image=[[[XeeRawImage alloc] initWithHandle:fh width:imgwidth height:imgheight
-			depth:bitdepth colourSpace:colourspace flags:0] autorelease];
+			case '2':
+				maxval=[self nextIntegerAfterWhiteSpace];
 
-			if(maxval!=255&&maxval!=65535)
+				if(maxval<=255)
+				image=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeLuma8 width:imgwidth height:imgheight] autorelease];
+				else
+				image=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeLuma16 width:imgwidth height:imgheight] autorelease];
+			break;
+
+			case '3':
+				maxval=[self nextIntegerAfterWhiteSpace];
+
+				if(maxval<=255)
+				image=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeRGB8 width:imgwidth height:imgheight] autorelease];
+				else
+				image=[[[XeeBitmapImage alloc] initWithType:XeeBitmapTypeRGB16 width:imgwidth height:imgheight] autorelease];
+			break;
+
+			case '4':
+				image=[[[XeeBitmapRawImage alloc] initWithHandle:fh width:imgwidth height:imgheight] autorelease];
+			break;
+
+			case '5':
 			{
-				float one=(float)((1<<bitdepth)-1)/(float)maxval;
-				[(XeeRawImage *)image setZeroPoint:0 onePoint:one forChannel:0];
-				if(type=='6')
+				maxval=[self nextIntegerAfterWhiteSpace];
+
+				int bitdepth=maxval>=256?16:8;
+				image=[[[XeeRawImage alloc] initWithHandle:fh width:imgwidth height:imgheight
+				depth:bitdepth colourSpace:XeeGreyRawColourSpace flags:0] autorelease];
+
+				if(maxval!=255&&maxval!=65535)
 				{
+					float one=(float)((1<<bitdepth)-1)/(float)maxval;
+					[(XeeRawImage *)image setZeroPoint:0 onePoint:one forChannel:0];
+				}
+			}
+			break;
+
+			case '6':
+			{
+				maxval=[self nextIntegerAfterWhiteSpace];
+
+				int bitdepth=maxval>=256?16:8;
+				image=[[[XeeRawImage alloc] initWithHandle:fh width:imgwidth height:imgheight
+				depth:bitdepth colourSpace:XeeRGBRawColourSpace flags:0] autorelease];
+
+				if(maxval!=255&&maxval!=65535)
+				{
+					float one=(float)((1<<bitdepth)-1)/(float)maxval;
+					[(XeeRawImage *)image setZeroPoint:0 onePoint:one forChannel:0];
 					[(XeeRawImage *)image setZeroPoint:0 onePoint:one forChannel:1];
 					[(XeeRawImage *)image setZeroPoint:0 onePoint:one forChannel:2];
 				}
@@ -74,7 +115,73 @@
 
 		if([subimages count]==1) XeeImageLoaderHeaderDone();
 
-		[self runLoaderOnSubImage:image];
+		switch(type)
+		{
+			case '1':
+			{
+				CSHandle *fh=[self handle];
+				uint8_t *data=[(XeeBitmapImage *)image data];
+				int bytesperrow=[(XeeBitmapImage *)image bytesPerRow];
+
+				for(int y=0;y<imgheight;y++)
+				{
+					uint8_t *dest=data+y*bytesperrow;
+					for(int i=0;i<imgwidth;i++)
+					{
+						uint8_t val;
+						do { val=[fh readUInt8]; }
+						while(val!='0' && val!='1');
+
+						if(val=='0') dest[i]=0;
+						else dest[i]=255;
+					}
+					[(XeeBitmapImage *)image setCompletedRowCount:y+1];
+					XeeImageLoaderYield();
+				}
+			}
+			break;
+
+			case '2':
+			case '3':
+			{
+				int channels;
+				if(type=='2') channels=1;
+				else channels=3;
+
+				uint8_t *data=[(XeeBitmapImage *)image data];
+				int bytesperrow=[(XeeBitmapImage *)image bytesPerRow];
+
+				for(int y=0;y<imgheight;y++)
+				{
+					uint8_t *dest=data+y*bytesperrow;
+					for(int i=0;i<imgwidth*channels;i++)
+					{
+						int val=[self nextIntegerAfterWhiteSpace];
+						if(maxval==255)
+						{
+							dest[i]=val;
+						}
+						else if(maxval<255)
+						{
+							dest[i]=(255*val)/maxval;
+						}
+						else
+						{
+							((uint16_t *)dest)[i]=(65535*val)/maxval;
+						}
+					}
+					[(XeeBitmapImage *)image setCompletedRowCount:y+1];
+					XeeImageLoaderYield();
+				}
+			}
+			break;
+
+			case '4':
+			case '5':
+			case '6':
+				[self runLoaderOnSubImage:image];
+			break;
+		}
 	}
 }
 
@@ -83,7 +190,11 @@
 	char c;
 	int val=0;
 
-	do { c=[self nextCharacterSkippingComments]; }
+	do
+	{
+		c=[self nextCharacterSkippingComments];
+		if(c<0) return -1;
+	}
 	while(isspace(c));
 
 	do
@@ -91,20 +202,27 @@
 		if(c<'0'||c>'9') @throw @"Error parsing PNM header";
 		val=val*10+c-'0';
 		c=[self nextCharacterSkippingComments];
-	} while(!isspace(c));
+	} while(c>=0 && !isspace(c));
 
 	return val;
 }
 
--(char)nextCharacterSkippingComments
+-(int)nextCharacterSkippingComments
 {
 	CSHandle *fh=[self handle];
-	char c=[fh readUInt8];
+	if([fh atEndOfFile]) return -1;
 
+	char c=[fh readUInt8];
 	if(c!='#') return c;
 
-	do { c=[fh readUInt8]; }
+	do
+	{
+		if([fh atEndOfFile]) return -1;
+		c=[fh readUInt8];
+	}
 	while(c!='\n'&&c!='\r');
+
+	if([fh atEndOfFile]) return -1;
 
 	return [fh readUInt8];
 }

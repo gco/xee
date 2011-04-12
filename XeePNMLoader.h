@@ -10,6 +10,6 @@
 -(void)load;
 
 -(int)nextIntegerAfterWhiteSpace;
--(char)nextCharacterSkippingComments;
+-(int)nextCharacterSkippingComments;
 
 @end
