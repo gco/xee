@@ -58,12 +58,6 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 
 	background=gif->SBackGroundColor;
 
-	if(gif->SColorMap&&background<gif->SColorMap->ColorCount)
-	[self setBackgroundColor:[NSColor colorWithCalibratedRed:(float)gif->SColorMap->Colors[background].Red/255.0
-	green:(float)gif->SColorMap->Colors[background].Green/255.0
-	blue:(float)gif->SColorMap->Colors[background].Blue/255.0
-	alpha:1]];
-
 	currframe=0;
 	frametime=0;
 	transindex=-1;
@@ -106,16 +100,29 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 			if(code==GRAPHICS_EXT_FUNC_CODE&&ext[0]==4) // graphics control extension
 			{
 				frametime=(ext[2]&0xff)|((ext[3]&0xff)<<8);
-				transindex=(ext[1]&0x01)?ext[4]:-1;
-				disposal=(ext[1]&0x1c)>>2;
-
 				if(frametime==0||frametime==1) frametime=10; // oh boy, broken software!
-				if(disposal==4) disposal=3;
 
+				disposal=(ext[1]&0x1c)>>2;
+				if(disposal==4) disposal=3;
 				if(disposal==3) backupneeded=YES;
 
-				if(transindex>=0)
-				if([frames count]==0||(disposal==2&&transindex==background)) transparent=YES;
+				if(ext[1]&0x01)
+				{
+					transindex=ext[4];
+
+					if([frames count]==0) transparent=YES;
+					if(disposal==2&&transindex==background) transparent=YES;
+
+					if(gif->SColorMap&&transindex<gif->SColorMap->ColorCount)
+					[self setBackgroundColor:[NSColor colorWithCalibratedRed:(float)gif->SColorMap->Colors[transindex].Red/255.0
+					green:(float)gif->SColorMap->Colors[transindex].Green/255.0
+					blue:(float)gif->SColorMap->Colors[transindex].Blue/255.0
+					alpha:1]];
+				}
+				else
+				{
+					transindex=-1;
+				}
 
 				do { if(DGifGetExtensionNext(gif,&ext)==GIF_ERROR) return @selector(failLoading); }
 				while(ext);
@@ -336,7 +343,7 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 	int n=(bytesperrow/4)*height;
 	uint32_t val;
 
-	if(background==transindex) val=0x00000000;
+	if(transindex>=0) val=0x00000000;
 	else val=[globalpal table][background];
 
 	while(n--) *ptr++=val;
@@ -407,7 +414,7 @@ palette:(XeeGIFPalette *)pal
 
 	for(int y=0;y<height;y++)
 	{
-		uint32_t*dest=destdata+(top+y)*destwidth+left;
+		uint32_t *dest=destdata+(top+y)*destwidth+left;
 		int n=width;
 		while(n--)
 		{
@@ -431,7 +438,7 @@ palette:(XeeGIFPalette *)pal
 		uint32_t colour;
 
 		if(background==transparent) colour=0x00000000;
-		else background=[palette table][background];
+		else colour=[palette table][background];
 
 		for(int y=0;y<height;y++)
 		{
