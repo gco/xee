@@ -1,0 +1,149 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {launchAppFromMenu = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {CLASS = XeeApplication; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }, 
+        {CLASS = XeeClipboardWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {CLASS = XeeCloseButton; LANGUAGE = ObjC; SUPERCLASS = NSButton; }, 
+        {
+            ACTIONS = {cancelClick = id; nameChanged = id; renameClick = id; replaceClick = id; }; 
+            CLASS = XeeCollisionPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                controller = XeeDirectoryController; 
+                icon = XeeView; 
+                namefield = NSTextField; 
+                newdate = NSTextField; 
+                newformat = NSTextField; 
+                newsize = NSTextField; 
+                olddate = NSTextField; 
+                oldformat = NSTextField; 
+                oldsize = NSTextField; 
+                renamebutton = NSButton; 
+                replacebutton = NSButton; 
+                titlefield = NSTextField; 
+            }; 
+            SUPERCLASS = NSWindow; 
+        }, 
+        {
+            ACTIONS = {
+                animationToggle = id; 
+                copy = id; 
+                frameSkipNext = id; 
+                frameSkipPrev = id; 
+                saveImage = id; 
+                zoomActual = id; 
+                zoomFit = id; 
+                zoomIn = id; 
+                zoomOut = id; 
+            }; 
+            CLASS = XeeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {imageview = XeeView; statusbar = XeeStatusBar; window = NSWindow; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                dummy = id; 
+                openDocument = id; 
+                openHomePage = id; 
+                openSupportThread = id; 
+                paste = id; 
+                setDefaultEditorFromMenu = id; 
+            }; 
+            CLASS = XeeDelegate; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                copyitem = NSMenuItem; 
+                editmenu = NSMenu; 
+                openmenu = NSMenu; 
+                pasteitem = NSMenuItem; 
+                windowcontroller = XeeController; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = XeeDestinationListHandler; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {draggingExited = id; openInFinder = id; openInXee = id; removeFromList = id; }; 
+            CLASS = XeeDestinationView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeDirectoryController; }; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {
+            ACTIONS = {
+                askAndDelete = id; 
+                closeWindowOrDrawer = id; 
+                copyFile = id; 
+                deleteFileFromMenu = id; 
+                destinationListClick = id; 
+                jpegAutoRotate = id; 
+                jpegFlipHorizontal = id; 
+                jpegFlipVertical = id; 
+                jpegRotate180 = id; 
+                jpegRotateCCW = id; 
+                jpegRotateCW = id; 
+                launchAppFromMenu = id; 
+                launchDefaultEditor = id; 
+                moveFile = id; 
+                renameFileFromMenu = id; 
+                revealInFinder = id; 
+                skip100Back = id; 
+                skip100Forward = id; 
+                skip10Back = id; 
+                skip10Forward = id; 
+                skipFirst = id; 
+                skipLast = id; 
+                skipNext = id; 
+                skipPrev = id; 
+                skipRandom = id; 
+                skipRandomPrev = id; 
+            }; 
+            CLASS = XeeDirectoryController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                closebutton = NSButton; 
+                collisionpanel = XeeCollisionPanel; 
+                drawer = NSDrawer; 
+                drawerseg = NSSegmentedControl; 
+                renamepanel = XeeRenamePanel; 
+                table = NSTableView; 
+            }; 
+            SUPERCLASS = XeeController; 
+        }, 
+        {
+            CLASS = XeeDirectoryWindow; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeDirectoryController; }; 
+            SUPERCLASS = XeeWindow; 
+        }, 
+        {CLASS = XeeFiletypeListSource; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {cancelClick = id; renameClick = id; }; 
+            CLASS = XeeRenamePanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeDirectoryController; namefield = NSTextField; }; 
+            SUPERCLASS = NSWindow; 
+        }, 
+        {CLASS = XeeStatusBar; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            CLASS = XeeView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSOpenGLView; 
+        }, 
+        {
+            CLASS = XeeWindow; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = XeeController; }; 
+            SUPERCLASS = NSWindow; 
+        }
+    ); 
+    IBVersion = 1; 
+}

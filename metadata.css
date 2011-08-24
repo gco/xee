@@ -1,0 +1,30 @@
+table {
+	font-family:"Lucidia Sans",sans-serif;
+	position:absolute;
+	left: 0px;
+	right: 0px;
+	top: -4px;
+	width: 100%;
+}
+
+td {
+	font-size: 13px;
+	vertical-align: top;
+	padding: 1px 2px 1px 4px;
+}
+
+td:first-child {
+	background: #eee;
+	white-space: nowrap;
+	text-align: right;
+	padding: 1px 4px 1px 2px;
+}
+
+th {
+	font-size: 14px;
+	color: #000;
+	font-weight: bold;
+	border-bottom: 2px solid #4b4 !important;
+	padding-top: 4px;
+	text-align: center;
+}
